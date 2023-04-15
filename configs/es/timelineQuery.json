@@ -1,0 +1,42 @@
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "terms": {
+            "author_id": ["FOLLOWING_USER_ID1", "FOLLOWING_USER_ID2", "..."]
+          }
+        },
+        {
+          "nested": {
+            "path": "mentions",
+            "query": {
+              "terms": {
+                "mentions.user_id": ["USER_ID"]
+              }
+            }
+          }
+        }
+      ],
+      "minimum_should_match": 1,
+      "filter": [
+        {
+          "range": {
+            "updated_at": {
+              "gte": "now-10d/d",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "updated_at": {
+        "order": "desc"
+      }
+    }
+  ],
+  "size": 50
+}

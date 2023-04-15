@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "id": {
+      "type": "keyword"
+    },
+    "name": {
+      "type": "text"
+    },
+    "description": {
+      "type": "text"
+    },
+    "owner_id": {
+      "type": "keyword"
+    },
+    "user_ids": {
+      "type": "keyword"
+    },
+    "created_at": {
+      "type": "date"
+    },
+    "updated_at": {
+      "type": "date"
+    }
+  }
+}

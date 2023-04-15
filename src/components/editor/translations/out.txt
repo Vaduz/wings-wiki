@@ -1,0 +1,52 @@
+error - ESLint: Failed to load plugin 'jsx-a11y' declared in '.eslintrc.cjs ﾂｻ eslint-config-next/core-web-vitals ﾂｻ C:\Users\vaduz\Documents\Code\wings-wiki\node_modules\eslint-config-next\index.js': Cannot find module 'C:\Users\vaduz\Documents\Code\wings-wiki\node_modules\@babel\runtime\helpers\interopRequireDefault.js'
+Failed to compile.
+
+./node_modules/next-auth/client/_utils.js
+Module not found: Can't resolve '@babel/runtime/helpers/interopRequireDefault'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/next-auth/react/index.js
+./src/pages/_app.tsx
+
+./node_modules/next-auth/client/_utils.js
+Module not found: Can't resolve '@babel/runtime/regenerator'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/next-auth/react/index.js
+./src/pages/_app.tsx
+
+./node_modules/next-auth/client/_utils.js
+Module not found: Can't resolve '@babel/runtime/helpers/defineProperty'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/next-auth/react/index.js
+./src/pages/_app.tsx
+
+./node_modules/next-auth/client/_utils.js
+Module not found: Can't resolve '@babel/runtime/helpers/asyncToGenerator'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/next-auth/react/index.js
+./src/pages/_app.tsx
+
+./node_modules/next-auth/core/errors.js
+Module not found: Can't resolve '@babel/runtime/helpers/interopRequireDefault'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/next-auth/utils/logger.js
+./node_modules/next-auth/react/index.js
+./src/pages/_app.tsx
+
+
+> Build failed because of webpack errors
+

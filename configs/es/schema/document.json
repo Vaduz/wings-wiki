@@ -1,0 +1,36 @@
+{
+  "properties": {
+    "id": {
+      "type": "keyword"
+    },
+    "title": {
+      "type": "text"
+    },
+    "content": {
+      "type": "text"
+    },
+    "author_id": {
+      "type": "keyword"
+    },
+    "created_at": {
+      "type": "date"
+    },
+    "updated_at": {
+      "type": "date"
+    },
+    "parent_id": {
+      "type": "text"
+    },
+    "mentions": {
+      "type": "nested",
+      "properties": {
+        "user_id": {
+          "type": "keyword"
+        }
+      }
+    },
+    "tags": {
+      "type": "keyword"
+    }
+  }
+}

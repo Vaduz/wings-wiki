@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "id": {
+      "type": "keyword"
+    },
+    "name": {
+      "type": "text"
+    },
+    "email": {
+      "type": "keyword"
+    },
+    "oauth_provider": {
+      "type": "keyword"
+    },
+    "oauth_id": {
+      "type": "keyword"
+    },
+    "following_ids": {
+      "type": "keyword"
+    },
+    "created_at": {
+      "type": "date"
+    },
+    "updated_at": {
+      "type": "date"
+    }
+  }
+}
