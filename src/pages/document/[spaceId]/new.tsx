@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import React, { PropsWithChildren, useState } from 'react'
-import { CloseButton, documentBase, documentPath } from '@/components/global/link'
+import { CloseButton, documentPath, spaceBase } from '@/components/global/link'
 import TopNavi from '../../../components/global/topNavi'
 import { Editor } from '@/components/editor/editor'
 import { useRouter } from 'next/router'
@@ -24,7 +24,9 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
     }
     createDocumentApi(newWingsDocument, spaceId)
       .then((r) =>
-        router.push(r ? documentPath(r.id) : documentBase).catch((err) => console.error('Redirect error', err))
+        router
+          .push(r ? documentPath(spaceId, r.id) : spaceBase(spaceId))
+          .catch((err) => console.error('Redirect error', err))
       )
       .catch((err) => console.error('createDocumentApi error', err))
       .finally(() => console.log(new Date().toISOString(), ' Redirected'))
@@ -55,7 +57,7 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
             <i className="bi bi-globe" />
             &nbsp;Publish
           </a>
-          <CloseButton href={documentBase}>
+          <CloseButton href={spaceBase(spaceId)}>
             <i className="bi bi-card-list" />
             &nbsp;Documents
           </CloseButton>

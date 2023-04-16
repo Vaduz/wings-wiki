@@ -16,7 +16,7 @@ const ListDocuments = () => {
       .then((res) => setDocuments(res))
       .catch((err) => console.error(err))
     setLoading(false)
-  }, [])
+  }, [spaceId])
 
   if (loading) {
     return (

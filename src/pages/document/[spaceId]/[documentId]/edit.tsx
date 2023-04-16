@@ -1,6 +1,6 @@
 import { Editor } from '@/components/editor/editor'
 import React, { useEffect, useState } from 'react'
-import { CloseButton, documentBase, documentPath } from '@/components/global/link'
+import { CloseButton, documentPath } from '@/components/global/link'
 import TopNavi from '../../../../components/global/topNavi'
 import { useRouter } from 'next/router'
 import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'
@@ -51,7 +51,7 @@ const EditDocument = () => {
     wingsDocument.title = title
     wingsDocument.content = content
     updateDocumentApi(wingsDocument, 'e32385ad-4d6e-4c21-abbc-2f34e797caeb').then(() =>
-      router.push(documentPath(wingsDocument.id))
+      router.push(documentPath(spaceId, wingsDocument.id))
     )
   }
 
@@ -78,7 +78,7 @@ const EditDocument = () => {
           >
             <i className="bi bi-globe" /> Publish
           </a>
-          <CloseButton href={documentBase}>Close</CloseButton>
+          <CloseButton href={documentPath(spaceId, documentId)}>Close</CloseButton>
         </div>
       </div>
     </div>
