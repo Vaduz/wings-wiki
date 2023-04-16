@@ -2,39 +2,38 @@ export type UserId = string
 export type SpaceId = string
 export type DocumentId = string
 
-export interface User {
-  id: UserId
-  email: string
-  name: string
-  avatar_url: string
+interface Timestamps {
   created_at: Date
   updated_at: Date
 }
 
-export interface Space {
+export interface User extends NewUser, Timestamps {
+  id: UserId
+}
+
+export interface NewUser {
+  email: string
+  name: string
+  avatar_url: string
+}
+
+export interface Space extends NewSpace, Timestamps {
   id: SpaceId
+}
+
+export interface NewSpace {
   name: string
   description: string
   owner_id: UserId
   members: UserId[]
-  created_at: Date
-  updated_at: Date
 }
 
 export interface Mention {
   user_id: UserId
 }
 
-export interface WingsDocument {
+export interface WingsDocument extends NewWingsDocument, Timestamps {
   id: DocumentId
-  title: string
-  content: string
-  author_id: UserId
-  created_at: Date
-  updated_at: Date
-  parent_id?: DocumentId
-  mentions: Mention[]
-  tags: string[]
 }
 
 export interface NewWingsDocument {

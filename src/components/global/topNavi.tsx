@@ -1,6 +1,6 @@
 import React from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
-import {documentBase, newDocumentPath, searchPath, spaceBase} from '@/components/global/link'
+import { documentBase, newDocumentPath, searchPath, spaceBase } from '@/components/global/link'
 import Link from 'next/link'
 import { SpaceId } from '@/lib/types/es'
 import Image from 'next/image'
@@ -9,10 +9,9 @@ import getConfig from 'next/config'
 
 const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
   const { publicRuntimeConfig } = getConfig()
-  console.log('My config value:', publicRuntimeConfig.myConfigValue)
+  // console.log('My config value:', publicRuntimeConfig.myConfigValue)
   const { data: session, status } = useSession()
 
-  // console.log(query)
   return (
     <>
       <div>
@@ -39,7 +38,7 @@ const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
                 <Link href={searchPath(spaceId)}>Search</Link>
               </li>
               <li>
-                <Link href={newDocumentPath(spaceId)}>new</Link>
+                <Link href={newDocumentPath(spaceId)}>New</Link>
               </li>
             </>
           )}

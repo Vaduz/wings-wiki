@@ -1,19 +1,22 @@
-import { User, UserId } from '../types/es'
+import { NewUser, User, UserId } from '../types/es'
 import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
+import logger from '@/lib/logger/pino'
 
-// User helper functions
-export async function createUser(user: User): Promise<User> {
-  user.id = randomUUID()
+export async function createUser(param: NewUser): Promise<User> {
+  const userId: UserId = randomUUID()
   const { result } = await client.create({
     index: 'user',
-    id: user.id,
-    document: user,
+    id: userId,
+    document: param,
   })
   if (result != 'created') {
-    throw new WingsError(`Invalid createUser(${user}) result: ${result}`)
+    throw new WingsError(`Invalid createUser() result: ${result}, ${param}`)
   }
-  console.log(new Date().toISOString(), ` User created: ${user.id}, ${user.name}`)
+
+  const user: User = { ...param, id: userId } as User
+  logger.info({ message: 'lib/elasticsearch/user createUser()', userId: userId })
+  logger.debug({ filename: __filename, user: user })
   return user
 }
 
@@ -23,8 +26,10 @@ export async function getUser(userId: UserId): Promise<User | undefined> {
     id: userId,
   })
   if (!found || !_source) return
-  const user = _source as User
-  console.log(new Date().toISOString(), ` User fetched: ${userId}, ${user.name}`)
+
+  const user: User = { ..._source, id: userId } as User
+  logger.info({ message: 'lib/elasticsearch/user getUser()', userId: userId })
+  logger.debug({ filename: __filename, user: user })
   return user
 }
 
@@ -33,13 +38,16 @@ export async function updateUser(user: User): Promise<void> {
     index: 'user',
     id: user.id,
     doc: {
-      doc: document,
+      email: user.email,
+      name: user.name,
+      avatar_url: user.avatar_url,
+      updated_at: new Date(),
     },
   })
-
   if (result != 'updated') {
-    throw new WingsError(`Invalid updateUser(${user}) result: ${result}`)
-  } else {
-    console.log(new Date().toISOString(), ` User updated: ${user.id}, ${user.name}`)
+    throw new WingsError(`Invalid updateUser() result: ${result}, user: ${user}`)
   }
+
+  logger.info({ message: 'lib/elasticsearch/user getUser()', userId: user.id })
+  logger.debug({ filename: __filename, user: user })
 }

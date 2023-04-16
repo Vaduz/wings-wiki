@@ -8,7 +8,7 @@ export const spaceBase = (spaceId: SpaceId) => {
 }
 
 export const searchPath = (spaceId: SpaceId) => {
-  return `${spaceBase(spaceId)}/search`
+  return `${spaceBase(spaceId)}search`
 }
 
 export const newDocumentPath = (spaceId: SpaceId) => {

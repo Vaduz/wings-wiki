@@ -27,7 +27,7 @@ const ListDocuments = () => {
     )
   }
 
-  console.log('document', documents)
+  // console.log('document', documents)
 
   return (
     <div className="container-xl mt-3">
@@ -46,6 +46,11 @@ const ListDocuments = () => {
         <h2>
           <Link href={`/document/${spaceId}/b9b418d5-367b-4d91-96b0-c11f69fbeaa3`}>
             b9b418d5-367b-4d91-96b0-c11f69fbeaa3
+          </Link>
+        </h2>
+        <h2>
+          <Link href={`/document/${spaceId}/0f115cb6-7aec-4138-9aed-8422a2942e71`}>
+            0f115cb6-7aec-4138-9aed-8422a2942e71
           </Link>
         </h2>
         {/*<DocumentCards documents={documents ?? []} />*/}

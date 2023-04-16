@@ -12,9 +12,6 @@ const nextConfig = {
       },
     ],
   },
-  publicRuntimeConfig: {
-    myConfigValue: 'This is my config value',
-  },
 }
 
 export default nextConfig

@@ -1,26 +1,28 @@
 import { SpaceId, WingsDocument, DocumentId, NewWingsDocument } from '../types/es'
 import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
+import logger from '@/lib/logger/pino'
 
-// Document helper functions
 export async function createDocument(spaceId: SpaceId, param: NewWingsDocument): Promise<WingsDocument> {
   const documentId = randomUUID()
-  const document = {
+  const esDocument = {
     ...param,
     created_at: new Date(),
     updated_at: new Date(),
   }
-  console.log('ES createDocument:', spaceId, param, document)
   const { result } = await client.create({
     index: getDocumentIndex(spaceId),
     id: documentId,
-    document: document,
+    document: esDocument,
   })
   if (result != 'created') {
-    throw new WingsError(`Invalid createDocument(${spaceId}, ${param}), document: ${document}, result: ${result}`)
+    throw new WingsError(`Invalid createDocument() result: ${result}, ${spaceId}, ${param}, ${esDocument}`)
   }
-  console.log(new Date().toISOString(), ` Document created: ${spaceId}, ${documentId}, ${document.title}`)
-  return { ...document, id: documentId }
+
+  const document: WingsDocument = { ...esDocument, id: documentId }
+  logger.info({ message: 'lib/elasticsearch/document createDocument()', spaceId: spaceId, documentId: documentId })
+  logger.debug({ filename: __filename, document: document })
+  return document
 }
 
 export async function getDocument(spaceId: SpaceId, documentId: DocumentId): Promise<WingsDocument | undefined> {
@@ -30,12 +32,12 @@ export async function getDocument(spaceId: SpaceId, documentId: DocumentId): Pro
   })
   if (!found || !_source) return
   const document = { ..._source, id: documentId } as WingsDocument
-  console.log(new Date().toISOString(), ` Document fetched: ${spaceId}, ${documentId}`, document)
+  logger.info({ message: 'lib/elasticsearch/document getDocument()', spaceId: spaceId, documentId: documentId })
+  logger.debug({ filename: __filename, document: document })
   return document
 }
 
 export async function updateDocument(spaceId: SpaceId, document: WingsDocument): Promise<void> {
-  console.log(new Date().toISOString(), __filename, ` Document update request: ${spaceId}, `, document)
   const { result } = await client.update({
     index: getDocumentIndex(spaceId),
     id: document.id,
@@ -48,9 +50,10 @@ export async function updateDocument(spaceId: SpaceId, document: WingsDocument):
     },
   })
   if (result != 'updated') {
-    throw new WingsError(`Invalid updateDocument(${document}) result: ${result}`)
+    throw new WingsError(`Invalid updateDocument() result: ${result}, document: ${document}`)
   }
-  console.log(new Date().toISOString(), __filename, ` Document updated: ${spaceId}, ${document.id}, ${document.title}`)
+  logger.info({ message: 'lib/elasticsearch/document updateDocument()', spaceId: spaceId, documentId: document.id })
+  logger.debug({ filename: __filename, document: document })
 }
 
 export async function deleteDocument(spaceId: SpaceId, documentId: DocumentId): Promise<void> {
@@ -59,9 +62,9 @@ export async function deleteDocument(spaceId: SpaceId, documentId: DocumentId): 
     id: documentId,
   })
   if (result != 'deleted') {
-    throw new WingsError(`Invalid deleteDocument(${spaceId}, ${documentId}) result: ${result}`)
+    throw new WingsError(`Invalid deleteDocument() result: ${result}, ${spaceId}, ${documentId}`)
   }
-  console.log(`${new Date().toISOString()} Document deleted: ${spaceId}, ${documentId}`)
+  logger.info({ message: 'lib/elasticsearch/document deleteDocument()', spaceId: spaceId, documentId: documentId })
 }
 
 export function getDocumentIndex(spaceId: SpaceId): string {

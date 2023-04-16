@@ -1,17 +1,27 @@
-import { Space, SpaceId } from '../types/es'
+import { NewSpace, Space, SpaceId } from '../types/es'
 import client from '@/lib/elasticsearch'
+import logger from '@/lib/logger/pino'
+import { randomUUID } from 'crypto'
 
-// Space helper functions
-export async function createSpace(space: Space): Promise<Space> {
+export async function createSpace(param: NewSpace): Promise<Space> {
+  const spaceId: SpaceId = randomUUID()
+  const document = {
+    ...param,
+    created_at: new Date(),
+    updated_at: new Date(),
+  }
   const { result } = await client.create({
     index: 'space',
-    id: space.id,
-    document: space,
+    id: spaceId,
+    document: document,
   })
   if (result != 'created') {
-    throw new WingsError(`Invalid createSpace(${space}) result: ${result}`)
+    throw new WingsError(`Invalid createSpace() result: ${result}, ${param}, ${spaceId}`)
   }
-  console.log(new Date().toISOString(), ` Space created: ${space.id}, ${space.name}`)
+
+  const space: Space = { ...document, id: spaceId }
+  logger.info({ message: 'lib/elasticsearch/space createSpace()', spaceId: spaceId })
+  logger.debug({ filename: __filename, space: space })
   return space
 }
 
@@ -21,8 +31,9 @@ export async function getSpace(spaceId: SpaceId): Promise<Space | undefined> {
     id: spaceId,
   })
   if (!found || !_source) return
-  const space = _source as Space
-  console.log(new Date().toISOString(), ` Space fetched: ${spaceId}, ${space.name}`)
+  const space: Space = { ..._source, id: spaceId } as Space
+  logger.info({ message: 'lib/elasticsearch/space getSpace()', spaceId: space.id })
+  logger.debug({ filename: __filename, space: space })
   return space
 }
 
@@ -35,7 +46,8 @@ export async function updateSpace(space: Space): Promise<void> {
     },
   })
   if (result != 'updated') {
-    throw new WingsError(`Invalid updateSpace(${space}) result: ${result}`)
+    throw new WingsError(`Invalid updateSpace() result: ${result}, ${space}`)
   }
-  console.log(`${new Date().toISOString()} Space updated: ${space}`)
+  logger.info({ message: 'lib/elasticsearch/space updateSpace()', spaceId: space.id })
+  logger.debug({ filename: __filename, space: space })
 }

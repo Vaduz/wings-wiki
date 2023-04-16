@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { WingsDocument, DocumentId } from '@/lib/types/es'
 import { createDocument, getDocument, updateDocument, deleteDocument } from '@/lib/elasticsearch/document'
+import logger from '@/lib/logger/pino'
 
 type DocumentResponse = {
   data?: WingsDocument
@@ -9,7 +10,6 @@ type DocumentResponse = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<DocumentResponse>) {
   const { method, body } = req
-  console.log(new Date().toISOString(), __filename, method, body)
 
   try {
     switch (method) {
@@ -47,8 +47,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         res.status(405).end(`Method ${method} Not Allowed`)
     }
   } catch (e) {
-    console.error(new Date().toISOString(), e)
     res.status(500).json({ error: e })
+    logger.warn(e)
   }
-  console.info(`${new Date().toISOString()} ${method} /api/document`, res.statusCode, req.query, req.body)
+
+  logger.info({
+    path: '/api/document',
+    req: { method: method, query: req.query, body: body },
+    res: { status: res.statusCode },
+  })
 }

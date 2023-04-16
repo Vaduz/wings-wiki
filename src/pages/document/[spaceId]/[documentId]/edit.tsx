@@ -47,7 +47,7 @@ const EditDocument = () => {
   // setTitle(wingsDocument.title)
 
   const updateButtonHandler = (title: string = '', content: string = '') => {
-    console.log(`Updating document: ${title}, ${content}`)
+    // console.log(`Updating document: ${title}, ${content}`)
     wingsDocument.title = title
     wingsDocument.content = content
     updateDocumentApi(wingsDocument, 'e32385ad-4d6e-4c21-abbc-2f34e797caeb').then(() =>
