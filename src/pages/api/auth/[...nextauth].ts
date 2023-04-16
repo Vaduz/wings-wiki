@@ -1,6 +1,5 @@
-import NextAuth, { User } from 'next-auth'
+import NextAuth from 'next-auth'
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
-import { AdapterUser } from 'next-auth/adapters'
 
 export default NextAuth({
   providers: [

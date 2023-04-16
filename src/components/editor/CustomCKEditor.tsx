@@ -15,12 +15,11 @@ const CustomCKEditor = (props: EditorProps) => {
         console.log({ event, editor, data })
       }}
       onReady={(editor: any) => {
-        console.log('Editor1 is ready to use!', editor)
         // You can store the "editor" and use when it is needed.
         if (props.disabled) {
           editor.ui.view.toolbar.element.style.display = 'none' // flex to enable
         }
-        // console.log('Editor is ready to use!', editor)
+        console.log('Editor is ready to use!', editor)
       }}
     />
   )

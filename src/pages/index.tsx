@@ -1,14 +1,13 @@
 import React, { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { documentBase } from '@/components/global/link'
+import TopNavi from '@/components/global/topNavi'
 
 const Home: NextPage = () => {
-  const router = useRouter()
-  useEffect(() => {
-    router.push(documentBase).then((r) => console.log('Redirecting to documents'))
-  })
-  return <></>
+  return (
+    <div className="container-xl mt-3">
+      <TopNavi spaceId={undefined} />
+      <h1>Home</h1>
+    </div>
+  )
 }
 
 export default Home

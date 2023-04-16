@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react'
+import { DocumentId, SpaceId } from '@/lib/types/es'
 
 export const documentBase = '/document/'
 
@@ -8,8 +9,8 @@ export const documentPath = (documentId: string) => {
   return `${documentBase}${documentId}`
 }
 
-export const documentEditPath = (documentId: string) => {
-  return `${documentPath(documentId)}/edit`
+export const documentEditPath = (spaceId: SpaceId, documentId: DocumentId) => {
+  return `${spaceId}/${documentPath(documentId)}/edit`
 }
 
 interface PrimaryButtonProps {

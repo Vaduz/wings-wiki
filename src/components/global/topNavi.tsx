@@ -2,22 +2,33 @@ import React from 'react'
 import { signIn, signOut } from 'next-auth/react'
 import { documentBase, newDocumentPath } from '@/components/global/link'
 import Link from 'next/link'
+import { SpaceId } from '@/lib/types/es'
 
-const TopNavi = ({ query }: { query?: string }): JSX.Element => {
+const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
   // console.log(query)
   return (
     <>
       <div>
         <ul>
           <li>
-            <Link href={documentBase}>Top</Link>
+            <Link href={'/'}>Home</Link>
           </li>
           <li>
-            <Link href={`/search`}>search</Link>
+            <Link href={documentBase}>Spaces</Link>
           </li>
-          <li>
-            <Link href={newDocumentPath}>new</Link>
-          </li>
+          {spaceId && (
+            <>
+              <li>
+                <Link href={`${documentBase}/${spaceId}`}>Documents</Link>
+              </li>
+              <li>
+                <Link href={`${documentBase}/${spaceId}/search`}>Search</Link>
+              </li>
+              <li>
+                <Link href={`${documentBase}/${spaceId}/new`}>new</Link>
+              </li>
+            </>
+          )}
           <li>
             <Link onClick={() => signIn()} href={`#`}>
               Sign in

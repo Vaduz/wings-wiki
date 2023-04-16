@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { User, UserId } from '@/lib/types/es'
-import { getUser, updateUser } from '@/lib/helpers/elasticsearch'
+import { getUser, updateUser } from '@/lib/elasticsearch/user'
 
 type UserResponse = {
   data?: User
@@ -24,10 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         break
 
       case 'PUT':
-        const updatedUser: User = JSON.parse(body)
         // TODO Check userId and request userId are same
-        await updateUser(updatedUser)
-        res.status(200).json({ data: updatedUser })
+        await updateUser(body)
+        res.status(200).json({ data: body })
         break
 
       default:

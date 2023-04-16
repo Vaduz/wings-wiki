@@ -1,15 +1,15 @@
 import { documentPath } from '../global/link'
 import styles from './documentCards.module.scss'
 import Link from 'next/link'
-import { Document } from '@/lib/types/es'
+import { WingsDocument } from '@/lib/types/es'
 
 interface DocumentCardsProps {
-  documents: Document[]
+  documents: WingsDocument[]
 }
 const DocumentCards = (props: DocumentCardsProps) => {
   return (
     <div className="list-group" key="document-list">
-      {props.documents.map((document: Document) => {
+      {props.documents.map((document: WingsDocument) => {
         return (
           <div className="card mb-3" key={document.id}>
             <div className={`card-body rounded shadow-sm ${styles.hoverShadow}`}>

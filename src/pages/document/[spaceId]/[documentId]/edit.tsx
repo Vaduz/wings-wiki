@@ -1,17 +1,18 @@
 import { Editor } from '@/components/editor/editor'
 import React, { useEffect, useState } from 'react'
 import { CloseButton, documentBase, documentPath } from '@/components/global/link'
-import TopNavi from '../../../components/global/topNavi'
+import TopNavi from '../../../../components/global/topNavi'
 import { useRouter } from 'next/router'
-import { getDocumentApi } from '@/lib/utils/document'
-import { Document } from '@/lib/types/es'
+import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'
+import { DocumentId, SpaceId, WingsDocument } from '@/lib/types/es'
 
 const EditDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [title, setTitle] = useState('')
   const router = useRouter()
-  const { documentId } = router.query
-  const [wingsDocument, setWingsDocument] = useState<Document | undefined>()
+  const spaceId = router.query.spaceId as SpaceId
+  const documentId = router.query.documentId as DocumentId
+  const [wingsDocument, setWingsDocument] = useState<WingsDocument | undefined>()
 
   useEffect(() => {
     if (!documentId) {
@@ -19,11 +20,16 @@ const EditDocument = () => {
       return
     }
     setLoading(true)
-    getDocumentApi('e32385ad-4d6e-4c21-abbc-2f34e797caeb', 'c79db1bc-e68e-4f5a-81e0-60df5aaaaef6')
-      .then((res) => setWingsDocument(res))
+    getDocumentApi(spaceId, documentId)
+      .then((res) => {
+        setWingsDocument(res)
+        if (res) {
+          setTitle(res.title)
+        }
+      })
       .catch((err) => console.error(err))
     setLoading(false)
-  }, [documentId])
+  }, [documentId, spaceId])
 
   if (loading) {
     return <div>Loading...</div>
@@ -31,22 +37,26 @@ const EditDocument = () => {
 
   if (!wingsDocument) {
     return (
-      <>
+      <div className="container-xl mt-3">
         <TopNavi />
         <div>Document not found: {documentId}</div>
-      </>
+      </div>
     )
   }
 
-  setTitle(wingsDocument.title)
+  // setTitle(wingsDocument.title)
 
   const updateButtonHandler = (title: string = '', content: string = '') => {
     console.log(`Updating document: ${title}, ${content}`)
-    // updateDocument(document.key, title, content).then(() => router.push(documentPath(document.key)))
+    wingsDocument.title = title
+    wingsDocument.content = content
+    updateDocumentApi(wingsDocument, 'e32385ad-4d6e-4c21-abbc-2f34e797caeb').then(() =>
+      router.push(documentPath(wingsDocument.id))
+    )
   }
 
   return (
-    <>
+    <div className="container-xl mt-3">
       <TopNavi />
       <div className="container-xl mt-3">
         <div className="input-group">
@@ -57,7 +67,7 @@ const EditDocument = () => {
             placeholder="Title"
             aria-label="Title"
             onChange={(e) => setTitle(e.currentTarget.value)}
-            value={wingsDocument.title}
+            value={title}
           />
         </div>
         <Editor content={wingsDocument.content} disabled={false} />
@@ -71,7 +81,7 @@ const EditDocument = () => {
           <CloseButton href={documentBase}>Close</CloseButton>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

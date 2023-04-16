@@ -1,14 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Document, DocumentId } from '@/lib/types/es'
-import { createDocument, getDocument, updateDocument } from '@/lib/helpers/elasticsearch'
+import { WingsDocument, DocumentId } from '@/lib/types/es'
+import { createDocument, getDocument, updateDocument, deleteDocument } from '@/lib/elasticsearch/document'
 
 type DocumentResponse = {
-  data?: Document
+  data?: WingsDocument
   error?: unknown
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<DocumentResponse>) {
   const { method, body } = req
+  console.log(new Date().toISOString(), __filename, method, body)
 
   try {
     switch (method) {
@@ -25,19 +26,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       case 'POST':
         // TODO user validation
-        const newDocument: Document = await createDocument(req.query.spaceId as string, JSON.parse(body))
+        const newDocument: WingsDocument = await createDocument(req.query.spaceId as string, body)
         res.status(200).json({ data: newDocument })
         break
 
       case 'PUT':
         // TODO user validation
-        const document = JSON.parse(body)
-        await updateDocument(req.query.spaceId as string, document)
-        res.status(200).json({ data: document })
+        await updateDocument(req.query.spaceId as string, body)
+        res.status(200).json({ data: body })
+        break
+
+      case 'DELETE':
+        // TODO user validation
+        await deleteDocument(req.query.spaceId as string, req.query.documentId as string)
+        res.status(200).json({ data: undefined })
         break
 
       default:
-        res.setHeader('Allow', ['GET', 'POST', 'PUT'])
+        res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])
         res.status(405).end(`Method ${method} Not Allowed`)
     }
   } catch (e) {

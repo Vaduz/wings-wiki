@@ -25,14 +25,23 @@ export interface Mention {
   user_id: UserId
 }
 
-export interface Document {
+export interface WingsDocument {
   id: DocumentId
   title: string
   content: string
   author_id: UserId
   created_at: Date
   updated_at: Date
-  parent_id: DocumentId | null
+  parent_id?: DocumentId
+  mentions: Mention[]
+  tags: string[]
+}
+
+export interface NewWingsDocument {
+  title: string
+  content: string
+  author_id: UserId
+  parent_id?: DocumentId
   mentions: Mention[]
   tags: string[]
 }
