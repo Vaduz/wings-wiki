@@ -1,4 +1,4 @@
-import { documentPath } from '../global/link'
+import { documentBase } from '../global/link'
 import styles from './documentCards.module.scss'
 import Link from 'next/link'
 import { WingsDocument } from '@/lib/types/es'
@@ -16,7 +16,7 @@ const DocumentCards = (props: DocumentCardsProps) => {
               <h5 className="card-title">
                 <i className="bi bi-file-earmark-text text-primary" />
                 &nbsp;
-                <Link href={documentPath(document.id)} className="stretched-link link-dark text-decoration-none">
+                <Link href={documentBase} className="stretched-link link-dark text-decoration-none">
                   {document.title || '[Empty title]'}
                 </Link>
               </h5>

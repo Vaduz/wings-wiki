@@ -62,7 +62,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<UserResp
       path: '/api/user',
       req: { method: method, query: req.query, body: body },
       res: { status: res.statusCode },
-      userId: req.token?.userId
+      userId: req.token?.userId,
     })
   }
 }
