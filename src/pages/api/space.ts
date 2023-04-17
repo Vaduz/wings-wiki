@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Space, SpaceId } from '@/lib/types/es'
+import { NewSpace, Space, SpaceId, UserId } from '@/lib/types/es'
 import { createSpace, getSpace, updateSpace } from '@/lib/elasticsearch/space'
 import logger from '@/lib/logger/pino'
 import authenticate from '@/lib/middlewares/authenticate'
@@ -11,28 +11,47 @@ type SpaceResponse = {
 
 export async function handler(req: NextApiRequest, res: NextApiResponse<SpaceResponse>) {
   const { method, body } = req
+  const spaceId = req.query.spaceId as string
 
   try {
+    if (!req.token) {
+      logger.warn({ message: 'token not found' })
+      res.status(400).json({ data: undefined })
+      return
+    }
+    const userId = req.token.userId as UserId
+
+    const space = await getSpace(spaceId)
+    if (!space) {
+      res.status(404).json({ error: `${spaceId} not found` })
+      return
+    } else if (!space.members.includes(userId)) {
+      res.status(400).json({ data: undefined })
+      logger.warn({ message: 'Unauthorized space access', space: space, userId: userId })
+      return
+    }
+
     switch (method) {
       case 'GET':
-        const spaceId: SpaceId = req.query.spaceId as string
-        // TODO user validation
-        const fetchedSpace = await getSpace(spaceId)
-        if (!fetchedSpace) {
-          res.status(404).json({ error: `${spaceId} not found` })
-        } else {
-          res.status(200).json({ data: fetchedSpace })
-        }
+        res.status(200).json({ data: space })
         break
 
       case 'POST':
-        // TODO user validation
-        const newSpace: Space = await createSpace(body)
+        const paramSpace = body as NewSpace
+        if (!paramSpace.members.includes(userId)) {
+          res.status(400).json({ data: undefined })
+          logger.warn({
+            message: 'New member must include your userId',
+            paramSpace: paramSpace,
+            userId: userId,
+          })
+          return
+        }
+        const newSpace: Space = await createSpace(paramSpace)
         res.status(200).json({ data: newSpace })
         break
 
       case 'PUT':
-        // TODO user validation
         await updateSpace(body)
         res.status(200).json({ data: body })
         break
@@ -44,13 +63,15 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<SpaceRes
   } catch (e) {
     res.status(500).json({ error: e })
     logger.error(e)
+  } finally {
+    logger.info({
+      message: 'pages/api/space.ts finally',
+      path: '/api/space',
+      req: { method: method, query: req.query, body: body },
+      res: { status: res.statusCode },
+      userId: req.token?.userId,
+    })
   }
-
-  logger.info({
-    path: '/api/space',
-    req: { method: method, query: req.query, body: body },
-    res: { status: res.statusCode },
-  })
 }
 
 export default function withMiddleware(req: NextApiRequest, res: NextApiResponse) {

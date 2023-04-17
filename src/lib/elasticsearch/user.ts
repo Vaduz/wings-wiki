@@ -15,8 +15,8 @@ export async function createUser(param: NewUser): Promise<User> {
   }
 
   const user: User = { ...param, id: userId } as User
-  logger.info({ message: 'lib/elasticsearch/user createUser()', userId: userId })
-  logger.debug({ filename: __filename, user: user })
+  logger.debug({ message: 'lib/elasticsearch/user createUser()', userId: userId })
+  // logger.debug({ filename: __filename, user: user })
   return user
 }
 
@@ -28,8 +28,8 @@ export async function getUser(userId: UserId): Promise<User | undefined> {
   if (!found || !_source) return
 
   const user: User = { ..._source, id: userId } as User
-  logger.info({ message: 'lib/elasticsearch/user getUser()', userId: userId })
-  logger.debug({ filename: __filename, user: user })
+  logger.debug({ message: 'lib/elasticsearch/user getUser()', userId: userId })
+  // logger.debug({ filename: __filename, user: user })
   return user
 }
 
@@ -50,8 +50,8 @@ export async function updateUser(user: User): Promise<void> {
     throw new WingsError(`Invalid updateUser() result: ${result}, user: ${user}`)
   }
 
-  logger.info({ message: 'lib/elasticsearch/user getUser()', userId: user.id })
-  logger.debug({ filename: __filename, user: user })
+  logger.debug({ message: 'lib/elasticsearch/user getUser()', userId: user.id })
+  // logger.debug({ filename: __filename, user: user })
 }
 
 async function exactMatchSearch(terms: Map<string, string>): Promise<User | undefined> {
@@ -59,7 +59,7 @@ async function exactMatchSearch(terms: Map<string, string>): Promise<User | unde
   terms.forEach((value, key) => {
     filter.push({ term: { [key]: value } })
   })
-  logger.info({ filter: filter })
+  logger.debug({ message: 'exactMatchSearch', filter: filter })
 
   try {
     const response = await client.search<User>({
@@ -70,12 +70,12 @@ async function exactMatchSearch(terms: Map<string, string>): Promise<User | unde
         },
       },
     })
-    logger.info({ response: response })
+    logger.debug({ message: 'exactMatchSearch', response: response })
     const hit = response.hits.hits.at(0)
     if (!hit || !hit._source) return
     return { ...hit._source, id: hit._id }
   } catch (e) {
-    logger.error(e)
+    logger.error({ message: 'exactMatchSearch', terms: terms, error: e })
   }
 }
 

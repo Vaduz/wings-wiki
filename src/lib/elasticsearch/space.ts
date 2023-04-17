@@ -20,8 +20,8 @@ export async function createSpace(param: NewSpace): Promise<Space> {
   }
 
   const space: Space = { ...document, id: spaceId }
-  logger.info({ message: 'lib/elasticsearch/space createSpace()', spaceId: spaceId })
-  logger.debug({ filename: __filename, space: space })
+  logger.debug({ message: 'lib/elasticsearch/space createSpace()', spaceId: spaceId })
+  // logger.debug({ filename: __filename, space: space })
   return space
 }
 
@@ -32,8 +32,8 @@ export async function getSpace(spaceId: SpaceId): Promise<Space | undefined> {
   })
   if (!found || !_source) return
   const space: Space = { ..._source, id: spaceId } as Space
-  logger.info({ message: 'lib/elasticsearch/space getSpace()', spaceId: space.id })
-  logger.debug({ filename: __filename, space: space })
+  logger.debug({ message: 'lib/elasticsearch/space getSpace()', spaceId: space.id })
+  // logger.debug({ filename: __filename, space: space })
   return space
 }
 
@@ -42,12 +42,15 @@ export async function updateSpace(space: Space): Promise<void> {
     index: 'space',
     id: space.id,
     doc: {
-      doc: document,
+      name: space.name,
+      description: space.description,
+      members: space.members,
+      updated_at: new Date(),
     },
   })
   if (result != 'updated') {
     throw new WingsError(`Invalid updateSpace() result: ${result}, ${space}`)
   }
-  logger.info({ message: 'lib/elasticsearch/space updateSpace()', spaceId: space.id })
-  logger.debug({ filename: __filename, space: space })
+  logger.debug({ message: 'lib/elasticsearch/space updateSpace()', spaceId: space.id })
+  // logger.debug({ filename: __filename, space: space })
 }

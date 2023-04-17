@@ -20,7 +20,15 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      logger.info({ user: user, account: account, profile: profile, email: email, credentials: credentials })
+      logger.debug({
+        message: 'Sign in requested',
+        user: user,
+        account: account,
+        profile: profile,
+        email: email,
+        credentials: credentials,
+      })
+
       const isNewUser = user.id === null
       if (account && account.provider === 'google') {
         if (!profile || !profile.sub || !user || !user.email || !user.name) return false
@@ -37,12 +45,12 @@ export default NextAuth({
             name: user.name,
             avatar_url: user.image ?? '',
           })
-          logger.info({ isNewUser: isNewUser, user: newUser })
+          logger.info({ message: 'New user signed in', isNewUser: isNewUser, user: newUser })
           user.userId = newUser.id
           return true
         } else {
           const existingUser = await findUserByProvider('Google', profile.sub)
-          logger.info({ isNewUser: isNewUser, user: existingUser })
+          logger.info({ message: 'Existing user signed in', isNewUser: isNewUser, user: existingUser })
           if (existingUser) {
             user.userId = existingUser.id
             return true
@@ -84,7 +92,7 @@ export default NextAuth({
       profile?: Profile | undefined
       isNewUser?: boolean | undefined
     }) {
-      logger.info({ token: token, user: user, account: account, profile: profile, isNewUser: isNewUser })
+      logger.debug({ message: 'jwt', userId: user?.userId })
       if (user) {
         token.userId = user.userId
       }

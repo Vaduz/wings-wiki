@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { WingsDocument, DocumentId } from '@/lib/types/es'
+import { WingsDocument, DocumentId, UserId } from '@/lib/types/es'
 import { createDocument, getDocument, updateDocument, deleteDocument } from '@/lib/elasticsearch/document'
 import logger from '@/lib/logger/pino'
 import authenticate from '@/lib/middlewares/authenticate'
+import { getSpace } from '@/lib/elasticsearch/space'
 
 type DocumentResponse = {
   data?: WingsDocument
@@ -13,14 +14,33 @@ const secret = process.env.JWT_SECRET
 
 export async function handler(req: NextApiRequest, res: NextApiResponse<DocumentResponse>) {
   const { method, body } = req
-  logger.info({ token: req.token })
+  const spaceId = req.query.spaceId as string
+  const documentId = req.query.documentId as string
 
   try {
+    if (!req.token) {
+      logger.warn({ message: 'token not found' })
+      res.status(400).json({ data: undefined })
+      return
+    }
+    const userId = req.token.userId as UserId
+
+    const space = await getSpace(spaceId)
+    if (!space) {
+      logger.warn({ message: 'Space not found', spaceId: spaceId })
+      res.status(400).json({ data: undefined })
+      return
+    }
+
+    if (!space.members.includes(userId)) {
+      logger.warn({ message: 'Space not found', spaceId: spaceId })
+      res.status(400).json({ data: undefined })
+      return
+    }
+
     switch (method) {
       case 'GET':
-        const documentId: DocumentId = req.query.documentId as string
-        // TODO user validation
-        const fetchedDocument = await getDocument(req.query.spaceId as string, documentId)
+        const fetchedDocument = await getDocument(spaceId, documentId)
         if (!fetchedDocument) {
           res.status(404).json({ error: `${documentId} not found` })
         } else {
@@ -29,20 +49,34 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<Document
         break
 
       case 'POST':
-        // TODO user validation
-        const newDocument: WingsDocument = await createDocument(req.query.spaceId as string, body)
+        const newDocument: WingsDocument = await createDocument(spaceId, body)
         res.status(200).json({ data: newDocument })
         break
 
       case 'PUT':
-        // TODO user validation
-        await updateDocument(req.query.spaceId as string, body)
+        await updateDocument(spaceId, body)
         res.status(200).json({ data: body })
         break
 
       case 'DELETE':
-        // TODO user validation
-        await deleteDocument(req.query.spaceId as string, req.query.documentId as string)
+        const target = await getDocument(spaceId, documentId)
+        if (!target) {
+          logger.warn({ message: 'Target document not found', spaceId: spaceId, documentId: documentId })
+          res.status(400).json({ data: undefined })
+          break
+        }
+
+        if (target.author_id != userId) {
+          logger.warn({
+            message: `Unauthenticated or not an owner`,
+            author_id: target.author_id,
+            token: req.token,
+          })
+          res.status(400).json({ data: undefined })
+          break
+        }
+
+        await deleteDocument(spaceId, documentId)
         res.status(200).json({ data: undefined })
         break
 
@@ -53,13 +87,15 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<Document
   } catch (e) {
     res.status(500).json({ error: e })
     logger.error(e)
+  } finally {
+    logger.info({
+      message: 'pages/api/document.ts finally',
+      path: '/api/document',
+      req: { method: method, query: req.query, body: body },
+      res: { status: res.statusCode },
+      userId: req.token?.userId,
+    })
   }
-
-  logger.info({
-    path: '/api/document',
-    req: { method: method, query: req.query, body: body },
-    res: { status: res.statusCode },
-  })
 }
 
 export default function withMiddleware(req: NextApiRequest, res: NextApiResponse) {

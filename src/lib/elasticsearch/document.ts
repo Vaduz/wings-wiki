@@ -20,8 +20,8 @@ export async function createDocument(spaceId: SpaceId, param: NewWingsDocument):
   }
 
   const document: WingsDocument = { ...esDocument, id: documentId }
-  logger.info({ message: 'lib/elasticsearch/document createDocument()', spaceId: spaceId, documentId: documentId })
-  logger.debug({ filename: __filename, document: document })
+  logger.debug({ message: 'lib/elasticsearch/document createDocument()', spaceId: spaceId, documentId: documentId })
+  // logger.debug({ filename: __filename, document: document })
   return document
 }
 
@@ -32,8 +32,8 @@ export async function getDocument(spaceId: SpaceId, documentId: DocumentId): Pro
   })
   if (!found || !_source) return
   const document = { ..._source, id: documentId } as WingsDocument
-  logger.info({ message: 'lib/elasticsearch/document getDocument()', spaceId: spaceId, documentId: documentId })
-  logger.debug({ filename: __filename, document: document })
+  logger.debug({ message: 'lib/elasticsearch/document getDocument()', spaceId: spaceId, documentId: documentId })
+  // logger.debug({ filename: __filename, document: document })
   return document
 }
 
@@ -52,8 +52,8 @@ export async function updateDocument(spaceId: SpaceId, document: WingsDocument):
   if (result != 'updated') {
     throw new WingsError(`Invalid updateDocument() result: ${result}, document: ${document}`)
   }
-  logger.info({ message: 'lib/elasticsearch/document updateDocument()', spaceId: spaceId, documentId: document.id })
-  logger.debug({ filename: __filename, document: document })
+  logger.debug({ message: 'lib/elasticsearch/document updateDocument()', spaceId: spaceId, documentId: document.id })
+  // logger.debug({ filename: __filename, document: document })
 }
 
 export async function deleteDocument(spaceId: SpaceId, documentId: DocumentId): Promise<void> {
@@ -64,7 +64,7 @@ export async function deleteDocument(spaceId: SpaceId, documentId: DocumentId): 
   if (result != 'deleted') {
     throw new WingsError(`Invalid deleteDocument() result: ${result}, ${spaceId}, ${documentId}`)
   }
-  logger.info({ message: 'lib/elasticsearch/document deleteDocument()', spaceId: spaceId, documentId: documentId })
+  logger.debug({ message: 'lib/elasticsearch/document deleteDocument()', spaceId: spaceId, documentId: documentId })
 }
 
 export function getDocumentIndex(spaceId: SpaceId): string {

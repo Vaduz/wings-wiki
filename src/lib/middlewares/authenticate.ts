@@ -11,6 +11,7 @@ const authenticate = async (req: NextApiRequest, res: NextApiResponse, next: () 
     if (!token) {
       res.status(401).json({ message: 'Unauthorized' })
       logger.warn({
+        message: 'No token',
         path: req.url,
         req: { method: req.method, query: req.query, body: req.body },
         res: { status: res.statusCode },
@@ -24,6 +25,7 @@ const authenticate = async (req: NextApiRequest, res: NextApiResponse, next: () 
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' })
     logger.error({
+      message: 'Unknown error happened in authenticate.ts',
       path: req.url,
       req: { method: req.method, query: req.query, body: req.body },
       res: { status: res.statusCode },
