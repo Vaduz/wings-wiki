@@ -38,6 +38,8 @@ export async function updateUser(user: User): Promise<void> {
     index: 'user',
     id: user.id,
     doc: {
+      oauth_provider: user.oauth_provider,
+      oauth_id: user.oauth_id,
       email: user.email,
       name: user.name,
       avatar_url: user.avatar_url,
@@ -50,4 +52,42 @@ export async function updateUser(user: User): Promise<void> {
 
   logger.info({ message: 'lib/elasticsearch/user getUser()', userId: user.id })
   logger.debug({ filename: __filename, user: user })
+}
+
+async function exactMatchSearch(terms: Map<string, string>): Promise<User | undefined> {
+  const filter: Array<{ term: { [key: string]: string } }> = []
+  terms.forEach((value, key) => {
+    filter.push({ term: { [key]: value } })
+  })
+  logger.info({ filter: filter })
+
+  try {
+    const response = await client.search<User>({
+      index: 'user',
+      query: {
+        bool: {
+          filter: filter,
+        },
+      },
+    })
+    logger.info({ response: response })
+    const hit = response.hits.hits.at(0)
+    if (!hit || !hit._source) return
+    return { ...hit._source, id: hit._id }
+  } catch (e) {
+    logger.error(e)
+  }
+}
+
+export async function findUserByProvider(provider: OauthProvider, sub: string): Promise<User | undefined> {
+  return exactMatchSearch(
+    new Map<string, string>([
+      ['oauth_provider', provider],
+      ['oauth_id', sub],
+    ])
+  )
+}
+
+export async function findUserByEmail(email: string): Promise<User | undefined> {
+  return exactMatchSearch(new Map<string, string>([['email', email]]))
 }

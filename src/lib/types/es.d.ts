@@ -12,6 +12,8 @@ export interface User extends NewUser, Timestamps {
 }
 
 export interface NewUser {
+  oauth_provider: OauthProvider
+  oauth_id: string
   email: string
   name: string
   avatar_url: string

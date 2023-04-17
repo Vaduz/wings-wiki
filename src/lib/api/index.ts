@@ -11,6 +11,7 @@ async function apiCall<T>(
 ): Promise<ApiResponse<T>> {
   const queryString = query ? '?' + new URLSearchParams(query).toString() : ''
   const response = await fetch(`/api${endpoint}${queryString}`, {
+    credentials: 'include',
     method,
     headers: {
       'Content-Type': 'application/json',

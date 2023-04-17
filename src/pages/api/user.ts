@@ -1,15 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { User, UserId } from '@/lib/types/es'
 import { getUser, updateUser } from '@/lib/elasticsearch/user'
+import logger from '@/lib/logger/pino'
+import authenticate from '@/lib/middlewares/authenticate'
 
 type UserResponse = {
   data?: User
   error?: unknown
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<UserResponse>) {
+export async function handler(req: NextApiRequest, res: NextApiResponse<UserResponse>) {
   const { method, body } = req
-
   try {
     switch (method) {
       case 'GET':
@@ -34,8 +35,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         res.status(405).end(`Method ${method} Not Allowed`)
     }
   } catch (e) {
-    console.error('error', e)
     res.status(500).json({ error: e })
+    logger.error(e)
   }
-  console.info(`${new Date().toISOString()} ${method} /api/user`, res.statusCode, req.query, req.body)
+  logger.info({
+    path: '/api/user',
+    req: { method: method, query: req.query, body: body },
+    res: { status: res.statusCode },
+  })
+}
+
+export default function withMiddleware(req: NextApiRequest, res: NextApiResponse) {
+  return new Promise<void>((resolve, reject) => {
+    authenticate(req, res, () => {
+      handler(req, res).then()
+      resolve()
+    }).then()
+  })
 }

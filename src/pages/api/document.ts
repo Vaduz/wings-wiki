@@ -2,14 +2,18 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { WingsDocument, DocumentId } from '@/lib/types/es'
 import { createDocument, getDocument, updateDocument, deleteDocument } from '@/lib/elasticsearch/document'
 import logger from '@/lib/logger/pino'
+import authenticate from '@/lib/middlewares/authenticate'
 
 type DocumentResponse = {
   data?: WingsDocument
   error?: unknown
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<DocumentResponse>) {
+const secret = process.env.JWT_SECRET
+
+export async function handler(req: NextApiRequest, res: NextApiResponse<DocumentResponse>) {
   const { method, body } = req
+  logger.info({ token: req.token })
 
   try {
     switch (method) {
@@ -48,12 +52,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
   } catch (e) {
     res.status(500).json({ error: e })
-    logger.warn(e)
+    logger.error(e)
   }
 
   logger.info({
     path: '/api/document',
     req: { method: method, query: req.query, body: body },
     res: { status: res.statusCode },
+  })
+}
+
+export default function withMiddleware(req: NextApiRequest, res: NextApiResponse) {
+  return new Promise<void>((resolve, reject) => {
+    authenticate(req, res, () => {
+      handler(req, res).then()
+      resolve()
+    }).then()
   })
 }

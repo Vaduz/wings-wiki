@@ -1,5 +1,8 @@
-import NextAuth from 'next-auth'
+import NextAuth, { Account, Profile, User } from 'next-auth'
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
+import { JWT } from 'next-auth/jwt'
+import { createUser, findUserByEmail, findUserByProvider, updateUser } from '@/lib/elasticsearch/user'
+import logger from '@/lib/logger/pino'
 
 export default NextAuth({
   providers: [
@@ -16,17 +19,76 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    signIn: async ({ user, account, profile, email, credentials }) => {
-      console.log('user', user)
-      console.log('account', account)
-      console.log('profile', profile)
-      console.log('email', email)
-      console.log('credentials', credentials)
+    async signIn({ user, account, profile, email, credentials }) {
+      logger.info({ user: user, account: account, profile: profile, email: email, credentials: credentials })
+      const isNewUser = user.id === null
       if (account && account.provider === 'google') {
-        const googleProfile = profile as GoogleProfile
-        return googleProfile.email_verified
+        if (!profile || !profile.sub || !user || !user.email || !user.name) return false
+        if (isNewUser) {
+          const googleProfile = profile as GoogleProfile
+          if (!googleProfile.email_verified) {
+            logger.info({ message: 'email is not verified', email: email, googleProfile: googleProfile })
+            return false
+          }
+          const newUser = await createUser({
+            oauth_provider: 'Google',
+            oauth_id: profile.sub,
+            email: user.email,
+            name: user.name,
+            avatar_url: user.image ?? '',
+          })
+          logger.info({ isNewUser: isNewUser, user: newUser })
+          user.userId = newUser.id
+          return true
+        } else {
+          const existingUser = await findUserByProvider('Google', profile.sub)
+          logger.info({ isNewUser: isNewUser, user: existingUser })
+          if (existingUser) {
+            user.userId = existingUser.id
+            return true
+          } else {
+            const hasEmailUser = await findUserByEmail(user.email)
+            logger.info({ message: 'hasEmailUser fetched', hasEmailUser: hasEmailUser })
+            if (!hasEmailUser) {
+              logger.info({ message: 'Email not found', user: hasEmailUser })
+              return false
+            }
+            if (hasEmailUser && !hasEmailUser.oauth_id && !hasEmailUser.oauth_provider) {
+              // pre created user
+              hasEmailUser.oauth_provider = 'Google'
+              hasEmailUser.oauth_id = profile.sub
+              hasEmailUser.name = user.name
+              hasEmailUser.avatar_url = user.image ?? ''
+              const updatedUser = await updateUser(hasEmailUser)
+              logger.info({ message: 'Pre-created has been updated', user: updatedUser })
+              return true
+            } else {
+              logger.info({ message: 'Wrong OAuth provider', user: hasEmailUser })
+              return false
+            }
+          }
+        }
       }
-      return true
+      return false
+    },
+    async jwt({
+      token,
+      user,
+      account,
+      profile,
+      isNewUser,
+    }: {
+      token: JWT
+      user?: User | null
+      account?: Account | null
+      profile?: Profile | undefined
+      isNewUser?: boolean | undefined
+    }) {
+      logger.info({ token: token, user: user, account: account, profile: profile, isNewUser: isNewUser })
+      if (user) {
+        token.userId = user.userId
+      }
+      return token
     },
   },
   secret: process.env.JWT_SECRET ?? 'Empty JWT_SECRET!',
