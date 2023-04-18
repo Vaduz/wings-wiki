@@ -1,5 +1,6 @@
 import { apiGet, apiPost, apiPut, ApiResponse } from '@/lib/api'
-import { NewWingsDocument, SpaceId, WingsDocument } from '@/lib/types/es'
+import { NewWingsDocument, Space, SpaceId, WingsDocument } from '@/lib/types/es'
+import { DocumentsAndSpace } from '@/lib/types/wings'
 
 const apiPath = '/document'
 
@@ -32,10 +33,10 @@ export async function updateDocumentApi(document: WingsDocument, spaceId: string
 
 const apiSearchPath = `${apiPath}/search`
 
-export async function searchDocumentApi(spaceId: SpaceId): Promise<WingsDocument[]> {
-  const { data, error } = await apiPost<ApiResponse<WingsDocument[]>>(apiSearchPath, undefined, { spaceId })
+export async function documentsAndSpaceApi(spaceId: SpaceId): Promise<DocumentsAndSpace | undefined> {
+  const { data, error } = await apiPost<ApiResponse<DocumentsAndSpace>>(apiSearchPath, undefined, { spaceId })
   if (error || !data || !data.data) {
-    return []
+    return
   }
-  return data.data
+  return data.data as DocumentsAndSpace
 }

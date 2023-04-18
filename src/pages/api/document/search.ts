@@ -1,12 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import authenticate from '@/lib/middlewares/authenticate'
-import { UserId, WingsDocument } from '@/lib/types/es'
+import { Space, UserId, WingsDocument } from '@/lib/types/es'
 import logger from '@/lib/logger/pino'
 import { getSpace } from '@/lib/elasticsearch/space'
 import { searchDocuments } from '@/lib/elasticsearch/document'
+import { DocumentsAndSpace } from '@/lib/types/wings'
 
 type DocumentListResponse = {
-  data?: WingsDocument[]
+  data?: DocumentsAndSpace
   error?: unknown
 }
 
@@ -46,7 +47,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<Document
     }
 
     const documents = await searchDocuments(spaceId)
-    res.status(200).json({ data: documents })
+    res.status(200).json({ data: { space: space, documents: documents } })
     logger.debug({ message: 'Fetched documents', documents: documents })
   } catch (e) {
     res.status(500).json({ error: e })
