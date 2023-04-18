@@ -38,11 +38,11 @@ export interface WingsDocumentId {
   id: DocumentId
 }
 
-export interface WingsDocument extends WingsDocumentId, SourceWingsDocument {}
+export interface WingsDocument extends WingsDocumentId, SourceWingsDocument, Timestamps {}
 
 export interface SourceWingsDocument extends WingsDocumentMeta, WingsDocumentContent {}
 
-export interface WingsDocumentMeta extends Timestamps {
+export interface WingsDocumentMeta {
   title: string
   author_id: UserId
   parent_id?: DocumentId
