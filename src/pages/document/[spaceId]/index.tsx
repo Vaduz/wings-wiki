@@ -13,6 +13,7 @@ const ListDocuments = () => {
   const [documents, setDocuments] = useState<WingsDocument[]>()
   const router = useRouter()
   const spaceId = router.query.spaceId as SpaceId
+
   useEffect(() => {
     documentsAndSpaceApi(spaceId)
       .then((res) => {

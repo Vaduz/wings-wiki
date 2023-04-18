@@ -2,19 +2,18 @@ import {
   SpaceId,
   WingsDocument,
   DocumentId,
-  SourceWingsDocument,
-  UserId,
+  NewWingsDocument,
   Space,
   SearchDocumentHit,
-  WingsDocumentSearchResult,
+  EsWingsDocument,
 } from '../types/es'
 import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
 
-export async function createDocument(spaceId: SpaceId, param: SourceWingsDocument): Promise<WingsDocument> {
+export async function createDocument(spaceId: SpaceId, param: NewWingsDocument): Promise<WingsDocument> {
   const documentId = randomUUID()
-  const esDocument = {
+  const esDocument: EsWingsDocument = {
     ...param,
     created_at: new Date(),
     updated_at: new Date(),
@@ -54,7 +53,9 @@ export async function updateDocument(spaceId: SpaceId, document: WingsDocument):
       title: document.title,
       content: document.content,
       author_id: document.author_id,
+      parent_id: document.parent_id,
       mentions: document.mentions,
+      tags: document.tags,
       updated_at: new Date(),
     },
   })

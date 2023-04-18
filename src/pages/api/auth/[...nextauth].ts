@@ -92,7 +92,7 @@ export default NextAuth({
       profile?: Profile | undefined
       isNewUser?: boolean | undefined
     }) {
-      logger.debug({ message: 'jwt', userId: user?.userId })
+      logger.debug({ message: 'jwt call', userId: user?.userId })
       if (user) {
         token.userId = user.userId
       }

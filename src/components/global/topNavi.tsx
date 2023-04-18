@@ -8,18 +8,16 @@ import Image from 'next/image'
 import getConfig from 'next/config'
 
 const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
-  const { publicRuntimeConfig } = getConfig()
-  // console.log('My config value:', publicRuntimeConfig.myConfigValue)
-  const { data: session, status } = useSession()
+  const { data, status } = useSession()
 
   return (
     <>
       <div>
-        {status == 'authenticated' && session && session.user && (
+        {status == 'authenticated' && data && data.user && (
           <>
-            <h3>Hello {session.user.name}</h3>
-            <h4>{session.user.email}</h4>
-            <Image src={session.user.image ?? ''} alt={`user image`} width={32} height={32} />
+            <h3>Hello {data.user.name}</h3>
+            <h4>{data.user.email}</h4>
+            <Image src={data.user.image ?? ''} alt={`user image`} width={32} height={32} />
           </>
         )}
         <ul>

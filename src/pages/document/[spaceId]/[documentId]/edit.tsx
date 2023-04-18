@@ -50,9 +50,7 @@ const EditDocument = () => {
     // console.log(`Updating document: ${title}, ${content}`)
     wingsDocument.title = title
     wingsDocument.content = content
-    updateDocumentApi(wingsDocument, 'e32385ad-4d6e-4c21-abbc-2f34e797caeb').then(() =>
-      router.push(documentPath(spaceId, wingsDocument.id))
-    )
+    updateDocumentApi(wingsDocument, spaceId).then(() => router.push(documentPath(spaceId, wingsDocument.id)))
   }
 
   return (

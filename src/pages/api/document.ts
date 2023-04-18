@@ -49,7 +49,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<Document
         break
 
       case 'POST':
-        const newDocument: WingsDocument = await createDocument(spaceId, body)
+        const newDocument: WingsDocument = await createDocument(spaceId, { ...body, author_id: userId })
         res.status(200).json({ data: newDocument })
         break
 

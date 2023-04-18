@@ -38,9 +38,14 @@ export interface WingsDocumentId {
   id: DocumentId
 }
 
-export interface WingsDocument extends WingsDocumentId, SourceWingsDocument, Timestamps {}
+export interface WingsDocument extends WingsDocumentId, NewWingsDocument, Timestamps {}
 
-export interface SourceWingsDocument extends WingsDocumentMeta, WingsDocumentContent {}
+export interface EsWingsDocument extends NewWingsDocument, Timestamps {}
+
+// WingsDocument without content
+export interface WingsDocumentSearchResult extends WingsDocumentId, WingsDocumentMeta, Timestamps {}
+
+export interface NewWingsDocument extends WingsDocumentMeta, WingsDocumentContent {}
 
 export interface WingsDocumentMeta {
   title: string
@@ -53,9 +58,6 @@ export interface WingsDocumentMeta {
 export interface WingsDocumentContent {
   content: string
 }
-
-// WingsDocument without content
-export interface WingsDocumentSearchResult extends WingsDocumentId, WingsDocumentMeta {}
 
 export interface HighlightContent {
   content: string[]
