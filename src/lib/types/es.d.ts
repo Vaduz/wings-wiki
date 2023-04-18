@@ -34,15 +34,34 @@ export interface Mention {
   user_id: UserId
 }
 
-export interface WingsDocument extends NewWingsDocument, Timestamps {
+export interface WingsDocumentId {
   id: DocumentId
 }
 
-export interface NewWingsDocument {
+export interface WingsDocument extends WingsDocumentId, SourceWingsDocument {}
+
+export interface SourceWingsDocument extends WingsDocumentMeta, WingsDocumentContent {}
+
+export interface WingsDocumentMeta extends Timestamps {
   title: string
-  content: string
   author_id: UserId
   parent_id?: DocumentId
   mentions?: Mention[]
   tags?: string[]
+}
+
+export interface WingsDocumentContent {
+  content: string
+}
+
+// WingsDocument without content
+export interface WingsDocumentSearchResult extends WingsDocumentId, WingsDocumentMeta {}
+
+export interface HighlightContent {
+  content: string[]
+}
+
+export interface SearchDocumentHit {
+  document: WingsDocumentSearchResult
+  highlight?: HighlightContent
 }

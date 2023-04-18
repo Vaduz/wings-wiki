@@ -1,20 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import authenticate from '@/lib/middlewares/authenticate'
-import { SearchDocumentHit, UserId } from '@/lib/types/es'
+import { UserId } from '@/lib/types/es'
 import logger from '@/lib/logger/pino'
 import { getSpace } from '@/lib/elasticsearch/space'
-import { searchDocuments } from '@/lib/elasticsearch/document'
+import { getLatestDocuments } from '@/lib/elasticsearch/document'
+import { DocumentsAndSpace } from '@/lib/types/wings'
 
 type DocumentListResponse = {
-  data?: SearchDocumentHit[]
+  data?: DocumentsAndSpace
   error?: unknown
 }
 
 export async function handler(req: NextApiRequest, res: NextApiResponse<DocumentListResponse>) {
   const { method, body } = req
   const spaceId = req.query.spaceId as string
-  const q = req.query.q as string
-
   if (!spaceId) {
     res.status(400).json({ data: undefined })
     return
@@ -47,16 +46,16 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<Document
       return
     }
 
-    const searchResults = await searchDocuments(spaceId, q)
-    res.status(200).json({ data: searchResults })
-    logger.debug({ message: 'Fetched documents', documents: searchResults })
+    const documents = await getLatestDocuments(spaceId)
+    res.status(200).json({ data: { space: space, documents: documents } })
+    logger.debug({ message: 'Fetched documents', documents: documents })
   } catch (e) {
     res.status(500).json({ error: e })
     logger.error(e)
   } finally {
     logger.info({
-      message: 'pages/api/document/search.ts finally',
-      path: '/api/document/search',
+      message: 'pages/api/document/latest.ts finally',
+      path: '/api/document/latest',
       req: { method: method, query: req.query, body: body },
       res: { status: res.statusCode },
       userId: req.token?.userId,

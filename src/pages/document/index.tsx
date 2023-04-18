@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getUserSpacesApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
+import { spaceBase } from '@/components/global/link'
 
 const ListSpaces = (): JSX.Element => {
   const router = useRouter()
@@ -27,7 +28,7 @@ const ListSpaces = (): JSX.Element => {
         {spaces.map((space) => {
           return (
             <li key={space.id}>
-              <Link href={`/document/${space.id}/`}>{space.name}</Link>
+              <Link href={spaceBase(space.id)}>{space.name}</Link>
             </li>
           )
         })}

@@ -1,9 +1,18 @@
-import { SpaceId, WingsDocument, DocumentId, NewWingsDocument, UserId, Space } from '../types/es'
+import {
+  SpaceId,
+  WingsDocument,
+  DocumentId,
+  SourceWingsDocument,
+  UserId,
+  Space,
+  SearchDocumentHit,
+  WingsDocumentSearchResult,
+} from '../types/es'
 import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
 
-export async function createDocument(spaceId: SpaceId, param: NewWingsDocument): Promise<WingsDocument> {
+export async function createDocument(spaceId: SpaceId, param: SourceWingsDocument): Promise<WingsDocument> {
   const documentId = randomUUID()
   const esDocument = {
     ...param,
@@ -67,7 +76,7 @@ export async function deleteDocument(spaceId: SpaceId, documentId: DocumentId): 
   logger.debug({ message: 'lib/elasticsearch/document deleteDocument()', spaceId: spaceId, documentId: documentId })
 }
 
-export async function searchDocuments(spaceId: SpaceId): Promise<WingsDocument[]> {
+export async function getLatestDocuments(spaceId: SpaceId): Promise<WingsDocument[]> {
   try {
     const response = await client.search<Space>({
       index: getDocumentIndex(spaceId),
@@ -79,7 +88,7 @@ export async function searchDocuments(spaceId: SpaceId): Promise<WingsDocument[]
         },
       ],
     })
-    logger.debug({ message: 'searchDocuments', spaceId: spaceId, response: response })
+    logger.debug({ message: 'getLatestDocuments', spaceId: spaceId, response: response })
     const hits = response.hits.hits
     if (!hits) return []
     const spaces: WingsDocument[] = []
@@ -91,7 +100,53 @@ export async function searchDocuments(spaceId: SpaceId): Promise<WingsDocument[]
     })
     return spaces
   } catch (e) {
-    logger.error({ message: 'searchDocuments', spaceId: spaceId, error: e })
+    logger.error({ message: 'getLatestDocuments', spaceId: spaceId, error: e })
+    return []
+  }
+}
+
+export async function searchDocuments(spaceId: SpaceId, q: string): Promise<SearchDocumentHit[]> {
+  try {
+    const response = await client.search<Space>({
+      index: getDocumentIndex(spaceId),
+      query: {
+        multi_match: {
+          query: q,
+          fields: ['tag^3', 'title^2', 'content'],
+        },
+      },
+      highlight: {
+        fields: {
+          title: {
+            fragment_size: 100,
+            number_of_fragments: 1,
+          },
+          content: {
+            fragment_size: 100,
+            number_of_fragments: 1,
+          },
+        },
+      },
+      from: 0,
+      size: 20,
+    })
+    logger.debug({ message: 'searchDocuments', spaceId: spaceId, q: q, response: response })
+    const hits = response.hits.hits
+    if (!hits) return []
+    const searchResults: SearchDocumentHit[] = []
+    hits.forEach((hit) => {
+      const content = hit.highlight && hit.highlight.content ? hit.highlight.content : undefined
+      searchResults.push({
+        document: {
+          ...hit._source,
+          id: hit._id,
+        },
+        highlight: content && { content: content },
+      } as SearchDocumentHit)
+    })
+    return searchResults
+  } catch (e) {
+    logger.error({ message: 'searchDocuments', spaceId: spaceId, q: q, error: e })
     return []
   }
 }

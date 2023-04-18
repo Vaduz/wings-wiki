@@ -5,7 +5,7 @@ import TopNavi from '../../../components/global/topNavi'
 import { Editor } from '@/components/editor/editor'
 import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'
-import { NewWingsDocument, SpaceId } from '@/lib/types/es'
+import { SourceWingsDocument, SpaceId } from '@/lib/types/es'
 
 const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [title, setTitle] = useState('')
@@ -14,7 +14,7 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
 
   const createButtonHandler = (title: string = '', content: string = '') => {
     console.log(`Creating new document: ${title}, ${content}`)
-    const newWingsDocument: NewWingsDocument = {
+    const newWingsDocument: SourceWingsDocument = {
       title: title,
       content: content,
       author_id: '5fe976c2-f72f-4530-951e-a7f143b4550d',
