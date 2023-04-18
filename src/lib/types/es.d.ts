@@ -43,6 +43,6 @@ export interface NewWingsDocument {
   content: string
   author_id: UserId
   parent_id?: DocumentId
-  mentions: Mention[]
-  tags: string[]
+  mentions?: Mention[]
+  tags?: string[]
 }

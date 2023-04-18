@@ -1,19 +1,36 @@
 import TopNavi from '@/components/global/topNavi'
 import { useRouter } from 'next/router'
-import { SpaceId } from '@/lib/types/es'
+import { Space, SpaceId } from '@/lib/types/es'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { getUserSpacesApi } from '@/lib/api/space'
+import logger from '@/lib/logger/pino'
 
 const ListSpaces = (): JSX.Element => {
   const router = useRouter()
-  const spaceId = router.query.spaceId as SpaceId
+  const [spaces, setSpaces] = useState<Space[]>()
+  useEffect(() => {
+    getUserSpacesApi()
+      .then((r) => setSpaces(r))
+      .catch((e) => logger.error({ message: 'document/index.tsx', error: e }))
+  }, [])
+
+  if (!spaces) {
+    return <div>Loading...</div>
+  }
+
   return (
     <div className="container-xl mt-3">
-      <TopNavi spaceId={spaceId} />
+      <TopNavi />
       <h1>Spaces</h1>
       <ul>
-        <li>
-          <Link href={'/document/e32385ad-4d6e-4c21-abbc-2f34e797caeb/'}>e32385ad-4d6e-4c21-abbc-2f34e797caeb</Link>
-        </li>
+        {spaces.map((space) => {
+          return (
+            <li key={space.id}>
+              <Link href={`/document/${space.id}/`}>{space.name}</Link>
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

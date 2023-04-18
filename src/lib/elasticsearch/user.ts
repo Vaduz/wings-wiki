@@ -59,7 +59,7 @@ async function exactMatchSearch(terms: Map<string, string>): Promise<User | unde
   terms.forEach((value, key) => {
     filter.push({ term: { [key]: value } })
   })
-  logger.debug({ message: 'exactMatchSearch', filter: filter })
+  logger.debug({ message: 'user.ts exactMatchSearch', filter: filter })
 
   try {
     const response = await client.search<User>({
@@ -70,12 +70,12 @@ async function exactMatchSearch(terms: Map<string, string>): Promise<User | unde
         },
       },
     })
-    logger.debug({ message: 'exactMatchSearch', response: response })
+    logger.debug({ message: 'user.ts exactMatchSearch', response: response })
     const hit = response.hits.hits.at(0)
     if (!hit || !hit._source) return
     return { ...hit._source, id: hit._id }
   } catch (e) {
-    logger.error({ message: 'exactMatchSearch', terms: terms, error: e })
+    logger.error({ message: 'user.ts exactMatchSearch', terms: terms, error: e })
   }
 }
 

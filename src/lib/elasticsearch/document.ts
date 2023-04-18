@@ -1,4 +1,4 @@
-import { SpaceId, WingsDocument, DocumentId, NewWingsDocument } from '../types/es'
+import { SpaceId, WingsDocument, DocumentId, NewWingsDocument, UserId, Space } from '../types/es'
 import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
@@ -65,6 +65,35 @@ export async function deleteDocument(spaceId: SpaceId, documentId: DocumentId): 
     throw new WingsError(`Invalid deleteDocument() result: ${result}, ${spaceId}, ${documentId}`)
   }
   logger.debug({ message: 'lib/elasticsearch/document deleteDocument()', spaceId: spaceId, documentId: documentId })
+}
+
+export async function searchDocuments(spaceId: SpaceId): Promise<WingsDocument[]> {
+  try {
+    const response = await client.search<Space>({
+      index: getDocumentIndex(spaceId),
+      sort: [
+        {
+          updated_at: {
+            order: 'desc',
+          },
+        },
+      ],
+    })
+    logger.debug({ message: 'searchDocuments', spaceId: spaceId, response: response })
+    const hits = response.hits.hits
+    if (!hits) return []
+    const spaces: WingsDocument[] = []
+    hits.forEach((hit) => {
+      spaces.push({
+        ...hit._source,
+        id: hit._id,
+      } as WingsDocument)
+    })
+    return spaces
+  } catch (e) {
+    logger.error({ message: 'searchDocuments', spaceId: spaceId, error: e })
+    return []
+  }
 }
 
 export function getDocumentIndex(spaceId: SpaceId): string {

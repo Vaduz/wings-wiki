@@ -1,4 +1,4 @@
-import { NewSpace, Space, SpaceId } from '../types/es'
+import { NewSpace, Space, SpaceId, User, UserId } from '../types/es'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
 import { randomUUID } from 'crypto'
@@ -53,4 +53,33 @@ export async function updateSpace(space: Space): Promise<void> {
   }
   logger.debug({ message: 'lib/elasticsearch/space updateSpace()', spaceId: space.id })
   // logger.debug({ filename: __filename, space: space })
+}
+
+export async function getUserSpaces(userId: UserId): Promise<Space[]> {
+  try {
+    const response = await client.search<Space>({
+      index: 'space',
+      query: {
+        bool: {
+          filter: {
+            term: { 'members.keyword': userId },
+          },
+        },
+      },
+    })
+    logger.debug({ message: 'getUserSpaces', response: response })
+    const hits = response.hits.hits
+    if (!hits) return []
+    const spaces: Space[] = []
+    hits.forEach((hit) => {
+      spaces.push({
+        ...hit._source,
+        id: hit._id,
+      } as Space)
+    })
+    return spaces
+  } catch (e) {
+    logger.error({ message: 'getUserSpaces', userId: userId, error: e })
+    return []
+  }
 }
