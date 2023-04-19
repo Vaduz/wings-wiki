@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { NewSpace, Space, SpaceId, UserId } from '@/lib/types/es'
+import { Space, UserId } from '@/lib/types/es'
 import { createSpace, getSpace, updateSpace } from '@/lib/elasticsearch/space'
 import logger from '@/lib/logger/pino'
 import authenticate from '@/lib/middlewares/authenticate'
+import { CreateSpaceRequest } from '@/lib/api/space'
 
 type SpaceResponse = {
   data?: Space
@@ -11,7 +12,6 @@ type SpaceResponse = {
 
 export async function handler(req: NextApiRequest, res: NextApiResponse<SpaceResponse>) {
   const { method, body } = req
-  const spaceId = req.query.spaceId as string
 
   try {
     if (!req.token) {
@@ -21,39 +21,42 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<SpaceRes
     }
     const userId = req.token.userId as UserId
 
-    const space = await getSpace(spaceId)
-    if (!space) {
-      res.status(404).json({ error: `${spaceId} not found` })
-      return
-    } else if (!space.members.includes(userId)) {
-      res.status(400).json({ data: undefined })
-      logger.warn({ message: 'Unauthorized space access', space: space, userId: userId })
-      return
-    }
-
     switch (method) {
       case 'GET':
-        res.status(200).json({ data: space })
+        const spaceId = req.query.spaceId as string
+        const fetchedSpace = await getSpace(spaceId)
+        if (!fetchedSpace) {
+          res.status(404).json({ error: `${spaceId} not found` })
+          return
+        } else if (!fetchedSpace.members.includes(userId) && fetchedSpace.owner_id != userId) {
+          res.status(400).json({ data: undefined })
+          logger.warn({ message: 'Unauthorized space access', userId: userId })
+          return
+        } else {
+          res.status(200).json({ data: fetchedSpace })
+        }
         break
 
       case 'POST':
-        const paramSpace = body as NewSpace
-        if (!paramSpace.members.includes(userId)) {
-          res.status(400).json({ data: undefined })
-          logger.warn({
-            message: 'New member must include your userId',
-            paramSpace: paramSpace,
-            userId: userId,
-          })
-          return
-        }
-        const newSpace: Space = await createSpace(paramSpace)
+        const postSpace = body as CreateSpaceRequest
+        const newSpace: Space = await createSpace({ ...postSpace, owner_id: userId })
         res.status(200).json({ data: newSpace })
         break
 
       case 'PUT':
-        await updateSpace(body)
-        res.status(200).json({ data: body })
+        const putSpace = body as Space
+        const targetSpace = await getSpace(putSpace.id)
+        if (!targetSpace) {
+          res.status(404).json({ error: `${putSpace.id} not found` })
+          return
+        } else if (!targetSpace.members.includes(userId) && targetSpace.owner_id != userId) {
+          res.status(400).json({ data: undefined })
+          logger.warn({ message: 'Unauthorized space access', space: targetSpace, userId: userId })
+          return
+        } else {
+          await updateSpace(body)
+          res.status(200).json({ data: body })
+        }
         break
 
       default:

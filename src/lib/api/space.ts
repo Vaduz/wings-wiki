@@ -1,4 +1,4 @@
-import { Space } from '@/lib/types/es'
+import { Space, UserId } from '@/lib/types/es'
 import { apiGet, apiPost, apiPut, ApiResponse } from '@/lib/api/index'
 
 const apiPath = '/space'
@@ -11,7 +11,13 @@ export async function getSpaceApi(spaceId: string): Promise<Space | undefined> {
   return data.data
 }
 
-export async function createSpaceApi(space: Space): Promise<Space | undefined> {
+export interface CreateSpaceRequest {
+  name: string
+  description: string
+  members: UserId[]
+}
+
+export async function createSpaceApi(space: CreateSpaceRequest): Promise<Space | undefined> {
   const { data, error } = await apiPost<ApiResponse<Space>>(apiPath, space, {})
   if (error || !data) {
     return

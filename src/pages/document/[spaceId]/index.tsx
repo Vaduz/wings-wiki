@@ -24,7 +24,7 @@ const ListDocuments = () => {
     setLoading(false)
   }, [spaceId])
 
-  if (loading || !documents || !space) {
+  if (loading || documents == undefined || !space) {
     return (
       <div className="container-xl mt-3">
         <TopNavi spaceId={spaceId} />
@@ -38,6 +38,7 @@ const ListDocuments = () => {
       <TopNavi spaceId={spaceId} />
       <div className="container-xl mt-3">
         <h1>{space.name}</h1>
+        {documents.length == 0 && <div> No documents</div>}
         {documents.map((document) => {
           return (
             <h3 key={document.id}>

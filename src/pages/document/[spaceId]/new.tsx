@@ -51,9 +51,7 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
         <div className="float-end">
           <a
             className="btn btn-primary"
-            onClick={(e) =>
-              createButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
-            }
+            onClick={() => createButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)}
           >
             <i className="bi bi-globe" />
             &nbsp;Publish

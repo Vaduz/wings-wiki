@@ -1,6 +1,6 @@
 import React from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
-import { documentBase, newDocumentPath, searchPath, spaceBase } from '@/components/global/link'
+import { documentBase, newDocumentPath, newSpacePath, searchPath, spaceBase } from '@/components/global/link'
 import Link from 'next/link'
 import { SpaceId } from '@/lib/types/es'
 import Image from 'next/image'
@@ -27,6 +27,9 @@ const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           <li>
             <Link href={documentBase}>Spaces</Link>
           </li>
+          <li>
+            <Link href={newSpacePath}>New Space</Link>
+          </li>
           {spaceId && (
             <>
               <li>
@@ -36,7 +39,7 @@ const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
                 <Link href={searchPath(spaceId)}>Search</Link>
               </li>
               <li>
-                <Link href={newDocumentPath(spaceId)}>New</Link>
+                <Link href={newDocumentPath(spaceId)}>New Document</Link>
               </li>
             </>
           )}

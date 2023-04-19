@@ -3,6 +3,8 @@ import { DocumentId, SpaceId } from '@/lib/types/es'
 
 export const documentBase = '/document/'
 
+export const newSpacePath = `${documentBase}new`
+
 export const spaceBase = (spaceId: SpaceId) => {
   return `${documentBase}${spaceId}/`
 }

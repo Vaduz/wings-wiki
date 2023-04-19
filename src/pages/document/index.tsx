@@ -1,6 +1,5 @@
 import TopNavi from '@/components/global/topNavi'
-import { useRouter } from 'next/router'
-import { Space, SpaceId } from '@/lib/types/es'
+import { Space } from '@/lib/types/es'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getUserSpacesApi } from '@/lib/api/space'
@@ -8,7 +7,6 @@ import logger from '@/lib/logger/pino'
 import { spaceBase } from '@/components/global/link'
 
 const ListSpaces = (): JSX.Element => {
-  const router = useRouter()
   const [spaces, setSpaces] = useState<Space[]>()
   useEffect(() => {
     getUserSpacesApi()

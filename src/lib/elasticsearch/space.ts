@@ -1,4 +1,4 @@
-import { NewSpace, Space, SpaceId, User, UserId } from '../types/es'
+import { NewSpace, Space, SpaceId, UserId } from '../types/es'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
 import { randomUUID } from 'crypto'
@@ -61,9 +61,15 @@ export async function getUserSpaces(userId: UserId): Promise<Space[]> {
       index: 'space',
       query: {
         bool: {
-          filter: {
-            term: { 'members.keyword': userId },
-          },
+          should: [
+            {
+              term: { 'members.keyword': userId },
+            },
+            {
+              term: { owner_id: userId },
+            },
+          ],
+          minimum_should_match: 1,
         },
       },
     })

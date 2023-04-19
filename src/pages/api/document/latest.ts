@@ -40,8 +40,8 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<Document
       return
     }
 
-    if (!space.members.includes(userId)) {
-      logger.warn({ message: 'Space not found', spaceId: spaceId })
+    if (!space.members.includes(userId) && space.owner_id != userId) {
+      logger.warn({ message: 'Unauthorized space access', spaceId: spaceId })
       res.status(400).json({ data: undefined })
       return
     }
