@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import React from 'react'
 import logger from '@/lib/logger/pino'
+import { apiBase, documentBase } from '@/components/global/link'
 
 interface AuthenticatedComponentProps {
   children: React.ReactNode
@@ -16,7 +17,7 @@ const AuthenticatedComponent: React.FC<AuthenticatedComponentProps> = ({ childre
     // Add any paths that require authentication here
     if (
       status === 'unauthenticated' &&
-      (router.pathname.startsWith('/document') || router.pathname.startsWith('/api'))
+      (router.pathname.startsWith(documentBase) || router.pathname.startsWith(apiBase))
     ) {
       router.push('/401').catch((err) => logger.error(err))
     }

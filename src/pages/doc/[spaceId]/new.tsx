@@ -19,7 +19,7 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
     const newWingsDocument = {
       title: title,
       content: content,
-      parent_id: undefined,
+      parent_id: '-1',
       mentions: mentions,
       tags: tags,
     }

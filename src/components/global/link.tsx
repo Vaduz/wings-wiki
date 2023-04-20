@@ -1,7 +1,9 @@
 import React, { ReactNode } from 'react'
 import { DocumentId, SpaceId } from '@/lib/types/es'
 
-export const documentBase = '/document/'
+export const apiBase = '/api/'
+
+export const documentBase = '/doc/'
 
 export const newSpacePath = `${documentBase}new`
 

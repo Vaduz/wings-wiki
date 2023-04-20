@@ -12,15 +12,11 @@ const DocumentTree = ({ spaceId, wingsDocument }: { spaceId: SpaceId; wingsDocum
         <TraceParent spaceId={spaceId} documentId={wingsDocument.parent_id} />
         <li>
           Same Level:
-          <ul>
-            <DocumentTreeView spaceId={spaceId} documentId={wingsDocument.parent_id} />
-          </ul>
+          <DocumentTreeView spaceId={spaceId} documentId={wingsDocument.parent_id} />
         </li>
         <li>
           Child Level:
-          <ul>
-            <DocumentTreeView spaceId={spaceId} documentId={wingsDocument.id} />
-          </ul>
+          <DocumentTreeView spaceId={spaceId} documentId={wingsDocument.id} />
         </li>
       </ul>
     </div>
@@ -36,15 +32,13 @@ const TraceParent = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Do
       .catch((err) => console.error(err))
   }, [spaceId, documentId])
 
-  if (documentId == '-1') return <div>root (-1)</div>
+  if (documentId == '-1') return <li>root (-1)</li>
 
   if (!parent) return <div>Loading...</div>
 
   return (
     <>
-      <li>
-        <TraceParent spaceId={spaceId} documentId={parent.parent_id} />
-      </li>
+      <TraceParent spaceId={spaceId} documentId={parent.parent_id} />
       <li>
         <Link href={documentPath(spaceId, parent.id)}>{parent.title}</Link> ({parent.id})
       </li>
@@ -71,7 +65,7 @@ const DocumentTreeView = ({ spaceId, documentId }: { spaceId: SpaceId; documentI
           </li>
         )
       })}
-      {children.length == 0 && <div>No children for {documentId}</div>}
+      {children.length == 0 && <li>No children for {documentId}</li>}
     </ul>
   )
 }
