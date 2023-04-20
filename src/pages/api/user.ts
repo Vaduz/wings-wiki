@@ -8,10 +8,9 @@ import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
 
 export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<UserResponse>) {
   const { method, body } = req
+  const userId = req.token.userId as UserId
 
   try {
-    const userId = req.token.userId as UserId
-
     switch (method) {
       case 'GET':
         const user = await getUser(userId)
@@ -50,11 +49,9 @@ export async function handler(req: NextApiRequestWithToken, res: NextApiResponse
     logger.error(e)
   } finally {
     logger.info({
-      message: 'pages/api/user.ts finally',
       path: '/api/user',
-      req: { method: method, query: req.query, body: body },
-      res: { status: res.statusCode },
-      userId: req.token?.userId,
+      status: res.statusCode,
+      req: { method: method, query: req.query, body: body, userId: userId },
     })
   }
 }

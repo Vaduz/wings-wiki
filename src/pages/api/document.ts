@@ -13,10 +13,9 @@ export async function handler(req: NextApiRequestWithTokenAndSpace, res: NextApi
   const { method, body } = req
   const spaceId = req.query.spaceId as string
   const documentId = req.query.documentId as string
+  const userId = req.token.userId as UserId
 
   try {
-    const userId = req.token.userId as UserId
-
     switch (method) {
       case 'GET':
         const fetchedDocument = await getDocument(spaceId, documentId)
@@ -68,11 +67,9 @@ export async function handler(req: NextApiRequestWithTokenAndSpace, res: NextApi
     logger.error(e)
   } finally {
     logger.info({
-      message: 'pages/api/document.ts finally',
       path: '/api/document',
-      req: { method: method, query: req.query, body: body },
-      res: { status: res.statusCode },
-      userId: req.token?.userId,
+      status: res.statusCode,
+      req: { method: method, query: req.query, body: body, userId: userId },
     })
   }
 }

@@ -1,4 +1,4 @@
-import { SearchDocumentHit, Space, User, WingsDocument } from '@/lib/types/es'
+import { SearchDocumentHit, Space, User, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/es'
 
 export type ApiResponse<T> = {
   data?: T
@@ -10,6 +10,7 @@ export type DocumentHomeResponse = ApiResponse<DocumentsAndSpace>
 export type DocumentResponse = ApiResponse<WingsDocument>
 export type SpaceResponse = ApiResponse<Space>
 export type SpaceListResponse = ApiResponse<Space[]>
+export type DocumentTreeResponse = ApiResponse<WingsDocumentSearchResult[]>
 
 export interface DocumentsAndSpace {
   documents: WingsDocument[]

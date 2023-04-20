@@ -1,16 +1,17 @@
 import { NextApiResponse } from 'next'
 import { NextApiRequestWithTokenAndSpace } from '@/lib/types/nextApi'
 import logger from '@/lib/logger/pino'
-import { getLatestDocuments } from '@/lib/elasticsearch/document'
-import { DocumentHomeResponse } from '@/lib/types/apiResponse'
+import { childDocuments } from '@/lib/elasticsearch/document'
+import { DocumentTreeResponse } from '@/lib/types/apiResponse'
 import spaceAuthenticate from '@/lib/middlewares/spaceAuthenticate'
 import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
 import { UserId } from '@/lib/types/es'
 
-export async function handler(req: NextApiRequestWithTokenAndSpace, res: NextApiResponse<DocumentHomeResponse>) {
+export async function handler(req: NextApiRequestWithTokenAndSpace, res: NextApiResponse<DocumentTreeResponse>) {
   const { method, body } = req
   const userId = req.token.userId as UserId
   const spaceId = req.query.spaceId as string
+  const parentId = req.query.parentId as string
 
   if (!method || method != 'POST') {
     res.setHeader('Allow', ['POST'])
@@ -19,15 +20,15 @@ export async function handler(req: NextApiRequestWithTokenAndSpace, res: NextApi
   }
 
   try {
-    const documents = await getLatestDocuments(spaceId)
-    res.status(200).json({ data: { space: req.space, documents: documents } })
-    logger.debug({ message: 'Fetched documents', documents: documents })
+    const children = await childDocuments(spaceId, parentId)
+    res.status(200).json({ data: children })
+    logger.debug({ message: 'Fetched documents', documents: children })
   } catch (e) {
     res.status(500).json({ error: e })
     logger.error(e)
   } finally {
     logger.info({
-      path: '/api/document/latest',
+      path: '/api/document/children',
       status: res.statusCode,
       req: { method: method, query: req.query, body: body, userId: userId },
     })

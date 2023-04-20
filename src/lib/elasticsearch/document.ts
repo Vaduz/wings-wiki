@@ -1,11 +1,11 @@
 import {
+  DocumentId,
+  EsWingsDocument,
+  NewWingsDocument,
+  SearchDocumentHit,
   SpaceId,
   WingsDocument,
-  DocumentId,
-  NewWingsDocument,
-  Space,
-  SearchDocumentHit,
-  EsWingsDocument,
+  WingsDocumentSearchResult,
 } from '../types/es'
 import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
@@ -79,7 +79,7 @@ export async function deleteDocument(spaceId: SpaceId, documentId: DocumentId): 
 
 export async function getLatestDocuments(spaceId: SpaceId): Promise<WingsDocument[]> {
   try {
-    const response = await client.search<Space>({
+    const response = await client.search<EsWingsDocument>({
       index: getDocumentIndex(spaceId),
       sort: [
         {
@@ -88,6 +88,9 @@ export async function getLatestDocuments(spaceId: SpaceId): Promise<WingsDocumen
           },
         },
       ],
+      _source: {
+        excludes: ['content'],
+      },
     })
     logger.debug({ message: 'getLatestDocuments', spaceId: spaceId, response: response })
     const hits = response.hits.hits
@@ -108,13 +111,16 @@ export async function getLatestDocuments(spaceId: SpaceId): Promise<WingsDocumen
 
 export async function searchDocuments(spaceId: SpaceId, q: string): Promise<SearchDocumentHit[]> {
   try {
-    const response = await client.search<Space>({
+    const response = await client.search<EsWingsDocument>({
       index: getDocumentIndex(spaceId),
       query: {
         multi_match: {
           query: q,
           fields: ['tag^3', 'title^2', 'content'],
         },
+      },
+      _source: {
+        excludes: ['content'],
       },
       highlight: {
         fields: {
@@ -141,13 +147,43 @@ export async function searchDocuments(spaceId: SpaceId, q: string): Promise<Sear
         document: {
           ...hit._source,
           id: hit._id,
-        },
+        } as WingsDocumentSearchResult,
         highlight: content && { content: content },
       } as SearchDocumentHit)
     })
     return searchResults
   } catch (e) {
     logger.error({ message: 'searchDocuments', spaceId: spaceId, q: q, error: e })
+    return []
+  }
+}
+
+export async function childDocuments(spaceId: SpaceId, parentId: DocumentId): Promise<WingsDocumentSearchResult[]> {
+  try {
+    const response = await client.search<EsWingsDocument>({
+      index: getDocumentIndex(spaceId),
+      query: {
+        match: {
+          parent_id: parentId,
+        },
+      },
+      _source: {
+        excludes: ['content'],
+      },
+    })
+    logger.debug({ message: 'childDocuments', spaceId: spaceId, parentId: parentId, response: response })
+    const hits = response.hits.hits
+    if (!hits) return []
+    const childDocuments: WingsDocumentSearchResult[] = []
+    hits.forEach((hit) => {
+      childDocuments.push({
+        ...hit._source,
+        id: hit._id,
+      } as WingsDocumentSearchResult)
+    })
+    return childDocuments
+  } catch (e) {
+    logger.error({ message: 'childDocuments', spaceId: spaceId, parentId: parentId, error: e })
     return []
   }
 }

@@ -8,16 +8,15 @@ import { SpaceListResponse } from '@/lib/types/apiResponse'
 
 export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<SpaceListResponse>) {
   const { method, body } = req
+  const userId = req.token.userId as UserId
+
+  if (!method || method != 'POST') {
+    res.setHeader('Allow', ['POST'])
+    res.status(405).end(`Method ${method} Not Allowed`)
+    return
+  }
 
   try {
-    if (!method || method != 'POST') {
-      res.setHeader('Allow', ['POST'])
-      res.status(405).end(`Method ${method} Not Allowed`)
-      return
-    }
-
-    const userId = req.token.userId as UserId
-
     const spaces = await getUserSpaces(userId)
     res.status(200).json({ data: spaces })
     logger.debug({ message: 'Fetched spaces', spaces: spaces })
@@ -26,11 +25,9 @@ export async function handler(req: NextApiRequestWithToken, res: NextApiResponse
     logger.error(e)
   } finally {
     logger.info({
-      message: 'pages/api/space/search.ts finally',
       path: '/api/space/search',
-      req: { method: method, query: req.query, body: body },
-      res: { status: res.statusCode },
-      userId: req.token?.userId,
+      status: res.statusCode,
+      req: { method: method, query: req.query, body: body, userId: userId },
     })
   }
 }

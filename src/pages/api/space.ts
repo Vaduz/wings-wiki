@@ -9,10 +9,9 @@ import { SpaceResponse } from '@/lib/types/apiResponse'
 
 export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<SpaceResponse>) {
   const { method, body } = req
+  const userId = req.token.userId as UserId
 
   try {
-    const userId = req.token.userId as UserId
-
     switch (method) {
       case 'GET':
         const spaceId = req.query.spaceId as string
@@ -60,11 +59,9 @@ export async function handler(req: NextApiRequestWithToken, res: NextApiResponse
     logger.error(e)
   } finally {
     logger.info({
-      message: 'pages/api/space.ts finally',
       path: '/api/space',
-      req: { method: method, query: req.query, body: body },
-      res: { status: res.statusCode },
-      userId: req.token?.userId,
+      status: res.statusCode,
+      req: { method: method, query: req.query, body: body, userId: userId },
     })
   }
 }
