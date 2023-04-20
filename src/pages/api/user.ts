@@ -1,23 +1,15 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiResponse } from 'next'
 import { User, UserId } from '@/lib/types/es'
 import { getUser, updateUser } from '@/lib/elasticsearch/user'
 import logger from '@/lib/logger/pino'
-import authenticate from '@/lib/middlewares/authenticate'
+import { UserResponse } from '@/lib/types/apiResponse'
+import { NextApiRequestWithToken } from '@/lib/types/nextApi'
+import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
 
-type UserResponse = {
-  data?: User
-  error?: unknown
-}
-
-export async function handler(req: NextApiRequest, res: NextApiResponse<UserResponse>) {
+export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<UserResponse>) {
   const { method, body } = req
 
   try {
-    if (!req.token) {
-      logger.warn({ message: 'token not found' })
-      res.status(400).json({ data: undefined })
-      return
-    }
     const userId = req.token.userId as UserId
 
     switch (method) {
@@ -67,9 +59,9 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<UserResp
   }
 }
 
-export default function withMiddleware(req: NextApiRequest, res: NextApiResponse) {
+export default function withMiddleware(req: NextApiRequestWithToken, res: NextApiResponse) {
   return new Promise<void>((resolve, reject) => {
-    authenticate(req, res, () => {
+    tokenAuthenticate(req, res, () => {
       handler(req, res).then()
       resolve()
     }).then()

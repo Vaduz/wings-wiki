@@ -1,7 +1,4 @@
-export type ApiResponse<T> = {
-  data?: T
-  error?: unknown
-}
+import { ApiResponse } from '@/lib/types/apiResponse'
 
 async function apiCall<T>(
   method: string,

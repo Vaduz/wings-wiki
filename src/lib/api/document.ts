@@ -1,6 +1,7 @@
-import { apiGet, apiPost, apiPut, ApiResponse } from '@/lib/api'
-import { SearchDocumentHit, SpaceId, WingsDocument, Mention } from '@/lib/types/es'
-import { DocumentsAndSpace } from '@/lib/types/wings'
+import { apiGet, apiPost, apiPut } from '@/lib/api'
+import { SearchDocumentHit, SpaceId, WingsDocument } from '@/lib/types/es'
+import { ApiResponse, DocumentsAndSpace } from '@/lib/types/apiResponse'
+import { NewWingsDocumentRequest } from '@/lib/types/apiRequest'
 
 const apiPath = '/document'
 
@@ -12,13 +13,6 @@ export async function getDocumentApi(spaceId: string, documentId: string): Promi
   return data.data
 }
 
-export interface NewWingsDocumentRequest {
-  title: string
-  content: string
-  parent_id?: string
-  mentions: Mention[]
-  tags: string[]
-}
 export async function createDocumentApi(
   document: NewWingsDocumentRequest,
   spaceId: string

@@ -1,29 +1,21 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import authenticate from '@/lib/middlewares/authenticate'
-import { Space, UserId } from '@/lib/types/es'
+import { NextApiResponse } from 'next'
+import { UserId } from '@/lib/types/es'
 import logger from '@/lib/logger/pino'
 import { getUserSpaces } from '@/lib/elasticsearch/space'
+import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
+import { NextApiRequestWithToken } from '@/lib/types/nextApi'
+import { SpaceListResponse } from '@/lib/types/apiResponse'
 
-type SpaceListResponse = {
-  data?: Space[]
-  error?: unknown
-}
-
-export async function handler(req: NextApiRequest, res: NextApiResponse<SpaceListResponse>) {
+export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<SpaceListResponse>) {
   const { method, body } = req
 
   try {
-    if (method != 'POST') {
+    if (!method || method != 'POST') {
       res.setHeader('Allow', ['POST'])
       res.status(405).end(`Method ${method} Not Allowed`)
       return
     }
 
-    if (!req.token) {
-      logger.warn({ message: 'token not found' })
-      res.status(400).json({ data: undefined })
-      return
-    }
     const userId = req.token.userId as UserId
 
     const spaces = await getUserSpaces(userId)
@@ -43,9 +35,9 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<SpaceLis
   }
 }
 
-export default function withMiddleware(req: NextApiRequest, res: NextApiResponse) {
+export default function withMiddleware(req: NextApiRequestWithToken, res: NextApiResponse) {
   return new Promise<void>((resolve, reject) => {
-    authenticate(req, res, () => {
+    tokenAuthenticate(req, res, () => {
       handler(req, res).then()
       resolve()
     }).then()

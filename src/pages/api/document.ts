@@ -1,42 +1,21 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { WingsDocument, DocumentId, UserId } from '@/lib/types/es'
-import { createDocument, getDocument, updateDocument, deleteDocument } from '@/lib/elasticsearch/document'
+import { NextApiResponse } from 'next'
+import { NextApiRequestWithTokenAndSpace } from '@/lib/types/nextApi'
+import { UserId, WingsDocument } from '@/lib/types/es'
+import { createDocument, deleteDocument, getDocument, updateDocument } from '@/lib/elasticsearch/document'
 import logger from '@/lib/logger/pino'
-import authenticate from '@/lib/middlewares/authenticate'
-import { getSpace } from '@/lib/elasticsearch/space'
-
-type DocumentResponse = {
-  data?: WingsDocument
-  error?: unknown
-}
+import spaceAuthenticate from '@/lib/middlewares/spaceAuthenticate'
+import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
+import { DocumentResponse } from '@/lib/types/apiResponse'
 
 const secret = process.env.JWT_SECRET
 
-export async function handler(req: NextApiRequest, res: NextApiResponse<DocumentResponse>) {
+export async function handler(req: NextApiRequestWithTokenAndSpace, res: NextApiResponse<DocumentResponse>) {
   const { method, body } = req
   const spaceId = req.query.spaceId as string
   const documentId = req.query.documentId as string
 
   try {
-    if (!req.token) {
-      logger.warn({ message: 'token not found' })
-      res.status(400).json({ data: undefined })
-      return
-    }
     const userId = req.token.userId as UserId
-
-    const space = await getSpace(spaceId)
-    if (!space) {
-      logger.warn({ message: 'Space not found', spaceId: spaceId })
-      res.status(400).json({ data: undefined })
-      return
-    }
-
-    if (!space.members.includes(userId)) {
-      logger.warn({ message: 'Space not found', spaceId: spaceId })
-      res.status(400).json({ data: undefined })
-      return
-    }
 
     switch (method) {
       case 'GET':
@@ -98,11 +77,13 @@ export async function handler(req: NextApiRequest, res: NextApiResponse<Document
   }
 }
 
-export default function withMiddleware(req: NextApiRequest, res: NextApiResponse) {
+export default function withMiddleware(req: NextApiRequestWithTokenAndSpace, res: NextApiResponse) {
   return new Promise<void>((resolve, reject) => {
-    authenticate(req, res, () => {
-      handler(req, res).then()
-      resolve()
+    tokenAuthenticate(req, res, () => {
+      spaceAuthenticate(req, res, () => {
+        handler(req, res).then()
+        resolve()
+      }).then()
     }).then()
   })
 }

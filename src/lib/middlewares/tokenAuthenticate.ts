@@ -4,7 +4,7 @@ import logger from '@/lib/logger/pino'
 
 const secret = process.env.JWT_SECRET
 
-const authenticate = async (req: NextApiRequest, res: NextApiResponse, next: () => void) => {
+const tokenAuthenticate = async (req: NextApiRequest, res: NextApiResponse, next: () => void): Promise<void> => {
   try {
     const token = await getToken({ req, secret })
 
@@ -34,4 +34,4 @@ const authenticate = async (req: NextApiRequest, res: NextApiResponse, next: () 
   }
 }
 
-export default authenticate
+export default tokenAuthenticate

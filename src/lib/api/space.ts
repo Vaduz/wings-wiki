@@ -1,5 +1,6 @@
 import { Space, UserId } from '@/lib/types/es'
-import { apiGet, apiPost, apiPut, ApiResponse } from '@/lib/api/index'
+import { apiGet, apiPost, apiPut } from '@/lib/api/index'
+import { ApiResponse } from '@/lib/types/apiResponse'
 
 const apiPath = '/space'
 

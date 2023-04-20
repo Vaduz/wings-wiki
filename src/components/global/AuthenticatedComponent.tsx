@@ -14,7 +14,10 @@ const AuthenticatedComponent: React.FC<AuthenticatedComponentProps> = ({ childre
 
   useEffect(() => {
     // Add any paths that require authentication here
-    if (status === 'unauthenticated' && router.pathname.startsWith('/document')) {
+    if (
+      status === 'unauthenticated' &&
+      (router.pathname.startsWith('/document') || router.pathname.startsWith('/api'))
+    ) {
       router.push('/401').catch((err) => logger.error(err))
     }
   }, [status, router])
