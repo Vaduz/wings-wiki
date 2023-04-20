@@ -1,10 +1,10 @@
 import { NewSpace, Space, SpaceId, UserId } from '../types/es'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
-import { randomUUID } from 'crypto'
+import { generateSpaceId } from '@/lib/utils/id'
 
 export async function createSpace(param: NewSpace): Promise<Space> {
-  const spaceId: SpaceId = randomUUID()
+  const spaceId: SpaceId = generateSpaceId()
   const document = {
     ...param,
     created_at: new Date(),

@@ -1,10 +1,10 @@
 import { NewUser, User, UserId } from '../types/es'
-import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
+import { generateUserId } from '@/lib/utils/id'
 
 export async function createUser(param: NewUser): Promise<User> {
-  const userId: UserId = randomUUID()
+  const userId: UserId = generateUserId()
   const { result } = await client.create({
     index: 'user',
     id: userId,

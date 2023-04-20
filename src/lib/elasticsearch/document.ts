@@ -7,14 +7,14 @@ import {
   WingsDocument,
   WingsDocumentSearchResult,
 } from '../types/es'
-import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
 import { getDocumentIndex } from '@/lib/utils/elasticsearch'
 import { ResponseError } from '@elastic/transport/lib/errors'
+import { generateDocumentId } from '@/lib/utils/id'
 
 export async function createDocument(spaceId: SpaceId, param: NewWingsDocument): Promise<WingsDocument> {
-  const documentId = randomUUID()
+  const documentId = generateDocumentId()
   const esDocument: EsWingsDocument = {
     ...param,
     created_at: new Date(),

@@ -1,24 +1,28 @@
+import crypto from 'crypto'
+
 export function generateRandomBytes(length: number): Uint8Array {
   const bytes = new Uint8Array(length)
   crypto.getRandomValues(bytes)
   return bytes
 }
 
-export function bytesToAlphanumeric(arrayBuffer: Uint8Array): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+const lowerChars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+
+export function bytesToAlphanumeric(chars: string, arrayBuffer: Uint8Array): string {
   return Array.from(new Uint8Array(arrayBuffer))
     .map((byte) => chars[byte % chars.length])
     .join('')
 }
 
 export function generateUserId(): string {
-  return bytesToAlphanumeric(generateRandomBytes(22))
+  return bytesToAlphanumeric(chars, generateRandomBytes(23))
 }
 
 export function generateSpaceId(): string {
-  return bytesToAlphanumeric(generateRandomBytes(8))
+  return bytesToAlphanumeric(lowerChars, generateRandomBytes(25))
 }
 
 export function generateDocumentId(): string {
-  return bytesToAlphanumeric(generateRandomBytes(24))
+  return bytesToAlphanumeric(chars, generateRandomBytes(24))
 }
