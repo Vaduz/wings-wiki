@@ -50,7 +50,7 @@ export interface NewWingsDocument extends WingsDocumentMeta, WingsDocumentConten
 export interface WingsDocumentMeta {
   title: string
   author_id: UserId
-  parent_id?: DocumentId
+  parent_id: DocumentId
   mentions?: Mention[]
   tags?: string[]
 }

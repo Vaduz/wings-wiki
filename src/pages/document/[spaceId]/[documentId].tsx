@@ -5,6 +5,7 @@ import TopNavi from '../../../components/global/topNavi'
 import { useRouter } from 'next/router'
 import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/es'
 import { getDocumentApi } from '@/lib/api/document'
+import DocumentTree from '@/components/DocumentTree'
 
 const ViewDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -41,6 +42,9 @@ const ViewDocument = () => {
   return (
     <div className="container-xl mt-3">
       <TopNavi spaceId={spaceId} />
+      <div>
+        <DocumentTree spaceId={spaceId} wingsDocument={wingsDocument} />
+      </div>
       <div className="container-xl mt-3">
         <h1 className="mb-3">{wingsDocument.title || ''}</h1>
         <Editor content={wingsDocument.content} disabled={true} />

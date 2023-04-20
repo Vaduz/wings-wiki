@@ -5,13 +5,11 @@ import Link from 'next/link'
 import { SpaceId } from '@/lib/types/es'
 import Image from 'next/image'
 
-import getConfig from 'next/config'
-
 const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
   const { data, status } = useSession()
 
   return (
-    <>
+    <div className="container-xl mt-3">
       <div>
         {status == 'authenticated' && data && data.user && (
           <>
@@ -55,7 +53,7 @@ const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           </li>
         </ul>
       </div>
-    </>
+    </div>
   )
 }
 

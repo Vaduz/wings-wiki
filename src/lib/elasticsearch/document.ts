@@ -10,6 +10,8 @@ import {
 import { randomUUID } from 'crypto'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
+import { getDocumentIndex } from '@/lib/utils/elasticsearch'
+import { ResponseError } from '@elastic/transport/lib/errors'
 
 export async function createDocument(spaceId: SpaceId, param: NewWingsDocument): Promise<WingsDocument> {
   const documentId = randomUUID()
@@ -95,17 +97,20 @@ export async function getLatestDocuments(spaceId: SpaceId): Promise<WingsDocumen
     logger.debug({ message: 'getLatestDocuments', spaceId: spaceId, response: response })
     const hits = response.hits.hits
     if (!hits) return []
-    const spaces: WingsDocument[] = []
+    const documents: WingsDocument[] = []
     hits.forEach((hit) => {
-      spaces.push({
+      documents.push({
         ...hit._source,
         id: hit._id,
       } as WingsDocument)
     })
-    return spaces
+    return documents
   } catch (e) {
-    logger.error({ message: 'getLatestDocuments', spaceId: spaceId, error: e })
-    return []
+    const err = e as ResponseError
+    if (err.meta.statusCode !== 404) {
+      logger.error({ message: 'getLatestDocuments', spaceId: spaceId, error: e })
+    }
+    return [] as WingsDocument[]
   }
 }
 
@@ -186,8 +191,4 @@ export async function childDocuments(spaceId: SpaceId, parentId: DocumentId): Pr
     logger.error({ message: 'childDocuments', spaceId: spaceId, parentId: parentId, error: e })
     return []
   }
-}
-
-export function getDocumentIndex(spaceId: SpaceId): string {
-  return `document_${spaceId}`
 }

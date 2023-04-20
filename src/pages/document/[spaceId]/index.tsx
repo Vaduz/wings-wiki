@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import TopNavi from '../../../components/global/topNavi'
 import { Space, SpaceId, WingsDocument } from '@/lib/types/es'
-import { documentsAndSpaceApi } from '@/lib/api/document'
+import { getLatestDocumentsApi } from '@/lib/api/document'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { documentPath } from '@/components/global/link'
-import logger from '@/lib/logger/pino'
 
 const ListDocuments = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -15,12 +14,14 @@ const ListDocuments = () => {
   const spaceId = router.query.spaceId as SpaceId
 
   useEffect(() => {
-    documentsAndSpaceApi(spaceId)
+    if (!spaceId) return
+    getLatestDocumentsApi(spaceId)
       .then((res) => {
-        setSpace(res?.space)
-        setDocuments(res?.documents)
+        if (!res) return
+        setSpace(res.space)
+        setDocuments(res.documents)
       })
-      .catch((err) => logger.error(err))
+      .catch((err) => console.error(err))
     setLoading(false)
   }, [spaceId])
 
@@ -38,7 +39,7 @@ const ListDocuments = () => {
       <TopNavi spaceId={spaceId} />
       <div className="container-xl mt-3">
         <h1>{space.name}</h1>
-        {documents.length == 0 && <div> No documents</div>}
+        {documents.length == 0 && <div>No documents</div>}
         {documents.map((document) => {
           return (
             <h3 key={document.id}>

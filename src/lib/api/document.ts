@@ -1,12 +1,18 @@
 import { apiGet, apiPost, apiPut } from '@/lib/api'
-import { SearchDocumentHit, SpaceId, WingsDocument } from '@/lib/types/es'
-import { ApiResponse, DocumentsAndSpace } from '@/lib/types/apiResponse'
+import { DocumentId, SearchDocumentHit, SpaceId, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/es'
+import {
+  DocumentHomeResponse,
+  DocumentListResponse,
+  DocumentResponse,
+  DocumentsAndSpace,
+  DocumentTreeResponse,
+} from '@/lib/types/apiResponse'
 import { NewWingsDocumentRequest } from '@/lib/types/apiRequest'
 
 const apiPath = '/document'
 
 export async function getDocumentApi(spaceId: string, documentId: string): Promise<WingsDocument | undefined> {
-  const { data, error } = await apiGet<ApiResponse<WingsDocument>>(apiPath, { spaceId, documentId })
+  const { data, error } = await apiGet<DocumentResponse>(apiPath, { spaceId, documentId })
   if (error || !data) {
     return
   }
@@ -17,7 +23,7 @@ export async function createDocumentApi(
   document: NewWingsDocumentRequest,
   spaceId: string
 ): Promise<WingsDocument | undefined> {
-  const { data, error } = await apiPost<ApiResponse<WingsDocument>>(apiPath, document, { spaceId })
+  const { data, error } = await apiPost<DocumentResponse>(apiPath, document, { spaceId })
   if (error || !data) {
     return
   }
@@ -25,15 +31,15 @@ export async function createDocumentApi(
 }
 
 export async function updateDocumentApi(document: WingsDocument, spaceId: string): Promise<WingsDocument | undefined> {
-  const { data, error } = await apiPut<ApiResponse<WingsDocument>>(apiPath, document, { spaceId })
+  const { data, error } = await apiPut<DocumentResponse>(apiPath, document, { spaceId })
   if (error || !data) {
     return
   }
   return data.data
 }
 
-export async function documentsAndSpaceApi(spaceId: SpaceId): Promise<DocumentsAndSpace | undefined> {
-  const { data, error } = await apiPost<ApiResponse<DocumentsAndSpace>>(`${apiPath}/latest`, undefined, { spaceId })
+export async function getLatestDocumentsApi(spaceId: SpaceId): Promise<DocumentsAndSpace | undefined> {
+  const { data, error } = await apiPost<DocumentHomeResponse>(`${apiPath}/latest`, undefined, { spaceId })
   if (error || !data || !data.data) {
     return
   }
@@ -41,7 +47,7 @@ export async function documentsAndSpaceApi(spaceId: SpaceId): Promise<DocumentsA
 }
 
 export async function searchDocumentsApi(spaceId: SpaceId, q: string): Promise<SearchDocumentHit[]> {
-  const { data, error } = await apiPost<ApiResponse<SearchDocumentHit[]>>(`${apiPath}/search`, undefined, {
+  const { data, error } = await apiPost<DocumentListResponse>(`${apiPath}/search`, undefined, {
     spaceId,
     q,
   })
@@ -49,4 +55,15 @@ export async function searchDocumentsApi(spaceId: SpaceId, q: string): Promise<S
     return []
   }
   return data.data as SearchDocumentHit[]
+}
+
+export async function childDocumentsApi(spaceId: SpaceId, parentId: DocumentId): Promise<WingsDocumentSearchResult[]> {
+  const { data, error } = await apiPost<DocumentTreeResponse>(`${apiPath}/children`, undefined, {
+    spaceId,
+    parentId,
+  })
+  if (error || !data || !data.data) {
+    return []
+  }
+  return data.data as WingsDocumentSearchResult[]
 }
