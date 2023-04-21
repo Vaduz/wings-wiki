@@ -7,7 +7,7 @@ import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/es'
 import { getDocumentApi } from '@/lib/api/document'
 import DocumentTree from '@/components/DocumentTree'
 import Button from '@mui/material/Button'
-import { Grid } from '@mui/material'
+import { Container, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 
 const ViewDocument = () => {
@@ -45,26 +45,28 @@ const ViewDocument = () => {
   return (
     <>
       <TopNavi spaceId={spaceId} />
-      <Grid container spacing={2}>
-        <Grid item xs={3} my="1rem">
-          <DocumentTree spaceId={spaceId} wingsDocument={wingsDocument} />
+      <Container>
+        <Grid container spacing={2}>
+          <Grid item xs={3} my="1rem">
+            <DocumentTree spaceId={spaceId} wingsDocument={wingsDocument} />
+          </Grid>
+          <Grid item xs={9}>
+            <Grid item xs={12} my="1rem">
+              <Typography variant="h3" gutterBottom>
+                {wingsDocument.title || ''}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sx={{ boxShadow: 2 }}>
+              <Editor content={wingsDocument.content} disabled={true} />
+            </Grid>
+            <Grid item xs={12} display="flex" justifyContent="flex-end" py="1rem">
+              <Button variant="contained" href={documentEditPath(spaceId, wingsDocument.id)}>
+                Edit
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs={9}>
-          <Grid item xs={12} my="1rem">
-            <Typography variant="h3" gutterBottom>
-              {wingsDocument.title || ''}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sx={{ boxShadow: 2 }}>
-            <Editor content={wingsDocument.content} disabled={true} />
-          </Grid>
-          <Grid item xs={12} display="flex" justifyContent="flex-end" py="1rem">
-            <Button variant="contained" href={documentEditPath(spaceId, wingsDocument.id)}>
-              Edit
-            </Button>
-          </Grid>
-        </Grid>
-      </Grid>
+      </Container>
     </>
   )
 }

@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'
 import { DocumentId, SpaceId, WingsDocument } from '@/lib/types/es'
 import Button from '@mui/material/Button'
-import { ButtonGroup, Grid, TextField } from '@mui/material'
+import { Container, ButtonGroup, Grid, TextField } from '@mui/material'
 
 const EditDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -34,19 +34,22 @@ const EditDocument = () => {
   }, [documentId, spaceId])
 
   if (loading) {
-    return <div>Loading...</div>
+    return (
+      <>
+        <TopNavi />
+        <p>Loading: {documentId}</p>
+      </>
+    )
   }
 
   if (!wingsDocument) {
     return (
-      <div className="container-xl mt-3">
+      <>
         <TopNavi />
-        <div>Document not found: {documentId}</div>
-      </div>
+        <p>Document not found: {documentId}</p>
+      </>
     )
   }
-
-  // setTitle(wingsDocument.title)
 
   const updateButtonHandler = (title: string = '', content: string = '') => {
     // console.log(`Updating document: ${title}, ${content}`)
@@ -58,37 +61,44 @@ const EditDocument = () => {
   return (
     <>
       <TopNavi />
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            id="title"
-            label="Title"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            onChange={(e) => setTitle(e.currentTarget.value)}
-            value={title}
-          />
+      <Container>
+        <Grid container rowSpacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              id="title"
+              label="Title"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              sx={{ boxShadow: 2 }}
+              onChange={(e) => setTitle(e.currentTarget.value)}
+              value={title}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={12} sx={{ boxShadow: 2 }}>
+                <Editor content={wingsDocument.content} disabled={false} />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} display="flex" justifyContent="flex-end">
+            <ButtonGroup variant="text" aria-label="text button grou">
+              <Button
+                variant="contained"
+                onClick={() =>
+                  updateButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
+                }
+              >
+                Update
+              </Button>
+              <Button variant="text" href={documentPath(spaceId, documentId)}>
+                Close
+              </Button>
+            </ButtonGroup>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sx={{ boxShadow: 2 }}>
-          <Editor content={wingsDocument.content} disabled={false} />
-        </Grid>
-        <Grid item xs={12} display="flex" justifyContent="flex-end">
-          <ButtonGroup variant="text" aria-label="text button grou">
-            <Button
-              variant="contained"
-              onClick={() =>
-                updateButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
-              }
-            >
-              Update
-            </Button>
-            <Button variant="text" href={documentPath(spaceId, documentId)}>
-              Close
-            </Button>
-          </ButtonGroup>
-        </Grid>
-      </Grid>
+      </Container>
     </>
   )
 }

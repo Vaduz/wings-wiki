@@ -7,9 +7,7 @@ import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'
 import { Mention, NewWingsDocument, SpaceId } from '@/lib/types/es'
 import Button from '@mui/material/Button'
-import { ButtonGroup, Grid, TextField } from '@mui/material'
-import Container from '@mui/material/Container'
-import Box from '@mui/material/Box'
+import { Container, ButtonGroup, Grid, TextField } from '@mui/material'
 
 const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [title, setTitle] = useState<string>('')
@@ -40,36 +38,43 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   return (
     <>
       <TopNavi spaceId={spaceId} />
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            id="title"
-            label="Title"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            onChange={(e) => setTitle(e.currentTarget.value)}
-          />
+      <Container>
+        <Grid container rowSpacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              id="title"
+              label="Title"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              sx={{ boxShadow: 2 }}
+              onChange={(e) => setTitle(e.currentTarget.value)}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={12} sx={{ boxShadow: 2 }}>
+                <Editor content={props.content ?? ''} disabled={false} />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} display="flex" justifyContent="flex-end">
+            <ButtonGroup variant="text" aria-label="text button group">
+              <Button
+                variant="contained"
+                onClick={() =>
+                  createButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
+                }
+              >
+                Publish
+              </Button>
+              <Button variant="text" href={spaceBase(spaceId)}>
+                Close
+              </Button>
+            </ButtonGroup>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sx={{ boxShadow: 2 }}>
-          <Editor content={props.content ?? ''} disabled={false} />
-        </Grid>
-        <Grid item xs={12} display="flex" justifyContent="flex-end">
-          <ButtonGroup variant="text" aria-label="text button group">
-            <Button
-              variant="contained"
-              onClick={() =>
-                createButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
-              }
-            >
-              Publish
-            </Button>
-            <Button variant="text" href={spaceBase(spaceId)}>
-              Close
-            </Button>
-          </ButtonGroup>
-        </Grid>
-      </Grid>
+      </Container>
     </>
   )
 }

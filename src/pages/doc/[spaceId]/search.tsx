@@ -7,7 +7,7 @@ import logger from '@/lib/logger/pino'
 import { searchDocumentsApi } from '@/lib/api/document'
 import Link from 'next/link'
 import { documentPath } from '@/components/global/link'
-import { Grid, TextField } from '@mui/material'
+import { Container, Grid, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
 
 const SearchDocuments = () => {
@@ -30,14 +30,14 @@ const SearchDocuments = () => {
   return (
     <>
       <TopNavi spaceId={spaceId} />
-      <Grid container spacing={2}>
-        <Grid item xs={12} my={'1rem'}>
-          <Typography variant="h3" gutterBottom>
-            Search
-          </Typography>
+      <Container>
+        <Grid container direction="column">
+          <Grid item>
+            <Typography variant="h2">Search</Typography>
+          </Grid>
+          <Search space={space} />
         </Grid>
-        <Search space={space} />
-      </Grid>
+      </Container>
     </>
   )
 }
@@ -53,13 +53,15 @@ export const Search = ({ space }: { space: Space }): JSX.Element => {
   }, [q, space])
 
   return (
-    <>
+    <Grid container>
       <Grid item xs={12}>
         <TextField
           id="q"
           label="Input text to search this space"
           variant="outlined"
           fullWidth
+          margin="normal"
+          sx={{ boxShadow: 2 }}
           onChange={(e) => setQ(e.target.value)}
         />
       </Grid>
@@ -75,7 +77,7 @@ export const Search = ({ space }: { space: Space }): JSX.Element => {
           })}
         </ul>
       </Grid>
-    </>
+    </Grid>
   )
 }
 
