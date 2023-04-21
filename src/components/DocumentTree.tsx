@@ -10,7 +10,15 @@ import FolderIcon from '@mui/icons-material/Folder'
 import HomeIcon from '@mui/icons-material/Home'
 import TextSnippetIcon from '@mui/icons-material/TextSnippet'
 
-const DocumentTree = ({ spaceId, wingsDocument }: { spaceId: SpaceId; wingsDocument: WingsDocument }): JSX.Element => {
+const DocumentTree = ({
+  spaceId,
+  parentId,
+  documentId,
+}: {
+  spaceId: SpaceId
+  parentId: DocumentId
+  documentId: DocumentId
+}): JSX.Element => {
   return (
     <>
       <Grid item sx={{ boxShadow: 2 }} p="0.5rem">
@@ -18,8 +26,8 @@ const DocumentTree = ({ spaceId, wingsDocument }: { spaceId: SpaceId; wingsDocum
           Document Tree
         </Typography>
         <List>
-          <TraceParent spaceId={spaceId} documentId={wingsDocument.parent_id} />
-          <DocumentTreeView spaceId={spaceId} parentId={wingsDocument.parent_id} documentId={wingsDocument.id} />
+          <TraceParent spaceId={spaceId} documentId={parentId} />
+          <DocumentTreeView spaceId={spaceId} parentId={parentId} documentId={documentId} />
         </List>
       </Grid>
     </>
@@ -65,6 +73,10 @@ const DocumentTreeView = ({
 
   const [children, setChildren] = useState<WingsDocumentSearchResult[]>()
   useEffect(() => {
+    if (documentId == '-1') {
+      setChildren([])
+      return
+    }
     childDocumentsApi(spaceId, documentId)
       .then((res) => setChildren(res))
       .catch((err) => console.error(err))

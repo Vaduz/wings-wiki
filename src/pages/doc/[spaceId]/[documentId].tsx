@@ -48,7 +48,7 @@ const ViewDocument = () => {
       <Container>
         <Grid container spacing={2}>
           <Grid item xs={3} my="1rem">
-            <DocumentTree spaceId={spaceId} wingsDocument={wingsDocument} />
+            <DocumentTree spaceId={spaceId} parentId={wingsDocument.parent_id} documentId={wingsDocument.id} />
           </Grid>
           <Grid item xs={9}>
             <Grid item xs={12} my="1rem">
