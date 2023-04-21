@@ -65,7 +65,7 @@ const DocumentTreeView = ({ spaceId, documentId }: { spaceId: SpaceId; documentI
           </li>
         )
       })}
-      {children.length == 0 && <li>No children for {documentId}</li>}
+      {children.length == 0 && <li>No children</li>}
     </ul>
   )
 }

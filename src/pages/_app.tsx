@@ -11,7 +11,6 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
           <Component {...pageProps} />
         </AuthenticatedComponent>
       </SessionProvider>
-      <Script src="/js/hs-ui.bundle.js" strategy="afterInteractive" />
     </>
   )
 }

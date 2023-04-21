@@ -1,9 +1,8 @@
 import fs from 'fs'
-import path from 'path'
+import path, { dirname } from 'path'
 import { Client } from '@elastic/elasticsearch'
-import { randomUUID } from 'crypto'
 import { fileURLToPath } from 'url'
-import { dirname } from 'path'
+import { generateDocumentId, generateUserId } from '@/lib/utils/id'
 
 const client = new Client({
   node: process.env.ES_API_URL ?? 'http://localhost:9200',
@@ -18,8 +17,8 @@ async function createIndex(indexName: string, schemaPath: string) {
 }
 
 async function createAdminAndSpace(adminEmail: string) {
-  const adminUserId = randomUUID()
-  const spaceId = randomUUID()
+  const adminUserId = generateUserId()
+  const spaceId = 'wings'
   await client.create({
     index: 'user',
     id: adminUserId,
@@ -52,14 +51,15 @@ async function createInitialDocument(spaceId: string, adminUserId: string) {
 
   await client.create({
     index: documentIndexName,
-    id: randomUUID(),
+    id: generateDocumentId(),
     document: {
       title: 'Hello Wings Wiki!',
       content: 'This is the initial document created by the admin user.',
       author_id: adminUserId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      parent_id: null,
+      parent_id: '-1',
+      tags: [],
     },
   })
 }
