@@ -7,6 +7,8 @@ import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/es'
 import { getDocumentApi } from '@/lib/api/document'
 import DocumentTree from '@/components/DocumentTree'
 import Button from '@mui/material/Button'
+import { Grid } from '@mui/material'
+import Typography from '@mui/material/Typography'
 
 const ViewDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -41,21 +43,29 @@ const ViewDocument = () => {
   }
 
   return (
-    <div className="container-xl mt-3">
+    <>
       <TopNavi spaceId={spaceId} />
-      <div>
-        <DocumentTree spaceId={spaceId} wingsDocument={wingsDocument} />
-      </div>
-      <div className="container-xl mt-3">
-        <h1 className="mb-3">{wingsDocument.title || ''}</h1>
-        <Editor content={wingsDocument.content} disabled={true} />
-        <div className="float-end">
-          <Button variant="contained" href={documentEditPath(spaceId, wingsDocument.id)}>
-            Edit
-          </Button>
-        </div>
-      </div>
-    </div>
+      <Grid container spacing={2}>
+        <Grid item xs={3}>
+          <DocumentTree spaceId={spaceId} wingsDocument={wingsDocument} />
+        </Grid>
+        <Grid item xs={9}>
+          <Grid item xs={12} my={'1rem'}>
+            <Typography variant="h3" gutterBottom>
+              {wingsDocument.title || ''}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sx={{ boxShadow: 2 }}>
+            <Editor content={wingsDocument.content} disabled={true} />
+          </Grid>
+          <Grid item xs={12} display="flex" justifyContent="flex-end" py="1rem">
+            <Button variant="contained" href={documentEditPath(spaceId, wingsDocument.id)}>
+              Edit
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
   )
 }
 

@@ -7,6 +7,8 @@ import logger from '@/lib/logger/pino'
 import { searchDocumentsApi } from '@/lib/api/document'
 import Link from 'next/link'
 import { documentPath } from '@/components/global/link'
+import { Grid, TextField } from '@mui/material'
+import Typography from '@mui/material/Typography'
 
 const SearchDocuments = () => {
   const router = useRouter()
@@ -26,13 +28,17 @@ const SearchDocuments = () => {
   if (!space) return <div>Unauthorized access</div>
 
   return (
-    <div className="container-xl mt-3">
+    <>
       <TopNavi spaceId={spaceId} />
-      <div className="container-xl mt-3">
-        <h1>Search</h1>
+      <Grid container spacing={2}>
+        <Grid item xs={12} my={'1rem'}>
+          <Typography variant="h3" gutterBottom>
+            Search
+          </Typography>
+        </Grid>
         <Search space={space} />
-      </div>
-    </div>
+      </Grid>
+    </>
   )
 }
 
@@ -47,19 +53,29 @@ export const Search = ({ space }: { space: Space }): JSX.Element => {
   }, [q, space])
 
   return (
-    <div>
-      <input value={q} onChange={(e) => setQ(e.target.value)} />
-      <ul>
-        {Array.from(hits).map((hit) => {
-          return (
-            <li key={hit.document.id}>
-              <Link href={documentPath(space.id, hit.document.id)}>{hit.document.title}</Link>
-              <div dangerouslySetInnerHTML={{ __html: hit.highlight?.content.join('') ?? '' }}></div>
-            </li>
-          )
-        })}
-      </ul>
-    </div>
+    <>
+      <Grid item xs={12}>
+        <TextField
+          id="q"
+          label="Input text to search this space"
+          variant="outlined"
+          fullWidth
+          onChange={(e) => setQ(e.target.value)}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <ul>
+          {Array.from(hits).map((hit) => {
+            return (
+              <li key={hit.document.id}>
+                <Link href={documentPath(space.id, hit.document.id)}>{hit.document.title}</Link>
+                <div dangerouslySetInnerHTML={{ __html: hit.highlight?.content.join('') ?? '' }}></div>
+              </li>
+            )
+          })}
+        </ul>
+      </Grid>
+    </>
   )
 }
 

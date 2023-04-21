@@ -7,7 +7,9 @@ import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'
 import { Mention, NewWingsDocument, SpaceId } from '@/lib/types/es'
 import Button from '@mui/material/Button'
-import { ButtonGroup } from '@mui/material'
+import { ButtonGroup, Grid, TextField } from '@mui/material'
+import Container from '@mui/material/Container'
+import Box from '@mui/material/Box'
 
 const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [title, setTitle] = useState<string>('')
@@ -36,22 +38,24 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   }
 
   return (
-    <div className="container-xl mt-3">
+    <>
       <TopNavi spaceId={spaceId} />
-      <div className="container-xl mt-3">
-        <div className="input-group">
-          <input
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
             id="title"
-            type="text"
-            className="form-control form-control-lg mb-3"
-            placeholder="Title"
-            aria-label="Title"
+            label="Title"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             onChange={(e) => setTitle(e.currentTarget.value)}
           />
-        </div>
-        <Editor content={props.content ?? ''} disabled={false} />
-        <div className="float-end">
-          <ButtonGroup variant="text" aria-label="text button grou">
+        </Grid>
+        <Grid item xs={12} sx={{ boxShadow: 2 }}>
+          <Editor content={props.content ?? ''} disabled={false} />
+        </Grid>
+        <Grid item xs={12} display="flex" justifyContent="flex-end">
+          <ButtonGroup variant="text" aria-label="text button group">
             <Button
               variant="contained"
               onClick={() =>
@@ -64,9 +68,9 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
               Close
             </Button>
           </ButtonGroup>
-        </div>
-      </div>
-    </div>
+        </Grid>
+      </Grid>
+    </>
   )
 }
 

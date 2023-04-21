@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'
 import { DocumentId, SpaceId, WingsDocument } from '@/lib/types/es'
 import Button from '@mui/material/Button'
-import { ButtonGroup } from '@mui/material'
+import { ButtonGroup, Grid, TextField } from '@mui/material'
 
 const EditDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -56,22 +56,24 @@ const EditDocument = () => {
   }
 
   return (
-    <div className="container-xl mt-3">
+    <>
       <TopNavi />
-      <div className="container-xl mt-3">
-        <div className="input-group">
-          <input
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
             id="title"
-            type="text"
-            className="form-control form-control-lg mb-3"
-            placeholder="Title"
-            aria-label="Title"
+            label="Title"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             onChange={(e) => setTitle(e.currentTarget.value)}
             value={title}
           />
-        </div>
-        <Editor content={wingsDocument.content} disabled={false} />
-        <div className="float-end">
+        </Grid>
+        <Grid item xs={12} sx={{ boxShadow: 2 }}>
+          <Editor content={wingsDocument.content} disabled={false} />
+        </Grid>
+        <Grid item xs={12} display="flex" justifyContent="flex-end">
           <ButtonGroup variant="text" aria-label="text button grou">
             <Button
               variant="contained"
@@ -79,15 +81,15 @@ const EditDocument = () => {
                 updateButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
               }
             >
-              Publish
+              Update
             </Button>
             <Button variant="text" href={documentPath(spaceId, documentId)}>
               Close
             </Button>
           </ButtonGroup>
-        </div>
-      </div>
-    </div>
+        </Grid>
+      </Grid>
+    </>
   )
 }
 
