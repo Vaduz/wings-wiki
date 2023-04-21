@@ -46,11 +46,11 @@ const ViewDocument = () => {
     <>
       <TopNavi spaceId={spaceId} />
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={3} my="1rem">
           <DocumentTree spaceId={spaceId} wingsDocument={wingsDocument} />
         </Grid>
         <Grid item xs={9}>
-          <Grid item xs={12} my={'1rem'}>
+          <Grid item xs={12} my="1rem">
             <Typography variant="h3" gutterBottom>
               {wingsDocument.title || ''}
             </Typography>
