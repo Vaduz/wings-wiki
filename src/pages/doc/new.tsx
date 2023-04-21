@@ -6,7 +6,6 @@ import logger from '@/lib/logger/pino'
 import { spaceBase } from '@/components/global/link'
 import { Container, Grid, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { TextareaAutosize } from '@mui/base'
 import Button from '@mui/material/Button'
 
 const NewSpace = (): JSX.Element => {

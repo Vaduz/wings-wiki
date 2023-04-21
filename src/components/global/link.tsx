@@ -15,8 +15,9 @@ export const searchPath = (spaceId: SpaceId) => {
   return `${spaceBase(spaceId)}/search`
 }
 
-export const newDocumentPath = (spaceId: SpaceId) => {
-  return `${spaceBase(spaceId)}/new`
+export const newDocumentPath = (spaceId: SpaceId, parentId?: DocumentId) => {
+  parentId ??= '-1'
+  return `${spaceBase(spaceId)}/new?parentId=${parentId}`
 }
 
 export const documentPath = (spaceId: SpaceId, documentId: DocumentId) => {

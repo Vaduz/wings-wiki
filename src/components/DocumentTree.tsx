@@ -1,7 +1,7 @@
 import { DocumentId, SpaceId, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/es'
 import { useEffect, useState } from 'react'
 import { childDocumentsApi, getDocumentApi } from '@/lib/api/document'
-import { documentPath, spaceBase } from '@/components/global/link'
+import { documentPath, newDocumentPath, spaceBase } from '@/components/global/link'
 import Typography from '@mui/material/Typography'
 import { Collapse, Grid, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import Container from '@mui/material/Container'
@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import FolderIcon from '@mui/icons-material/Folder'
 import HomeIcon from '@mui/icons-material/Home'
 import TextSnippetIcon from '@mui/icons-material/TextSnippet'
+import AddIcon from '@mui/icons-material/Add'
 
 const DocumentTree = ({
   spaceId,
@@ -120,6 +121,12 @@ const DocumentTreeView = ({
               </>
             )
           })}
+          <Item
+            title={'New Document'}
+            link={newDocumentPath(spaceId, parentId)}
+            key={'New Document'}
+            icon={<AddIcon />}
+          />
         </List>
       </Collapse>
     </>

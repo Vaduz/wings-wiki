@@ -5,9 +5,8 @@ import TopNavi from '../../../components/global/topNavi'
 import { Editor } from '@/components/editor/editor'
 import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'
-import { Mention, NewWingsDocument, SpaceId } from '@/lib/types/es'
-import Button from '@mui/material/Button'
-import { Container, ButtonGroup, Grid, TextField } from '@mui/material'
+import { DocumentId, Mention, SpaceId } from '@/lib/types/es'
+import { Container, Button, ButtonGroup, Grid, TextField } from '@mui/material'
 
 const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [title, setTitle] = useState<string>('')
@@ -15,13 +14,14 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [tags, setTags] = useState<string[]>([])
   const router = useRouter()
   const spaceId = router.query.spaceId as SpaceId
+  const parentId = router.query.parentId ? (router.query.parentId as DocumentId) : '-1'
 
   const createButtonHandler = (title: string = '', content: string = '') => {
     console.log(`Creating new document: ${title}, ${content}`)
     const newWingsDocument = {
       title: title,
       content: content,
-      parent_id: '-1',
+      parent_id: parentId,
       mentions: mentions,
       tags: tags,
     }

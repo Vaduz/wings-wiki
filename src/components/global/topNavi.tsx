@@ -2,19 +2,21 @@ import React from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { documentBase, newDocumentPath, newSpacePath, searchPath, spaceBase } from '@/components/global/link'
 import { SpaceId } from '@/lib/types/es'
-import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
-import Toolbar from '@mui/material/Toolbar'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-import Menu from '@mui/material/Menu'
-import MenuIcon from '@mui/icons-material/Menu'
-import Container from '@mui/material/Container'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import Tooltip from '@mui/material/Tooltip'
-import MenuItem from '@mui/material/MenuItem'
 import { useRouter } from 'next/router'
+import MenuIcon from '@mui/icons-material/Menu'
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+} from '@mui/material'
 
 const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
   const { data, status } = useSession()
