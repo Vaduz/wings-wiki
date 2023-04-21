@@ -1,10 +1,12 @@
 import { Editor } from '@/components/editor/editor'
 import React, { useEffect, useState } from 'react'
-import { CloseButton, documentPath } from '@/components/global/link'
+import { documentPath } from '@/components/global/link'
 import TopNavi from '../../../../components/global/topNavi'
 import { useRouter } from 'next/router'
 import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'
 import { DocumentId, SpaceId, WingsDocument } from '@/lib/types/es'
+import Button from '@mui/material/Button'
+import { ButtonGroup } from '@mui/material'
 
 const EditDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -70,13 +72,19 @@ const EditDocument = () => {
         </div>
         <Editor content={wingsDocument.content} disabled={false} />
         <div className="float-end">
-          <a
-            className="btn btn-primary"
-            onClick={() => updateButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)}
-          >
-            <i className="bi bi-globe" /> Publish
-          </a>
-          <CloseButton href={documentPath(spaceId, documentId)}>Close</CloseButton>
+          <ButtonGroup variant="text" aria-label="text button grou">
+            <Button
+              variant="contained"
+              onClick={() =>
+                updateButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
+              }
+            >
+              Publish
+            </Button>
+            <Button variant="text" href={documentPath(spaceId, documentId)}>
+              Close
+            </Button>
+          </ButtonGroup>
         </div>
       </div>
     </div>

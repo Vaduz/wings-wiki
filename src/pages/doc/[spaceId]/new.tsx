@@ -1,11 +1,13 @@
 import { NextPage } from 'next'
 import React, { PropsWithChildren, useState } from 'react'
-import { CloseButton, documentPath, spaceBase } from '@/components/global/link'
+import { documentPath, spaceBase } from '@/components/global/link'
 import TopNavi from '../../../components/global/topNavi'
 import { Editor } from '@/components/editor/editor'
 import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'
 import { Mention, NewWingsDocument, SpaceId } from '@/lib/types/es'
+import Button from '@mui/material/Button'
+import { ButtonGroup } from '@mui/material'
 
 const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [title, setTitle] = useState<string>('')
@@ -49,17 +51,19 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
         </div>
         <Editor content={props.content ?? ''} disabled={false} />
         <div className="float-end">
-          <a
-            className="btn btn-primary"
-            onClick={() => createButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)}
-          >
-            <i className="bi bi-globe" />
-            &nbsp;Publish
-          </a>
-          <CloseButton href={spaceBase(spaceId)}>
-            <i className="bi bi-card-list" />
-            &nbsp;Documents
-          </CloseButton>
+          <ButtonGroup variant="text" aria-label="text button grou">
+            <Button
+              variant="contained"
+              onClick={() =>
+                createButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
+              }
+            >
+              Publish
+            </Button>
+            <Button variant="text" href={spaceBase(spaceId)}>
+              Close
+            </Button>
+          </ButtonGroup>
         </div>
       </div>
     </div>

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Editor } from '@/components/editor/editor'
-import { PrimaryButton, documentEditPath } from '@/components/global/link'
+import { documentEditPath } from '@/components/global/link'
 import TopNavi from '../../../components/global/topNavi'
 import { useRouter } from 'next/router'
 import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/es'
 import { getDocumentApi } from '@/lib/api/document'
 import DocumentTree from '@/components/DocumentTree'
+import Button from '@mui/material/Button'
 
 const ViewDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -49,10 +50,9 @@ const ViewDocument = () => {
         <h1 className="mb-3">{wingsDocument.title || ''}</h1>
         <Editor content={wingsDocument.content} disabled={true} />
         <div className="float-end">
-          <PrimaryButton href={documentEditPath(spaceId, wingsDocument.id)} documentId={wingsDocument.id}>
-            <i className="bi bi-pencil" />
-            &nbsp;Edit
-          </PrimaryButton>
+          <Button variant="contained" href={documentEditPath(spaceId, wingsDocument.id)}>
+            Edit
+          </Button>
         </div>
       </div>
     </div>
