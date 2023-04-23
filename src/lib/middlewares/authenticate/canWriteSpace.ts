@@ -1,27 +1,27 @@
 import { NextApiResponse } from 'next'
-import { NextApiRequestWithSpace } from '@/lib/types/nextApi'
+import { NextApiRequestWriteSpace } from '@/lib/types/nextApi'
 import logger from '@/lib/logger/pino'
 import { UserId } from '@/lib/types/es'
 import { getSpace } from '@/lib/elasticsearch/space'
+import { getToken } from 'next-auth/jwt'
 
-const spaceAuthenticate = async (
-  req: NextApiRequestWithSpace,
-  res: NextApiResponse,
-  next: () => void
-): Promise<void> => {
-  const spaceId = req.query.spaceId as string
+const secret = process.env.JWT_SECRET
 
-  if (!req.token) {
+const canWriteSpace = async (req: NextApiRequestWriteSpace, res: NextApiResponse, next: () => void): Promise<void> => {
+  const token = await getToken({ req, secret })
+  if (!token) {
     logger.warn({ message: 'token not found' })
     res.status(400).json({ data: undefined })
     return
   }
-  const userId = req.token.userId as UserId
+  req.token = token
+  const userId = token.userId as UserId
 
+  const spaceId = req.query.spaceId as string
   const space = await getSpace(spaceId)
   if (!space) {
     logger.warn({ message: 'Space not found', spaceId: spaceId })
-    res.status(400).json({ data: undefined })
+    res.status(404).json({ data: undefined })
     return
   }
 
@@ -32,8 +32,7 @@ const spaceAuthenticate = async (
   }
 
   req.space = space
-
   next()
 }
 
-export default spaceAuthenticate
+export default canWriteSpace

@@ -1,14 +1,14 @@
-import { NextApiResponse } from 'next'
-import { UserId } from '@/lib/types/es'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { Space, UserId } from '@/lib/types/es'
 import logger from '@/lib/logger/pino'
-import { getUserSpaces } from '@/lib/elasticsearch/space'
-import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
-import { NextApiRequestWithToken } from '@/lib/types/nextApi'
+import { getPublicSpaces, getUserSpaces } from '@/lib/elasticsearch/space'
 import { SpaceListResponse } from '@/lib/types/apiResponse'
+import { getToken } from 'next-auth/jwt'
 
-export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<SpaceListResponse>) {
+const secret = process.env.JWT_SECRET
+
+export async function handler(req: NextApiRequest, res: NextApiResponse<SpaceListResponse>) {
   const { method, body } = req
-  const userId = req.token.userId as UserId
 
   if (!method || method != 'POST') {
     res.setHeader('Allow', ['POST'])
@@ -17,7 +17,15 @@ export async function handler(req: NextApiRequestWithToken, res: NextApiResponse
   }
 
   try {
-    const spaces = await getUserSpaces(userId)
+    let spaces: Space[] = await getPublicSpaces()
+    logger.info({ publicSpaces: spaces })
+
+    const token = await getToken({ req, secret })
+    if (token) {
+      const userId = token.userId as UserId
+      const userSpaces = await getUserSpaces(userId)
+      spaces.push(...userSpaces)
+    }
     res.status(200).json({ data: spaces })
     logger.debug({ message: 'Fetched spaces', spaces: spaces })
   } catch (e) {
@@ -27,16 +35,9 @@ export async function handler(req: NextApiRequestWithToken, res: NextApiResponse
     logger.info({
       path: '/api/space/search',
       status: res.statusCode,
-      req: { method: method, query: req.query, body: body, userId: userId },
+      req: { method: method, query: req.query, body: body },
     })
   }
 }
 
-export default function withMiddleware(req: NextApiRequestWithToken, res: NextApiResponse) {
-  return new Promise<void>((resolve, reject) => {
-    tokenAuthenticate(req, res, () => {
-      handler(req, res).then()
-      resolve()
-    }).then()
-  })
-}
+export default handler

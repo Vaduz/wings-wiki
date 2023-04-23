@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import React, { PropsWithChildren, useState } from 'react'
 import { documentPath, spaceBase } from '@/components/global/link'
-import TopNavi from '../../../components/global/topNavi'
+import TopNavi from '../../../components/global/TopNavi'
 import { Editor } from '@/components/editor/editor'
 import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'

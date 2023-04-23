@@ -1,15 +1,12 @@
 import { NextApiResponse } from 'next'
-import { NextApiRequestWithTokenAndSpace } from '@/lib/types/nextApi'
+import { NextApiRequestReadSpace } from '@/lib/types/nextApi'
 import logger from '@/lib/logger/pino'
 import { childDocuments } from '@/lib/elasticsearch/document'
 import { DocumentTreeResponse } from '@/lib/types/apiResponse'
-import spaceAuthenticate from '@/lib/middlewares/spaceAuthenticate'
-import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
-import { UserId } from '@/lib/types/es'
+import canReadSpace from '@/lib/middlewares/authenticate/canReadSpace'
 
-export async function handler(req: NextApiRequestWithTokenAndSpace, res: NextApiResponse<DocumentTreeResponse>) {
+export async function handler(req: NextApiRequestReadSpace, res: NextApiResponse<DocumentTreeResponse>) {
   const { method, body } = req
-  const userId = req.token.userId as UserId
   const spaceId = req.query.spaceId as string
   const parentId = req.query.parentId as string
 
@@ -30,18 +27,16 @@ export async function handler(req: NextApiRequestWithTokenAndSpace, res: NextApi
     logger.info({
       path: '/api/document/children',
       status: res.statusCode,
-      req: { method: method, query: req.query, body: body, userId: userId },
+      req: { method: method, query: req.query, body: body, userId: req.token?.userId },
     })
   }
 }
 
-export default function withMiddleware(req: NextApiRequestWithTokenAndSpace, res: NextApiResponse) {
+export default function withMiddleware(req: NextApiRequestReadSpace, res: NextApiResponse) {
   return new Promise<void>((resolve, reject) => {
-    tokenAuthenticate(req, res, () => {
-      spaceAuthenticate(req, res, () => {
-        handler(req, res).then()
-        resolve()
-      }).then()
+    canReadSpace(req, res, () => {
+      handler(req, res).then()
+      resolve()
     }).then()
   })
 }

@@ -1,5 +1,5 @@
 import React, { NextPage } from 'next'
-import TopNavi from '@/components/global/topNavi'
+import TopNavi from '@/components/global/TopNavi'
 import { Container, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 

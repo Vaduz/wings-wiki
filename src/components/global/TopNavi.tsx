@@ -108,37 +108,35 @@ const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               >
                 <Typography textAlign="center">New Space</Typography>
               </MenuItem>
-              {spaceId && (
-                <>
-                  <MenuItem
-                    key="Documents"
-                    onClick={() => {
-                      handleCloseNavMenu()
-                      router.push(spaceBase(spaceId)).then()
-                    }}
-                  >
-                    <Typography textAlign="center">Documents</Typography>
-                  </MenuItem>
-                  <MenuItem
-                    key="New Document"
-                    onClick={() => {
-                      handleCloseNavMenu()
-                      router.push(newDocumentPath(spaceId)).then()
-                    }}
-                  >
-                    <Typography textAlign="center">New Document</Typography>
-                  </MenuItem>
-                  <MenuItem
-                    key="Search"
-                    onClick={() => {
-                      handleCloseNavMenu()
-                      router.push(searchPath(spaceId)).then()
-                    }}
-                  >
-                    <Typography textAlign="center">Search</Typography>
-                  </MenuItem>
-                </>
-              )}
+              {spaceId && [
+                <MenuItem
+                  key="Documents"
+                  onClick={() => {
+                    handleCloseNavMenu()
+                    router.push(spaceBase(spaceId)).then()
+                  }}
+                >
+                  <Typography textAlign="center">Documents</Typography>
+                </MenuItem>,
+                <MenuItem
+                  key="New Document"
+                  onClick={() => {
+                    handleCloseNavMenu()
+                    router.push(newDocumentPath(spaceId)).then()
+                  }}
+                >
+                  <Typography textAlign="center">New Document</Typography>
+                </MenuItem>,
+                <MenuItem
+                  key="Search"
+                  onClick={() => {
+                    handleCloseNavMenu()
+                    router.push(searchPath(spaceId)).then()
+                  }}
+                >
+                  <Typography textAlign="center">Search</Typography>
+                </MenuItem>,
+              ]}
             </Menu>
           </Box>
 

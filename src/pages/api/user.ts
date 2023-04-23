@@ -4,7 +4,7 @@ import { getUser, updateUser } from '@/lib/elasticsearch/user'
 import logger from '@/lib/logger/pino'
 import { UserResponse } from '@/lib/types/apiResponse'
 import { NextApiRequestWithToken } from '@/lib/types/nextApi'
-import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
+import hasToken from '@/lib/middlewares/authenticate/hasToken'
 
 export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<UserResponse>) {
   const { method, body } = req
@@ -58,7 +58,7 @@ export async function handler(req: NextApiRequestWithToken, res: NextApiResponse
 
 export default function withMiddleware(req: NextApiRequestWithToken, res: NextApiResponse) {
   return new Promise<void>((resolve, reject) => {
-    tokenAuthenticate(req, res, () => {
+    hasToken(req, res, () => {
       handler(req, res).then()
       resolve()
     }).then()

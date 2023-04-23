@@ -1,12 +1,13 @@
-import TopNavi from '@/components/global/topNavi'
+import TopNavi from '@/components/global/TopNavi'
 import React, { useState } from 'react'
-import { createSpaceApi, CreateSpaceRequest } from '@/lib/api/space'
+import { createSpaceApi } from '@/lib/api/space'
 import { useRouter } from 'next/router'
 import logger from '@/lib/logger/pino'
 import { spaceBase } from '@/components/global/link'
 import { Container, Grid, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import { CreateSpaceRequest } from '@/lib/types/apiRequest'
 
 const NewSpace = (): JSX.Element => {
   const [name, setName] = useState<string>('')
@@ -20,6 +21,7 @@ const NewSpace = (): JSX.Element => {
       name: name,
       description: description,
       members: members,
+      visibility: 1,
     }
     createSpaceApi(createSpaceRequest)
       .then((res) => {

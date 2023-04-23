@@ -89,3 +89,30 @@ export async function getUserSpaces(userId: UserId): Promise<Space[]> {
     return []
   }
 }
+
+export async function getPublicSpaces(): Promise<Space[]> {
+  try {
+    const response = await client.search<Space>({
+      index: 'space',
+      query: {
+        match: {
+          visibility: 1,
+        },
+      },
+    })
+    logger.debug({ message: 'getPublicSpaces', response: response })
+    const hits = response.hits.hits
+    if (!hits) return []
+    const spaces: Space[] = []
+    hits.forEach((hit) => {
+      spaces.push({
+        ...hit._source,
+        id: hit._id,
+      } as Space)
+    })
+    return spaces
+  } catch (e) {
+    logger.error({ message: 'getPublicSpaces', error: e })
+    return []
+  }
+}

@@ -1,8 +1,8 @@
-import TopNavi from '@/components/global/topNavi'
+import TopNavi from '@/components/global/TopNavi'
 import { Space } from '@/lib/types/es'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { getUserSpacesApi } from '@/lib/api/space'
+import { getSpacesApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
 import { spaceBase } from '@/components/global/link'
 import { Container, Grid } from '@mui/material'
@@ -12,7 +12,7 @@ import { Search } from '@/pages/doc/[spaceId]/search'
 const ListSpaces = (): JSX.Element => {
   const [spaces, setSpaces] = useState<Space[]>()
   useEffect(() => {
-    getUserSpacesApi()
+    getSpacesApi()
       .then((r) => setSpaces(r))
       .catch((e) => logger.error({ message: 'document/index.tsx', error: e }))
   }, [])

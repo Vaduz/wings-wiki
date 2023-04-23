@@ -1,13 +1,11 @@
 import { DocumentId, SpaceId, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/es'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { childDocumentsApi, getDocumentApi } from '@/lib/api/document'
 import { documentPath, newDocumentPath, spaceBase } from '@/components/global/link'
-import Typography from '@mui/material/Typography'
-import { Collapse, Grid, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import Container from '@mui/material/Container'
+import { Collapse, Grid, List, ListItemButton, ListItemIcon, ListItemText, Container, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
-import FolderIcon from '@mui/icons-material/Folder'
 import HomeIcon from '@mui/icons-material/Home'
+import FolderIcon from '@mui/icons-material/Folder'
 import TextSnippetIcon from '@mui/icons-material/TextSnippet'
 import AddIcon from '@mui/icons-material/Add'
 
@@ -43,15 +41,21 @@ const TraceParent = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Do
       .then((res) => setParent(res))
       .catch((err) => console.error(err))
   }, [spaceId, documentId])
-  const router = useRouter()
 
-  if (documentId == '-1') return <Item title="Space Home" link={spaceBase(spaceId)} key="root" icon={<HomeIcon />} />
+  if (documentId == '-1')
+    return <Item title="Space Home" link={spaceBase(spaceId)} key="root" itemId="root" icon={<HomeIcon />} />
   if (!parent) return <div>Loading...</div>
 
   return (
     <>
       <TraceParent spaceId={spaceId} documentId={parent.parent_id} />
-      <Item title={parent.title} link={documentPath(spaceId, parent.id)} key={parent.id} icon={<FolderIcon />} />
+      <Item
+        title={parent.title}
+        link={documentPath(spaceId, parent.id)}
+        key={parent.id}
+        itemId={parent.id}
+        icon={<FolderIcon />}
+      />
     </>
   )
 }
@@ -83,34 +87,34 @@ const DocumentTreeView = ({
       .catch((err) => console.error(err))
   }, [spaceId, documentId])
 
-  const router = useRouter()
-
   if (!neighbors || !children) return <div>Loading...</div>
 
   return (
     <>
       <Collapse in timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
+        <List component="div" disablePadding key={`${spaceId}-${parentId}-${documentId}`}>
           {Array.from(neighbors).map((neighbor) => {
             return (
-              <>
+              <Fragment key={`fragment-${neighbor.id}`}>
                 <Item
                   title={neighbor.title}
                   link={documentPath(spaceId, neighbor.id)}
+                  itemId={neighbor.id}
                   key={neighbor.id}
                   icon={<TextSnippetIcon />}
                 />
                 {neighbor.id == documentId && (
                   <Container>
-                    <Collapse in timeout="auto" unmountOnExit key={documentId}>
-                      <List component="div" disablePadding>
+                    <Collapse in timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding key={`children-of-${neighbor.id}`}>
                         {Array.from(children).map((child) => {
                           return (
                             <Item
                               title={child.title}
                               link={documentPath(spaceId, child.id)}
-                              key={child.id}
+                              itemId={child.id}
                               icon={<TextSnippetIcon />}
+                              key={child.id}
                             />
                           )
                         })}
@@ -118,13 +122,14 @@ const DocumentTreeView = ({
                     </Collapse>
                   </Container>
                 )}
-              </>
+              </Fragment>
             )
           })}
           <Item
-            title={'New Document'}
+            title="New Document"
             link={newDocumentPath(spaceId, parentId)}
-            key={'New Document'}
+            key="New Document"
+            itemId="New Document"
             icon={<AddIcon />}
           />
         </List>
@@ -134,19 +139,19 @@ const DocumentTreeView = ({
 }
 
 const Item = ({
-  key,
+  itemId,
   title,
   link,
   icon,
 }: {
-  key: string
+  itemId: string
   title: string
   link: string
   icon: JSX.Element
 }): JSX.Element => {
   const router = useRouter()
   return (
-    <ListItemButton key={key} sx={{ py: '0.2rem' }}>
+    <ListItemButton key={`child-${itemId}`} sx={{ py: '0.2rem' }}>
       <ListItemIcon sx={{ minWidth: '2rem' }}>{icon}</ListItemIcon>
       <ListItemText
         primary={title}

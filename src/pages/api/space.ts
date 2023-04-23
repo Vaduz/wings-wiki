@@ -1,58 +1,43 @@
 import { NextApiResponse } from 'next'
-import { Space, UserId } from '@/lib/types/es'
-import { createSpace, getSpace, updateSpace } from '@/lib/elasticsearch/space'
+import { UserId } from '@/lib/types/es'
+import { getSpace } from '@/lib/elasticsearch/space'
 import logger from '@/lib/logger/pino'
-import { CreateSpaceRequest } from '@/lib/api/space'
 import { NextApiRequestWithToken } from '@/lib/types/nextApi'
-import tokenAuthenticate from '@/lib/middlewares/tokenAuthenticate'
 import { SpaceResponse } from '@/lib/types/apiResponse'
+import { getToken } from 'next-auth/jwt'
+
+const secret = process.env.JWT_SECRET
 
 export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<SpaceResponse>) {
   const { method, body } = req
-  const userId = req.token.userId as UserId
+  if (!method || method != 'GET') {
+    res.setHeader('Allow', ['GET'])
+    res.status(405).end(`Method ${method} Not Allowed`)
+    return
+  }
+  const token = await getToken({ req, secret })
 
   try {
-    switch (method) {
-      case 'GET':
-        const spaceId = req.query.spaceId as string
-        const fetchedSpace = await getSpace(spaceId)
-        if (!fetchedSpace) {
-          res.status(404).json({ error: `${spaceId} not found` })
-          return
-        } else if (!fetchedSpace.members.includes(userId) && fetchedSpace.owner_id != userId) {
-          res.status(400).json({ data: undefined })
-          logger.warn({ message: 'Unauthorized space access', userId: userId })
-          return
-        } else {
-          res.status(200).json({ data: fetchedSpace })
-        }
-        break
+    const spaceId = req.query.spaceId as string
+    const space = await getSpace(spaceId)
+    if (!space) {
+      res.status(404).json({ error: `${spaceId} not found` })
+      return
+    } else if (space.visibility == 1) {
+      res.status(200).json({ data: space })
+      return
+    } else if (!token) {
+      res.status(401).json({ error: 'Unauthorized' })
+      return
+    }
 
-      case 'POST':
-        const postSpace = body as CreateSpaceRequest
-        const newSpace: Space = await createSpace({ ...postSpace, owner_id: userId })
-        res.status(200).json({ data: newSpace })
-        break
-
-      case 'PUT':
-        const putSpace = body as Space
-        const targetSpace = await getSpace(putSpace.id)
-        if (!targetSpace) {
-          res.status(404).json({ error: `${putSpace.id} not found` })
-          return
-        } else if (!targetSpace.members.includes(userId) && targetSpace.owner_id != userId) {
-          res.status(400).json({ data: undefined })
-          logger.warn({ message: 'Unauthorized space access', space: targetSpace, userId: userId })
-          return
-        } else {
-          await updateSpace(body)
-          res.status(200).json({ data: body })
-        }
-        break
-
-      default:
-        res.setHeader('Allow', ['GET', 'POST', 'PUT'])
-        res.status(405).end(`Method ${method} Not Allowed`)
+    const userId = token.userId as UserId
+    if (!space.members.includes(userId) && space.owner_id != userId) {
+      res.status(400).json({ data: undefined })
+      logger.warn({ message: 'Unauthorized space access', userId: userId })
+      return
+    } else {
+      res.status(200).json({ data: space })
     }
   } catch (e) {
     res.status(500).json({ error: e })
@@ -61,16 +46,9 @@ export async function handler(req: NextApiRequestWithToken, res: NextApiResponse
     logger.info({
       path: '/api/space',
       status: res.statusCode,
-      req: { method: method, query: req.query, body: body, userId: userId },
+      req: { method: method, query: req.query, body: body, userId: token?.userId },
     })
   }
 }
 
-export default function withMiddleware(req: NextApiRequestWithToken, res: NextApiResponse) {
-  return new Promise<void>((resolve, reject) => {
-    tokenAuthenticate(req, res, () => {
-      handler(req, res).then()
-      resolve()
-    }).then()
-  })
-}
+export default handler

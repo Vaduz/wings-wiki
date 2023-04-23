@@ -1,4 +1,4 @@
-import TopNavi from '../../../components/global/topNavi'
+import TopNavi from '../../../components/global/TopNavi'
 import { useRouter } from 'next/router'
 import { SearchDocumentHit, Space, SpaceId } from '@/lib/types/es'
 import React, { useEffect, useState } from 'react'

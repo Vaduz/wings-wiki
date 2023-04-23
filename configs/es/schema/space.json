@@ -9,10 +9,13 @@
     "description": {
       "type": "text"
     },
-    "owner_id": {
+    "members": {
       "type": "keyword"
     },
-    "user_ids": {
+    "created_by": {
+      "type": "keyword"
+    },
+    "updated_by": {
       "type": "keyword"
     },
     "created_at": {

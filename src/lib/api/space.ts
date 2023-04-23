@@ -1,25 +1,18 @@
-import { Space, UserId } from '@/lib/types/es'
+import { Space } from '@/lib/types/es'
 import { apiGet, apiPost, apiPut } from '@/lib/api/index'
 import { ApiResponse } from '@/lib/types/apiResponse'
-
-const apiPath = '/space'
+import { CreateSpaceRequest } from '@/lib/types/apiRequest'
 
 export async function getSpaceApi(spaceId: string): Promise<Space | undefined> {
-  const { data, error } = await apiGet<ApiResponse<Space>>(apiPath, { spaceId })
+  const { data, error } = await apiGet<ApiResponse<Space>>('/space', { spaceId })
   if (error || !data) {
     return
   }
   return data.data
 }
 
-export interface CreateSpaceRequest {
-  name: string
-  description: string
-  members: UserId[]
-}
-
 export async function createSpaceApi(space: CreateSpaceRequest): Promise<Space | undefined> {
-  const { data, error } = await apiPost<ApiResponse<Space>>(apiPath, space, {})
+  const { data, error } = await apiPost<ApiResponse<Space>>('/space/create', space, {})
   if (error || !data) {
     return
   }
@@ -27,17 +20,15 @@ export async function createSpaceApi(space: CreateSpaceRequest): Promise<Space |
 }
 
 export async function updateSpaceApi(space: Space): Promise<Space | undefined> {
-  const { data, error } = await apiPut<ApiResponse<Space>>(apiPath, space, {})
+  const { data, error } = await apiPut<ApiResponse<Space>>('/space/update', space, {})
   if (error || !data) {
     return
   }
   return data.data
 }
 
-const apiSearchPath = `${apiPath}/search`
-
-export async function getUserSpacesApi(): Promise<Space[]> {
-  const { data, error } = await apiPost<ApiResponse<Space[]>>(apiSearchPath, {})
+export async function getSpacesApi(): Promise<Space[]> {
+  const { data, error } = await apiPost<ApiResponse<Space[]>>('/space/search', {})
   if (error || !data || !data.data) {
     return []
   }

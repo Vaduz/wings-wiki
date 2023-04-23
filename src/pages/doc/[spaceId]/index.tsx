@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import TopNavi from '../../../components/global/topNavi'
+import TopNavi from '../../../components/global/TopNavi'
 import { Space, SpaceId, WingsDocument } from '@/lib/types/es'
 import { getLatestDocumentsApi } from '@/lib/api/document'
 import { useRouter } from 'next/router'

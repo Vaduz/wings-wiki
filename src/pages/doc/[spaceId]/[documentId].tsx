@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Editor } from '@/components/editor/editor'
 import { documentEditPath } from '@/components/global/link'
-import TopNavi from '../../../components/global/topNavi'
+import TopNavi from '../../../components/global/TopNavi'
 import { useRouter } from 'next/router'
 import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/es'
 import { getDocumentApi } from '@/lib/api/document'
