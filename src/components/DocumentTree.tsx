@@ -118,6 +118,13 @@ const DocumentTreeView = ({
                             />
                           )
                         })}
+                        <Item
+                          title="New Document"
+                          link={newDocumentPath(spaceId, documentId)}
+                          key="New Document in child"
+                          itemId="New Document in child"
+                          icon={<AddIcon />}
+                        />
                       </List>
                     </Collapse>
                   </Container>
