@@ -61,6 +61,11 @@ export async function getUserSpaces(userId: UserId): Promise<Space[]> {
       index: 'space',
       query: {
         bool: {
+          must: [
+            {
+              term: { visibility: 2 },
+            },
+          ],
           should: [
             {
               term: { 'members.keyword': userId },

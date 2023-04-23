@@ -1,6 +1,6 @@
 import { Editor } from '@/components/editor/editor'
 import React, { useEffect, useState } from 'react'
-import { documentPath } from '@/components/global/link'
+import { documentPath } from '@/components/global/WingsLink'
 import TopNavi from '../../../../components/global/TopNavi'
 import { useRouter } from 'next/router'
 import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'

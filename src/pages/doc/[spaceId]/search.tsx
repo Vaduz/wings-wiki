@@ -6,7 +6,7 @@ import { getSpaceApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
 import { searchDocumentsApi } from '@/lib/api/document'
 import Link from 'next/link'
-import { documentPath } from '@/components/global/link'
+import { documentPath } from '@/components/global/WingsLink'
 import { Container, Grid, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
 

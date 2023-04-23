@@ -1,7 +1,5 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 import { DocumentId, SpaceId } from '@/lib/types/es'
-
-export const apiBase = '/api'
 
 export const documentBase = '/doc'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
-import { documentBase, newDocumentPath, newSpacePath, searchPath, spaceBase } from '@/components/global/link'
+import { documentBase, newDocumentPath, newSpacePath, searchPath, spaceBase } from '@/components/global/WingsLink'
 import { SpaceId } from '@/lib/types/es'
 import { useRouter } from 'next/router'
 import MenuIcon from '@mui/icons-material/Menu'

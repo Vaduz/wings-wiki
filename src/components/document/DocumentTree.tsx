@@ -1,7 +1,7 @@
 import { DocumentId, SpaceId, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/es'
 import { Fragment, useEffect, useState } from 'react'
 import { childDocumentsApi, getDocumentApi } from '@/lib/api/document'
-import { documentPath, newDocumentPath, spaceBase } from '@/components/global/link'
+import { documentPath, newDocumentPath, spaceBase } from '@/components/global/WingsLink'
 import { Collapse, Grid, List, ListItemButton, ListItemIcon, ListItemText, Container, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import HomeIcon from '@mui/icons-material/Home'

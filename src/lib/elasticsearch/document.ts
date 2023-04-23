@@ -83,6 +83,7 @@ export async function getLatestDocuments(spaceId: SpaceId): Promise<WingsDocumen
   try {
     const response = await client.search<EsWingsDocument>({
       index: getDocumentIndex(spaceId),
+      size: 20,
       sort: [
         {
           updated_at: {
@@ -118,6 +119,7 @@ export async function searchDocuments(spaceId: SpaceId, q: string): Promise<Sear
   try {
     const response = await client.search<EsWingsDocument>({
       index: getDocumentIndex(spaceId),
+      size: 20,
       query: {
         multi_match: {
           query: q,
@@ -140,7 +142,6 @@ export async function searchDocuments(spaceId: SpaceId, q: string): Promise<Sear
         },
       },
       from: 0,
-      size: 20,
     })
     logger.debug({ message: 'searchDocuments', spaceId: spaceId, q: q, response: response })
     const hits = response.hits.hits
@@ -167,6 +168,7 @@ export async function childDocuments(spaceId: SpaceId, parentId: DocumentId): Pr
   try {
     const response = await client.search<EsWingsDocument>({
       index: getDocumentIndex(spaceId),
+      size: 100,
       query: {
         match: {
           parent_id: parentId,
