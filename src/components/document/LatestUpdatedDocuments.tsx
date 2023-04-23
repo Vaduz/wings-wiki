@@ -1,12 +1,12 @@
 import { Grid, ListItemIcon } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import Link from 'next/link'
-import { documentPath } from '@/components/global/WingsLink'
+import { documentPath, spaceBase } from '@/components/global/WingsLink'
 import React, { useEffect, useState } from 'react'
 import { getLatestDocumentsApi } from '@/lib/api/document'
 import { Space, SpaceId, WingsDocument } from '@/lib/types/es'
 import { useRouter } from 'next/router'
 import TextSnippetIcon from '@mui/icons-material/TextSnippet'
+import HomeIcon from '@mui/icons-material/Home'
 
 const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element => {
   const router = useRouter()
@@ -30,7 +30,19 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
   return (
     <Grid container direction="column" sx={{ my: 2, p: 1, boxShadow: 2 }}>
       <Grid item>
-        <Typography variant="h5" sx={{ my: 1 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            my: 1,
+            display: 'flex',
+            alignItems: 'center',
+            ':hover': { cursor: 'pointer', textDecoration: 'underline' },
+          }}
+          onClick={() => router.push(spaceBase(spaceId)).then()}
+        >
+          <ListItemIcon sx={{ minWidth: '2rem' }}>
+            <HomeIcon />
+          </ListItemIcon>
           {space.name}
         </Typography>
       </Grid>
@@ -54,8 +66,9 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
                 </Typography>
               </Grid>
               <Grid item key={`${document.id}-bottom`}>
-                <Typography variant="subtitle1">{document.updated_at.toString()}</Typography>
-                <Typography variant="subtitle1">{document.author_id}</Typography>
+                <Typography variant="subtitle1">
+                  {document.updated_at.toString()} | {document.author_id}
+                </Typography>
               </Grid>
             </Grid>
           )

@@ -248,7 +248,7 @@ const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
                     signOut().then()
                   }}
                 >
-                  <Typography textAlign="center">logout</Typography>
+                  <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
               </Menu>
             </Box>

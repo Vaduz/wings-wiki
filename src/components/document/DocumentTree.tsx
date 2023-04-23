@@ -8,6 +8,7 @@ import HomeIcon from '@mui/icons-material/Home'
 import FolderIcon from '@mui/icons-material/Folder'
 import TextSnippetIcon from '@mui/icons-material/TextSnippet'
 import AddIcon from '@mui/icons-material/Add'
+import { getSpaceApi } from '@/lib/api/space'
 
 const DocumentTree = ({
   spaceId,
@@ -35,6 +36,7 @@ const DocumentTree = ({
 
 const TraceParent = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: DocumentId }): JSX.Element => {
   const [parent, setParent] = useState<WingsDocument>()
+  const [spaceTitle, setSpaceTitle] = useState('Space Home')
   useEffect(() => {
     if (documentId == '-1') return
     getDocumentApi(spaceId, documentId)
@@ -42,8 +44,17 @@ const TraceParent = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Do
       .catch((err) => console.error(err))
   }, [spaceId, documentId])
 
+  useEffect(() => {
+    getSpaceApi(spaceId)
+      .then((res) => {
+        if (!res) return
+        setSpaceTitle(res.name)
+      })
+      .catch((err) => console.error(err))
+  }, [spaceId])
+
   if (documentId == '-1')
-    return <Item title="Space Home" link={spaceBase(spaceId)} key="root" itemId="root" icon={<HomeIcon />} />
+    return <Item title={spaceTitle} link={spaceBase(spaceId)} key="root" itemId="root" icon={<HomeIcon />} />
   if (!parent) return <div>Loading...</div>
 
   return (

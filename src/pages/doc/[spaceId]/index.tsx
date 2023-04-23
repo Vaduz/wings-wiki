@@ -8,8 +8,7 @@ import DocumentTree from '@/components/document/DocumentTree'
 import LatestUpdatedDocuments from '@/components/document/LatestUpdatedDocuments'
 
 const ListDocuments = () => {
-  const router = useRouter()
-  const spaceId = router.query.spaceId as SpaceId
+  const spaceId = useRouter().query.spaceId as SpaceId
   if (!spaceId) return
 
   return (
@@ -22,7 +21,7 @@ const ListDocuments = () => {
           </Grid>
           <Grid item xs={9} rowSpacing={2}>
             <Typography variant="h2" sx={{ my: 2 }}>
-              Updated recently
+              New updates
             </Typography>
             <LatestUpdatedDocuments spaceId={spaceId} />
           </Grid>

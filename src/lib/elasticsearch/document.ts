@@ -79,11 +79,11 @@ export async function deleteDocument(spaceId: SpaceId, documentId: DocumentId): 
   logger.debug({ message: 'lib/elasticsearch/document deleteDocument()', spaceId: spaceId, documentId: documentId })
 }
 
-export async function getLatestDocuments(spaceId: SpaceId): Promise<WingsDocument[]> {
+export async function getLatestDocuments(spaceId: SpaceId, size: number): Promise<WingsDocument[]> {
   try {
     const response = await client.search<EsWingsDocument>({
       index: getDocumentIndex(spaceId),
-      size: 20,
+      size: size,
       sort: [
         {
           updated_at: {
