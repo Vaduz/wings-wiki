@@ -20,6 +20,7 @@ import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
 import AddIcon from '@mui/icons-material/Add'
 import { getSpaceApi } from '@/lib/api/space'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import AccountTreeIcon from '@mui/icons-material/AccountTree'
 
 const DocumentTree = ({
   spaceId,
@@ -33,7 +34,10 @@ const DocumentTree = ({
   return (
     <>
       <Paper>
-        <Typography variant="h5" sx={{ p: 1 }}>
+        <Typography variant="h5" sx={{ p: 1, display: 'flex', alignItems: 'center' }}>
+          <ListItemIcon sx={{ minWidth: '2.2rem' }}>
+            <AccountTreeIcon />
+          </ListItemIcon>
           Document Tree
         </Typography>
         <List>

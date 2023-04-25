@@ -71,10 +71,7 @@ const SmallProfile = (): JSX.Element => {
         {Array.from(menus).map((menu) => {
           return (
             <ListItem disablePadding key={menu.path}>
-              <ListItemButton
-                onClick={() => router.push(menu.path).then()}
-                selected={router.pathname.startsWith(menu.path)}
-              >
+              <ListItemButton onClick={() => router.push(menu.path).then()} selected={router.pathname === menu.path}>
                 <ListItemIcon>{menu.icon}</ListItemIcon>
                 <ListItemText primary={menu.name} />
               </ListItemButton>
