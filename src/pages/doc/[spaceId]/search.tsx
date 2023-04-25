@@ -1,13 +1,13 @@
 import TopNavi from '../../../components/global/TopNavi'
 import { useRouter } from 'next/router'
-import { SearchDocumentHit, Space, SpaceId } from '@/lib/types/es'
+import { SearchDocumentHit, Space, SpaceId } from '@/lib/types/elasticsearch'
 import React, { useEffect, useState } from 'react'
 import { getSpaceApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
 import { searchDocumentsApi } from '@/lib/api/document'
 import Link from 'next/link'
 import { documentPath } from '@/components/global/WingsLink'
-import { Container, Grid, TextField } from '@mui/material'
+import { CircularProgress, Container, Grid, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
 
 const SearchDocuments = () => {
@@ -24,8 +24,8 @@ const SearchDocuments = () => {
       .finally(() => setLoading(false))
   }, [spaceId])
 
-  if (loading) return <div>Loading...</div>
-  if (!space) return <div>Unauthorized access</div>
+  if (loading) return <CircularProgress />
+  if (!space) return <Typography variant="h4">Unauthorized access</Typography>
 
   return (
     <>

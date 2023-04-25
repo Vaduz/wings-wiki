@@ -1,10 +1,10 @@
 import { NextApiResponse } from 'next'
-import { NextApiRequestWriteSpace } from '@/lib/types/nextApi'
+import { NextApiRequestWriteSpace } from '@/lib/types/nextApiRequest'
 import { updateDocument } from '@/lib/elasticsearch/document'
 import logger from '@/lib/logger/pino'
 import { DocumentResponse } from '@/lib/types/apiResponse'
 import canWriteSpace from '@/lib/middlewares/authenticate/canWriteSpace'
-import { UserId } from '@/lib/types/es'
+import { UserId } from '@/lib/types/elasticsearch'
 
 export async function handler(req: NextApiRequestWriteSpace, res: NextApiResponse<DocumentResponse>) {
   const { method, body } = req

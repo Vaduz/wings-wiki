@@ -1,4 +1,4 @@
-import { Space } from '@/lib/types/es'
+import { Space } from '@/lib/types/elasticsearch'
 import { apiGet, apiPost, apiPut } from '@/lib/api/index'
 import { ApiResponse } from '@/lib/types/apiResponse'
 import { CreateSpaceRequest } from '@/lib/types/apiRequest'

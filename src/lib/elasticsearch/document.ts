@@ -6,7 +6,7 @@ import {
   SpaceId,
   WingsDocument,
   WingsDocumentSearchResult,
-} from '../types/es'
+} from '../types/elasticsearch'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
 import { getDocumentIndex } from '@/lib/utils/elasticsearch'

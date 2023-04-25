@@ -1,4 +1,4 @@
-import { NewSpace, Space, SpaceId, UserId } from '../types/es'
+import { NewSpace, Space, SpaceId, UserId } from '../types/elasticsearch'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
 import { generateSpaceId } from '@/lib/utils/id'

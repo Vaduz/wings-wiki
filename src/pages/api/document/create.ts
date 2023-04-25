@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next'
-import { NextApiRequestWriteSpace } from '@/lib/types/nextApi'
-import { UserId, WingsDocument } from '@/lib/types/es'
+import { NextApiRequestWriteSpace } from '@/lib/types/nextApiRequest'
+import { UserId, WingsDocument } from '@/lib/types/elasticsearch'
 import { createDocument } from '@/lib/elasticsearch/document'
 import logger from '@/lib/logger/pino'
 import { DocumentResponse } from '@/lib/types/apiResponse'

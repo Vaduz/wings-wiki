@@ -1,5 +1,5 @@
 import { NextApiResponse } from 'next'
-import { NextApiRequestReadSpace } from '@/lib/types/nextApi'
+import { NextApiRequestReadSpace } from '@/lib/types/nextApiRequest'
 import logger from '@/lib/logger/pino'
 import { searchDocuments } from '@/lib/elasticsearch/document'
 import { DocumentListResponse } from '@/lib/types/apiResponse'

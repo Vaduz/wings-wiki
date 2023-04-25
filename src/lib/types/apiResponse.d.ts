@@ -1,4 +1,4 @@
-import { SearchDocumentHit, Space, User, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/es'
+import { SearchDocumentHit, Space, User, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/elasticsearch'
 
 export type ApiResponse<T> = {
   data?: T

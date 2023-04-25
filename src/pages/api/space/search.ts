@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Space, UserId } from '@/lib/types/es'
+import { Space, UserId } from '@/lib/types/elasticsearch'
 import logger from '@/lib/logger/pino'
 import { getPublicSpaces, getUserSpaces } from '@/lib/elasticsearch/space'
 import { SpaceListResponse } from '@/lib/types/apiResponse'

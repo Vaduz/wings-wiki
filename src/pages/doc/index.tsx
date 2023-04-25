@@ -1,13 +1,10 @@
 import TopNavi from '@/components/global/TopNavi'
-import { Space } from '@/lib/types/es'
-import Link from 'next/link'
+import { Space } from '@/lib/types/elasticsearch'
 import React, { useEffect, useState } from 'react'
 import { getSpacesApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
-import { spaceBase } from '@/components/global/WingsLink'
-import { Container, Grid } from '@mui/material'
-import Typography from '@mui/material/Typography'
-import { Search } from '@/pages/doc/[spaceId]/search'
+import { CircularProgress, Container, Grid } from '@mui/material'
+import SmallSpaces from '@/components/space/SmallSpaces'
 
 const ListSpaces = (): JSX.Element => {
   const [spaces, setSpaces] = useState<Space[]>()
@@ -17,9 +14,7 @@ const ListSpaces = (): JSX.Element => {
       .catch((e) => logger.error({ message: 'document/index.tsx', error: e }))
   }, [])
 
-  if (!spaces) {
-    return <div>Loading...</div>
-  }
+  if (!spaces) return <CircularProgress />
 
   return (
     <>
@@ -27,19 +22,7 @@ const ListSpaces = (): JSX.Element => {
       <Container>
         <Grid container direction="column">
           <Grid item>
-            <Typography variant="h2">Spaces</Typography>
-          </Grid>
-          <Grid item>
-            <ul>
-              {spaces.map((space) => {
-                return (
-                  <li key={space.id}>
-                    <Link href={spaceBase(space.id)}>{space.name}</Link>
-                    <p>{space.description}</p>
-                  </li>
-                )
-              })}
-            </ul>
+            <SmallSpaces spaces={spaces} />
           </Grid>
         </Grid>
       </Container>

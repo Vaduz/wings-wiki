@@ -1,5 +1,11 @@
 import { apiGet, apiPost, apiPut } from '@/lib/api'
-import { DocumentId, SearchDocumentHit, SpaceId, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/es'
+import {
+  DocumentId,
+  SearchDocumentHit,
+  SpaceId,
+  WingsDocument,
+  WingsDocumentSearchResult,
+} from '@/lib/types/elasticsearch'
 import {
   DocumentHomeResponse,
   DocumentListResponse,

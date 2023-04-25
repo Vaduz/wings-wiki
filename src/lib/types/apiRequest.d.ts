@@ -1,4 +1,4 @@
-import { Mention, UserId } from '@/lib/types/es'
+import { Mention, UserId } from '@/lib/types/elasticsearch'
 
 export interface NewWingsDocumentRequest {
   title: string

@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { documentBase, newDocumentPath, newSpacePath, searchPath, spaceBase } from '@/components/global/WingsLink'
-import { SpaceId } from '@/lib/types/es'
+import { SpaceId } from '@/lib/types/elasticsearch'
 import { useRouter } from 'next/router'
 import MenuIcon from '@mui/icons-material/Menu'
 import {
@@ -20,8 +20,9 @@ import {
 
 const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
   const { data, status } = useSession()
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
+  const isLoggedIn = !!(data && status == 'authenticated')
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
   const router = useRouter()
 
   const handleCloseNavMenu = () => {
@@ -160,6 +161,9 @@ const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
             Wings
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Button href="/" key="Home" onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
+              Home
+            </Button>
             <Button
               href={documentBase}
               key="Spaces"
@@ -207,12 +211,12 @@ const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           </Box>
 
           {/* Avatar */}
-          {(!data || status != 'authenticated') && (
+          {!isLoggedIn && (
             <Button onClick={() => signIn()} color="inherit">
               Login
             </Button>
           )}
-          {data && status == 'authenticated' && (
+          {isLoggedIn && (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

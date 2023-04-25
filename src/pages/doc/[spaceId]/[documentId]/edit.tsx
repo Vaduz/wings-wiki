@@ -4,9 +4,9 @@ import { documentPath } from '@/components/global/WingsLink'
 import TopNavi from '../../../../components/global/TopNavi'
 import { useRouter } from 'next/router'
 import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'
-import { DocumentId, SpaceId, WingsDocument } from '@/lib/types/es'
+import { DocumentId, SpaceId, WingsDocument } from '@/lib/types/elasticsearch'
 import Button from '@mui/material/Button'
-import { Container, ButtonGroup, Grid, TextField } from '@mui/material'
+import { Container, ButtonGroup, Grid, TextField, CircularProgress, Typography } from '@mui/material'
 
 const EditDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -37,7 +37,7 @@ const EditDocument = () => {
     return (
       <>
         <TopNavi />
-        <p>Loading: {documentId}</p>
+        <CircularProgress />
       </>
     )
   }
@@ -46,7 +46,7 @@ const EditDocument = () => {
     return (
       <>
         <TopNavi />
-        <p>Document not found: {documentId}</p>
+        <Typography variant="body1">Document not found: {documentId}</Typography>
       </>
     )
   }
@@ -60,7 +60,7 @@ const EditDocument = () => {
 
   return (
     <>
-      <TopNavi />
+      <TopNavi spaceId={spaceId} />
       <Container>
         <Grid container rowSpacing={2}>
           <Grid item xs={12}>
@@ -77,7 +77,7 @@ const EditDocument = () => {
           </Grid>
           <Grid item xs={12}>
             <Grid container>
-              <Grid item xs={12} sx={{ boxShadow: 2 }}>
+              <Grid item xs={12}>
                 <Editor content={wingsDocument.content} disabled={false} />
               </Grid>
             </Grid>

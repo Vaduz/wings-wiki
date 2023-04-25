@@ -1,11 +1,9 @@
 import React from 'react'
-import { Space } from '@/lib/types/es'
+import { Space } from '@/lib/types/elasticsearch'
 import LatestUpdatedDocuments from '@/components/document/LatestUpdatedDocuments'
 import Typography from '@mui/material/Typography'
 
 const GlobalUpdates = ({ spaces }: { spaces: Space[] }): JSX.Element => {
-  if (!spaces) return <div>Loading...</div>
-
   return (
     <>
       <Typography variant="h4" sx={{ my: 2 }}>

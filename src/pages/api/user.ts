@@ -1,9 +1,9 @@
 import { NextApiResponse } from 'next'
-import { User, UserId } from '@/lib/types/es'
+import { User, UserId } from '@/lib/types/elasticsearch'
 import { getUser, updateUser } from '@/lib/elasticsearch/user'
 import logger from '@/lib/logger/pino'
 import { UserResponse } from '@/lib/types/apiResponse'
-import { NextApiRequestWithToken } from '@/lib/types/nextApi'
+import { NextApiRequestWithToken } from '@/lib/types/nextApiRequest'
 import hasToken from '@/lib/middlewares/authenticate/hasToken'
 
 export async function handler(req: NextApiRequestWithToken, res: NextApiResponse<UserResponse>) {

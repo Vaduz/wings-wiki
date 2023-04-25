@@ -1,14 +1,25 @@
-import { DocumentId, SpaceId, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/es'
-import { Fragment, useEffect, useState } from 'react'
+import { DocumentId, SpaceId, WingsDocument, WingsDocumentSearchResult } from '@/lib/types/elasticsearch'
+import React, { Fragment, useEffect, useState } from 'react'
 import { childDocumentsApi, getDocumentApi } from '@/lib/api/document'
 import { documentPath, newDocumentPath, spaceBase } from '@/components/global/WingsLink'
-import { Collapse, Grid, List, ListItemButton, ListItemIcon, ListItemText, Container, Typography } from '@mui/material'
+import {
+  Collapse,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Container,
+  Typography,
+  Paper,
+  CircularProgress,
+} from '@mui/material'
 import { useRouter } from 'next/router'
 import HomeIcon from '@mui/icons-material/Home'
 import FolderIcon from '@mui/icons-material/Folder'
-import TextSnippetIcon from '@mui/icons-material/TextSnippet'
+import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
 import AddIcon from '@mui/icons-material/Add'
 import { getSpaceApi } from '@/lib/api/space'
+import { ExpandLess, ExpandMore } from '@mui/icons-material'
 
 const DocumentTree = ({
   spaceId,
@@ -21,15 +32,15 @@ const DocumentTree = ({
 }): JSX.Element => {
   return (
     <>
-      <Grid item sx={{ boxShadow: 2 }} p="0.5rem">
-        <Typography variant="h5" gutterBottom>
+      <Paper>
+        <Typography variant="h5" sx={{ p: 1 }}>
           Document Tree
         </Typography>
         <List>
           <TraceParent spaceId={spaceId} documentId={parentId} />
           <DocumentTreeView spaceId={spaceId} parentId={parentId} documentId={documentId} />
         </List>
-      </Grid>
+      </Paper>
     </>
   )
 }
@@ -54,8 +65,8 @@ const TraceParent = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Do
   }, [spaceId])
 
   if (documentId == '-1')
-    return <Item title={spaceTitle} link={spaceBase(spaceId)} key="root" itemId="root" icon={<HomeIcon />} />
-  if (!parent) return <div>Loading...</div>
+    return <Item title={spaceTitle} link={spaceBase(spaceId)} key="root" itemId="root" icon={<HomeIcon />} expand={0} />
+  if (!parent) return <CircularProgress />
 
   return (
     <>
@@ -66,6 +77,7 @@ const TraceParent = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Do
         key={parent.id}
         itemId={parent.id}
         icon={<FolderIcon />}
+        expand={0}
       />
     </>
   )
@@ -98,57 +110,61 @@ const DocumentTreeView = ({
       .catch((err) => console.error(err))
   }, [spaceId, documentId])
 
-  if (!neighbors || !children) return <div>Loading...</div>
-
   return (
     <>
       <Collapse in timeout="auto" unmountOnExit>
         <List component="div" disablePadding key={`${spaceId}-${parentId}-${documentId}`}>
-          {Array.from(neighbors).map((neighbor) => {
-            return (
-              <Fragment key={`fragment-${neighbor.id}`}>
-                <Item
-                  title={neighbor.title}
-                  link={documentPath(spaceId, neighbor.id)}
-                  itemId={neighbor.id}
-                  key={neighbor.id}
-                  icon={<TextSnippetIcon />}
-                />
-                {neighbor.id == documentId && (
-                  <Container>
-                    <Collapse in timeout="auto" unmountOnExit>
-                      <List component="div" disablePadding key={`children-of-${neighbor.id}`}>
-                        {Array.from(children).map((child) => {
-                          return (
-                            <Item
-                              title={child.title}
-                              link={documentPath(spaceId, child.id)}
-                              itemId={child.id}
-                              icon={<TextSnippetIcon />}
-                              key={child.id}
-                            />
-                          )
-                        })}
-                        <Item
-                          title="New Document"
-                          link={newDocumentPath(spaceId, documentId)}
-                          key="New Document in child"
-                          itemId="New Document in child"
-                          icon={<AddIcon />}
-                        />
-                      </List>
-                    </Collapse>
-                  </Container>
-                )}
-              </Fragment>
-            )
-          })}
+          {neighbors &&
+            Array.from(neighbors).map((neighbor) => {
+              return (
+                <Fragment key={`fragment-${neighbor.id}`}>
+                  <Item
+                    title={neighbor.title}
+                    link={documentPath(spaceId, neighbor.id)}
+                    itemId={neighbor.id}
+                    key={neighbor.id}
+                    icon={<TextSnippetOutlinedIcon />}
+                    expand={(neighbor.id == documentId && 1) || 2}
+                  />
+                  {neighbor.id == documentId && (
+                    <Container>
+                      <Collapse in timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding key={`children-of-${neighbor.id}`}>
+                          {children &&
+                            Array.from(children).map((child) => {
+                              return (
+                                <Item
+                                  title={child.title}
+                                  link={documentPath(spaceId, child.id)}
+                                  itemId={child.id}
+                                  icon={<TextSnippetOutlinedIcon />}
+                                  key={child.id}
+                                  expand={0}
+                                />
+                              )
+                            })}
+                          <Item
+                            title="New Document"
+                            link={newDocumentPath(spaceId, documentId)}
+                            key="New Document in child"
+                            itemId="New Document in child"
+                            icon={<AddIcon />}
+                            expand={0}
+                          />
+                        </List>
+                      </Collapse>
+                    </Container>
+                  )}
+                </Fragment>
+              )
+            })}
           <Item
             title="New Document"
             link={newDocumentPath(spaceId, parentId)}
             key="New Document"
             itemId="New Document"
             icon={<AddIcon />}
+            expand={0}
           />
         </List>
       </Collapse>
@@ -161,13 +177,16 @@ const Item = ({
   title,
   link,
   icon,
+  expand,
 }: {
   itemId: string
   title: string
   link: string
   icon: JSX.Element
+  expand: number
 }): JSX.Element => {
   const router = useRouter()
+  const expandEl = expand == 1 ? <ExpandLess /> : expand == 2 ? <ExpandMore /> : undefined
   return (
     <ListItemButton key={`child-${itemId}`} sx={{ py: '0.2rem' }}>
       <ListItemIcon sx={{ minWidth: '2rem' }}>{icon}</ListItemIcon>
@@ -178,6 +197,7 @@ const Item = ({
           router.push(link).then()
         }}
       />
+      {expandEl}
     </ListItemButton>
   )
 }

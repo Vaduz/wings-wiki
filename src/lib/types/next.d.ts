@@ -1,5 +1,5 @@
 import { JWT } from 'next-auth/jwt'
-import { UserId } from '@/lib/types/es'
+import { UserId } from '@/lib/types/elasticsearch'
 
 declare module 'next' {
   export interface NextApiRequest {

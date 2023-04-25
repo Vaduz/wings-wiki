@@ -1,11 +1,11 @@
-import { Grid, ListItemIcon } from '@mui/material'
+import { Card, CardActionArea, CircularProgress, Divider, Grid, ListItemIcon, Paper } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { documentPath, spaceBase } from '@/components/global/WingsLink'
 import React, { useEffect, useState } from 'react'
 import { getLatestDocumentsApi } from '@/lib/api/document'
-import { Space, SpaceId, WingsDocument } from '@/lib/types/es'
+import { Space, SpaceId, WingsDocument } from '@/lib/types/elasticsearch'
 import { useRouter } from 'next/router'
-import TextSnippetIcon from '@mui/icons-material/TextSnippet'
+import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
 import HomeIcon from '@mui/icons-material/Home'
 
 const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element => {
@@ -25,15 +25,14 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
     setLoading(false)
   }, [spaceId])
 
-  if (loading || documents == undefined || !space) return <div>Loading...</div>
+  if (loading || documents == undefined || !space) return <CircularProgress />
 
   return (
-    <Grid container direction="column" sx={{ my: 2, p: 1, boxShadow: 2 }}>
-      <Grid item>
+    <Grid container direction="column" sx={{ my: 2, p: 1 }}>
+      <Grid item my={1}>
         <Typography
           variant="h5"
           sx={{
-            my: 1,
             display: 'flex',
             alignItems: 'center',
             ':hover': { cursor: 'pointer', textDecoration: 'underline' },
@@ -47,32 +46,26 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
         </Typography>
       </Grid>
       <Grid item>
-        {documents.length == 0 && <div>No documents</div>}
-        {documents.map((document) => {
-          return (
-            <Grid
-              key={document.id}
-              container
-              direction="column"
-              sx={{ my: 1, p: 1, boxShadow: 1, '&:hover': { boxShadow: 4, cursor: 'pointer' } }}
-              onClick={() => router.push(documentPath(spaceId, document.id)).then()}
-            >
-              <Grid item key={document.id}>
-                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
-                  <ListItemIcon sx={{ minWidth: '2rem' }}>
-                    <TextSnippetIcon />
-                  </ListItemIcon>
-                  {document.title}
-                </Typography>
-              </Grid>
-              <Grid item key={`${document.id}-bottom`}>
-                <Typography variant="subtitle1">
-                  {document.updated_at.toString()} | {document.author_id}
-                </Typography>
-              </Grid>
-            </Grid>
-          )
-        })}
+        <Grid container ml={2}>
+          {documents.length == 0 && <Typography variant="body1">No documents</Typography>}
+          {documents.map((document) => {
+            return (
+              <Card key={document.id} sx={{ my: 1, width: '100%' }}>
+                <CardActionArea onClick={() => router.push(documentPath(spaceId, document.id)).then()} sx={{ p: 1 }}>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
+                    <ListItemIcon sx={{ minWidth: '2rem' }}>
+                      <TextSnippetOutlinedIcon />
+                    </ListItemIcon>
+                    {document.title}
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    {document.updated_at.toString()} | {document.author_id}
+                  </Typography>
+                </CardActionArea>
+              </Card>
+            )
+          })}
+        </Grid>
       </Grid>
     </Grid>
   )

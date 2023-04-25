@@ -1,8 +1,8 @@
 import { NextApiResponse } from 'next'
-import { Space, UserId } from '@/lib/types/es'
+import { Space, UserId } from '@/lib/types/elasticsearch'
 import { getSpace, updateSpace } from '@/lib/elasticsearch/space'
 import logger from '@/lib/logger/pino'
-import { NextApiRequestReadSpace } from '@/lib/types/nextApi'
+import { NextApiRequestReadSpace } from '@/lib/types/nextApiRequest'
 import { SpaceResponse } from '@/lib/types/apiResponse'
 import canReadSpace from '@/lib/middlewares/authenticate/canReadSpace'
 

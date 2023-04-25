@@ -3,11 +3,11 @@ import { Editor } from '@/components/editor/editor'
 import { documentEditPath } from '@/components/global/WingsLink'
 import TopNavi from '../../../components/global/TopNavi'
 import { useRouter } from 'next/router'
-import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/es'
+import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/elasticsearch'
 import { getDocumentApi } from '@/lib/api/document'
 import DocumentTree from '@/components/document/DocumentTree'
 import Button from '@mui/material/Button'
-import { Container, Grid } from '@mui/material'
+import { CircularProgress, Container, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 
 const ViewDocument = () => {
@@ -29,15 +29,13 @@ const ViewDocument = () => {
     setLoading(false)
   }, [spaceId, documentId])
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
+  if (loading) return <CircularProgress />
 
   if (!wingsDocument) {
     return (
       <>
         <TopNavi spaceId={spaceId} />
-        <div>Document not found: {documentId}</div>
+        <Typography variant="body1">Document not found: {documentId}</Typography>
       </>
     )
   }
@@ -47,16 +45,14 @@ const ViewDocument = () => {
       <TopNavi spaceId={spaceId} />
       <Container>
         <Grid container spacing={2}>
-          <Grid item xs={3} my="1rem">
+          <Grid item xs={4} my="1rem">
             <DocumentTree spaceId={spaceId} parentId={wingsDocument.parent_id} documentId={wingsDocument.id} />
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={8}>
             <Grid item xs={12} my="1rem">
-              <Typography variant="h3" gutterBottom>
-                {wingsDocument.title || ''}
-              </Typography>
+              <Typography variant="h3">{wingsDocument.title || ''}</Typography>
             </Grid>
-            <Grid item xs={12} sx={{ boxShadow: 2 }}>
+            <Grid item xs={12}>
               <Editor content={wingsDocument.content} disabled={true} />
             </Grid>
             <Grid item xs={12} display="flex" justifyContent="flex-end" py="1rem">

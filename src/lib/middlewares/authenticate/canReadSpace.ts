@@ -1,7 +1,7 @@
 import { NextApiResponse } from 'next'
-import { NextApiRequestReadSpace } from '@/lib/types/nextApi'
+import { NextApiRequestReadSpace } from '@/lib/types/nextApiRequest'
 import logger from '@/lib/logger/pino'
-import { UserId } from '@/lib/types/es'
+import { UserId } from '@/lib/types/elasticsearch'
 import { getSpace } from '@/lib/elasticsearch/space'
 import { getToken } from 'next-auth/jwt'
 

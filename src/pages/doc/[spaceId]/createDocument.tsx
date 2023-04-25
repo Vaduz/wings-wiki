@@ -5,8 +5,8 @@ import TopNavi from '../../../components/global/TopNavi'
 import { Editor } from '@/components/editor/editor'
 import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'
-import { DocumentId, Mention, SpaceId } from '@/lib/types/es'
-import { Container, Button, ButtonGroup, Grid, TextField } from '@mui/material'
+import { DocumentId, Mention, SpaceId } from '@/lib/types/elasticsearch'
+import { Container, Button, ButtonGroup, Grid, TextField, Paper, Typography } from '@mui/material'
 
 const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [title, setTitle] = useState<string>('')
@@ -41,19 +41,24 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
       <Container>
         <Grid container rowSpacing={2}>
           <Grid item xs={12}>
-            <TextField
-              id="title"
-              label="Title"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              sx={{ boxShadow: 2 }}
-              onChange={(e) => setTitle(e.currentTarget.value)}
-            />
+            <Typography variant="h2" sx={{ mt: 2 }}>
+              New Document
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Paper>
+              <TextField
+                id="title"
+                label="Title"
+                variant="outlined"
+                fullWidth
+                onChange={(e) => setTitle(e.currentTarget.value)}
+              />
+            </Paper>
           </Grid>
           <Grid item xs={12}>
             <Grid container>
-              <Grid item xs={12} sx={{ boxShadow: 2 }}>
+              <Grid item xs={12}>
                 <Editor content={props.content ?? ''} disabled={false} />
               </Grid>
             </Grid>

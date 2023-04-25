@@ -1,9 +1,9 @@
 import React from 'react'
-import { DocumentId, SpaceId } from '@/lib/types/es'
+import { DocumentId, SpaceId } from '@/lib/types/elasticsearch'
 
 export const documentBase = '/doc'
 
-export const newSpacePath = `${documentBase}/new`
+export const newSpacePath = `${documentBase}/createSpace`
 
 export const spaceBase = (spaceId: SpaceId) => {
   return `${documentBase}/${spaceId}`
@@ -15,7 +15,7 @@ export const searchPath = (spaceId: SpaceId) => {
 
 export const newDocumentPath = (spaceId: SpaceId, parentId?: DocumentId) => {
   parentId ??= '-1'
-  return `${spaceBase(spaceId)}/new?parentId=${parentId}`
+  return `${spaceBase(spaceId)}/createDocument?parentId=${parentId}`
 }
 
 export const documentPath = (spaceId: SpaceId, documentId: DocumentId) => {
