@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Editor } from '@/components/editor/editor'
 import { documentEditPath } from '@/components/global/WingsLink'
 import TopNavi from '../../../components/global/TopNavi'
@@ -9,6 +9,7 @@ import DocumentTree from '@/components/document/DocumentTree'
 import Button from '@mui/material/Button'
 import { CircularProgress, Container, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
+import { addVisitedDocumentHistory } from '@/lib/localStorage/history'
 
 const ViewDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -24,10 +25,14 @@ const ViewDocument = () => {
     }
     setLoading(true)
     getDocumentApi(spaceId, documentId)
-      .then((res) => setWingsDocument(res))
+      .then((res) => {
+        if (!res) return
+        setWingsDocument(res)
+        addVisitedDocumentHistory({ url: router.asPath, title: res.title })
+      })
       .catch((err) => console.error(err))
     setLoading(false)
-  }, [spaceId, documentId])
+  }, [spaceId, documentId, router.asPath])
 
   if (loading) return <CircularProgress />
 

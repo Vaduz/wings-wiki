@@ -35,7 +35,7 @@ const Home: NextPage = () => {
           <Grid item xs={8}>
             <Grid container>
               <Grid item xs={12} my={1}>
-                <Typography variant="h2">Overview</Typography>
+                <Typography variant="h2">Timeline</Typography>
               </Grid>
               <Grid item xs={12}>
                 <GlobalUpdates spaces={spaces} />

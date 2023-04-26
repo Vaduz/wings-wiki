@@ -4,7 +4,7 @@ import { documentBase, spaceBase } from '@/components/global/WingsLink'
 import { useRouter } from 'next/router'
 import Typography from '@mui/material/Typography'
 import React from 'react'
-import HomeIcon from '@mui/icons-material/Home'
+import WorkspacesIcon from '@mui/icons-material/Workspaces'
 
 const SmallSpaces = ({ spaces }: { spaces: Space[] }): JSX.Element => {
   const router = useRouter()
@@ -32,7 +32,7 @@ const SmallSpaces = ({ spaces }: { spaces: Space[] }): JSX.Element => {
                   }}
                 >
                   <ListItemIcon sx={{ minWidth: '2rem' }}>
-                    <HomeIcon />
+                    <WorkspacesIcon />
                   </ListItemIcon>
                   {space.name}
                 </Typography>

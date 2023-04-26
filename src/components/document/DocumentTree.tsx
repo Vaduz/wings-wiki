@@ -14,7 +14,7 @@ import {
   CircularProgress,
 } from '@mui/material'
 import { useRouter } from 'next/router'
-import HomeIcon from '@mui/icons-material/Home'
+import WorkspacesIcon from '@mui/icons-material/Workspaces'
 import FolderIcon from '@mui/icons-material/Folder'
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
 import AddIcon from '@mui/icons-material/Add'
@@ -34,7 +34,7 @@ const DocumentTree = ({
   return (
     <>
       <Paper>
-        <Typography variant="h5" sx={{ p: 1, display: 'flex', alignItems: 'center' }}>
+        <Typography variant="h6" sx={{ p: 1, display: 'flex', alignItems: 'center' }}>
           <ListItemIcon sx={{ minWidth: '2.2rem' }}>
             <AccountTreeIcon />
           </ListItemIcon>
@@ -69,7 +69,16 @@ const TraceParent = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Do
   }, [spaceId])
 
   if (documentId == '-1')
-    return <Item title={spaceTitle} link={spaceBase(spaceId)} key="root" itemId="root" icon={<HomeIcon />} expand={0} />
+    return (
+      <Item
+        title={spaceTitle}
+        link={spaceBase(spaceId)}
+        key="root"
+        itemId="root"
+        icon={<WorkspacesIcon />}
+        expand={0}
+      />
+    )
   if (!parent) return <CircularProgress />
 
   return (

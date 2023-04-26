@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import LogoutIcon from '@mui/icons-material/Logout'
+import HomeIcon from '@mui/icons-material/Home'
 import {
   AppBar,
   Box,
@@ -23,11 +24,11 @@ import {
 } from '@mui/material'
 import { getSpacesApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
-import HomeIcon from '@mui/icons-material/Home'
+import WorkspacesIcon from '@mui/icons-material/Workspaces'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import AddIcon from '@mui/icons-material/Add'
-import BusinessIcon from '@mui/icons-material/Business'
+import ViewTimelineOutlinedIcon from '@mui/icons-material/ViewTimelineOutlined'
 import RestoreIcon from '@mui/icons-material/Restore'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import { Check } from '@mui/icons-material'
@@ -88,11 +89,13 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
   }, [spaceId])
   const [anchorElHome, setAnchorElHome] = useState<null | HTMLElement>(null)
   const [anchorElSpace, setAnchorElSpace] = useState<null | HTMLElement>(null)
+  const [anchorElDocument, setAnchorElDocument] = useState<null | HTMLElement>(null)
 
   return (
     <>
       <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
         <Button key="Home" onClick={(e) => setAnchorElHome(e.currentTarget)} sx={{ my: 2, color: 'white' }}>
+          <HomeIcon sx={{ mr: '0.2rem' }} />
           Home
           <ChevronRightIcon sx={{ transform: 'rotate(90deg)' }} />
         </Button>
@@ -121,9 +124,9 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           >
             <Typography sx={{ display: 'flex', alignItems: 'center' }}>
               <ListItemIcon>
-                <BusinessIcon />
+                <ViewTimelineOutlinedIcon />
               </ListItemIcon>
-              Overview
+              Timeline
             </Typography>
           </MenuItem>
           <MenuItem
@@ -170,13 +173,12 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           </MenuItem>
         </Menu>
         <Button key="Spaces" onClick={(e) => setAnchorElSpace(e.currentTarget)} sx={{ my: 2, color: 'white' }}>
-          {(mySpace && (
+          {
             <>
-              <HomeIcon sx={{ mr: '0.2rem' }} />
-              {mySpace.name}
+              <WorkspacesIcon sx={{ mr: '0.4rem' }} />
+              {(mySpace && mySpace.name) || 'Space'}
             </>
-          )) ||
-            'Space'}
+          }
           <ChevronRightIcon sx={{ transform: 'rotate(90deg)' }} />
         </Button>
         <Menu
@@ -202,7 +204,7 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               setAnchorElSpace(null)
             }}
           >
-            <Typography textAlign="center">All spaces</Typography>
+            <Typography>All spaces</Typography>
           </MenuItem>
           <Divider key="space-mangement" />
           {spaces &&
@@ -216,7 +218,7 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
                   }}
                 >
                   <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-                    <ListItemIcon>{(space.id == spaceId && <Check />) || <HomeIcon />}</ListItemIcon>
+                    <ListItemIcon>{(space.id == spaceId && <Check />) || <WorkspacesIcon />}</ListItemIcon>
                     {space.name}
                   </Typography>
                 </MenuItem>
@@ -233,7 +235,7 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
             <ListItemIcon>
               <AddIcon />
             </ListItemIcon>
-            <Typography textAlign="center">New Space</Typography>
+            <Typography>New Space</Typography>
           </MenuItem>
         </Menu>
         {spaceId && (
@@ -253,6 +255,64 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               <SearchOutlinedIcon sx={{ mr: '0.2rem' }} />
               Search
             </Button>
+          </>
+        )}
+        {!spaceId && spaces && (
+          <>
+            <Button
+              key="New Document"
+              onClick={(e) => {
+                setAnchorElDocument(e.currentTarget)
+              }}
+              sx={{ my: 2, color: 'white' }}
+            >
+              <EditOutlinedIcon sx={{ mr: '0.2rem' }} />
+              New Document
+              <ChevronRightIcon sx={{ transform: 'rotate(90deg)' }} />
+            </Button>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="document-menu-appbar"
+              anchorEl={anchorElDocument}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElDocument)}
+              onClose={() => setAnchorElDocument(null)}
+            >
+              <Divider key="new-document-divider">
+                <Typography variant="body2">SELECT TARGET SPACE</Typography>
+              </Divider>
+              {Array.from(spaces).map((space) => {
+                return (
+                  <MenuItem
+                    key={`document-menu-${space.id}`}
+                    onClick={() => {
+                      router.push(newDocumentPath(space.id)).then()
+                      setAnchorElDocument(null)
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <ListItemIcon>
+                        <WorkspacesIcon sx={{ mr: '0.4rem' }} />
+                      </ListItemIcon>
+                      {space.name}
+                    </Typography>
+                  </MenuItem>
+                )
+              })}
+            </Menu>
           </>
         )}
       </Box>
@@ -296,13 +356,13 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           }}
         >
           <MenuItem
-            key="home-overview"
+            key="home-timeline"
             onClick={() => {
               setAnchorElNav(null)
               router.push('/').then()
             }}
           >
-            <Typography textAlign="center">Home</Typography>
+            <Typography>Home</Typography>
           </MenuItem>
           <MenuItem
             key="home-edited"
@@ -311,7 +371,7 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               router.push('/edited').then()
             }}
           >
-            <Typography textAlign="center">Edited</Typography>
+            <Typography>Edited</Typography>
           </MenuItem>
           <MenuItem
             key="home-visited"
@@ -320,7 +380,7 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               router.push('/visited').then()
             }}
           >
-            <Typography textAlign="center">Visited History</Typography>
+            <Typography>Visited History</Typography>
           </MenuItem>
           <MenuItem
             key="home-starred"
@@ -329,7 +389,7 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               router.push('/starred').then()
             }}
           >
-            <Typography textAlign="center">Starred</Typography>
+            <Typography>Starred</Typography>
           </MenuItem>
           <Divider key="home-divider" />
           {/* TODO Add space list */}
@@ -340,7 +400,7 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               router.push(documentBase).then()
             }}
           >
-            <Typography textAlign="center">Spaces</Typography>
+            <Typography>Spaces</Typography>
           </MenuItem>
           <MenuItem
             key="New Space"
@@ -349,7 +409,7 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               router.push(newSpacePath).then()
             }}
           >
-            <Typography textAlign="center">New Space</Typography>
+            <Typography>New Space</Typography>
           </MenuItem>
           {spaceId && [
             <Divider key="space-divider" />,
@@ -360,7 +420,7 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
                 router.push(spaceBase(spaceId)).then()
               }}
             >
-              <Typography textAlign="center">Documents</Typography>
+              <Typography>Documents</Typography>
             </MenuItem>,
             <MenuItem
               key="New Document"
@@ -369,7 +429,7 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
                 router.push(newDocumentPath(spaceId)).then()
               }}
             >
-              <Typography textAlign="center">New Document</Typography>
+              <Typography>New Document</Typography>
             </MenuItem>,
             <Divider key="document-divider" />,
             <MenuItem
@@ -379,7 +439,7 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
                 router.push(searchPath(spaceId)).then()
               }}
             >
-              <Typography textAlign="center">Search</Typography>
+              <Typography>Search</Typography>
             </MenuItem>,
           ]}
         </Menu>
@@ -422,11 +482,11 @@ const UserMenu = (): JSX.Element => {
             open={Boolean(anchorElUser)}
             onClose={() => setAnchorElUser(null)}
           >
-            <MenuItem key="name">
-              <Typography textAlign="center">{data?.user?.name}</Typography>
+            <MenuItem key="name" disabled>
+              <Typography>{data?.user?.name}</Typography>
             </MenuItem>
-            <MenuItem key="email">
-              <Typography textAlign="center">{data?.user?.email}</Typography>
+            <MenuItem key="email" disabled>
+              <Typography>{data?.user?.email}</Typography>
             </MenuItem>
             <Divider key="logout-divider" />
             <MenuItem
@@ -437,7 +497,7 @@ const UserMenu = (): JSX.Element => {
               }}
             >
               <LogoutIcon sx={{ mr: 1 }} />
-              <Typography textAlign="center">Logout</Typography>
+              <Typography>Logout</Typography>
             </MenuItem>
           </Menu>
         </Box>

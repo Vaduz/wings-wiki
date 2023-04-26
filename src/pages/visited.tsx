@@ -2,12 +2,13 @@ import TopNavi from '@/components/global/TopNavi'
 import { Container, Grid, ListItemIcon, Typography } from '@mui/material'
 import SmallProfile from '@/components/profile/SmallProfile'
 import React, { NextPage } from 'next'
-import HandymanIcon from '@mui/icons-material/Handyman'
 import SmallSpaces from '@/components/space/SmallSpaces'
 import { useEffect, useState } from 'react'
 import { Space } from '@/lib/types/elasticsearch'
 import { getSpacesApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
+import { getVisitedHistory } from '@/lib/localStorage/history'
+import { VisitedDocumentHistory } from '@/lib/types/localStorage'
 
 const Visited: NextPage = () => {
   const [spaces, setSpaces] = useState<Space[]>([])
@@ -15,6 +16,11 @@ const Visited: NextPage = () => {
     getSpacesApi()
       .then((r) => setSpaces(r))
       .catch((e) => logger.error({ message: 'GlobalUpdates', error: e }))
+  }, [])
+
+  const [histories, setHistories] = useState<VisitedDocumentHistory[]>([])
+  useEffect(() => {
+    setHistories(getVisitedHistory())
   }, [])
 
   return (
@@ -37,9 +43,21 @@ const Visited: NextPage = () => {
               <Grid item xs={12} my={1}>
                 <Typography variant="h2">Visited History</Typography>
               </Grid>
-              <ListItemIcon>
-                <HandymanIcon sx={{ width: 128, height: 128 }} />
-              </ListItemIcon>
+              {histories.length == 0 && (
+                <Grid item xs={12}>
+                  <Typography>No history</Typography>
+                </Grid>
+              )}
+              {histories.length > 0 &&
+                Array.from(histories).map((history) => {
+                  return (
+                    <Grid item xs={12} key={`grid-${history.timestamp.toString()}`}>
+                      <Typography variant="body1" key={`typography-${history.timestamp.toString()}`}>
+                        {history.title} | {new Date(history.timestamp).toLocaleString()} | {history.url}
+                      </Typography>
+                    </Grid>
+                  )
+                })}
             </Grid>
           </Grid>
         </Grid>

@@ -6,7 +6,7 @@ import { getLatestDocumentsApi } from '@/lib/api/document'
 import { Space, SpaceId, WingsDocument } from '@/lib/types/elasticsearch'
 import { useRouter } from 'next/router'
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
-import HomeIcon from '@mui/icons-material/Home'
+import WorkspacesIcon from '@mui/icons-material/Workspaces'
 
 const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element => {
   const router = useRouter()
@@ -40,7 +40,7 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
           onClick={() => router.push(spaceBase(spaceId)).then()}
         >
           <ListItemIcon sx={{ minWidth: '2rem' }}>
-            <HomeIcon />
+            <WorkspacesIcon />
           </ListItemIcon>
           {space.name}
         </Typography>
@@ -58,8 +58,8 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
                     </ListItemIcon>
                     {document.title}
                   </Typography>
-                  <Typography variant="subtitle1">
-                    {document.updated_at.toString()} | {document.author_id}
+                  <Typography variant="body2" textAlign="right" color="gray">
+                    {new Date(document.updated_at).toLocaleString()}
                   </Typography>
                 </CardActionArea>
               </Card>

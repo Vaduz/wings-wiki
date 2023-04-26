@@ -15,16 +15,16 @@ import {
 import { signIn, useSession } from 'next-auth/react'
 import RestoreIcon from '@mui/icons-material/Restore'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
-import BusinessIcon from '@mui/icons-material/Business'
+import ViewTimelineOutlinedIcon from '@mui/icons-material/ViewTimelineOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import { useRouter } from 'next/router'
 import React from 'react'
 
 const menus = [
   {
-    name: 'Overview',
+    name: 'Timeline',
     path: '/',
-    icon: <BusinessIcon />,
+    icon: <ViewTimelineOutlinedIcon />,
   },
   {
     name: 'Edited',
