@@ -1,12 +1,12 @@
-import { Card, CardActionArea, CircularProgress, Divider, Grid, ListItemIcon, Paper } from '@mui/material'
+import { CircularProgress, Grid, ListItemIcon } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { documentPath, spaceBase } from '@/components/global/WingsLink'
+import { spaceBase } from '@/components/global/WingsLink'
 import React, { useEffect, useState } from 'react'
 import { getLatestDocumentsApi } from '@/lib/api/document'
 import { Space, SpaceId, WingsDocument } from '@/lib/types/elasticsearch'
 import { useRouter } from 'next/router'
-import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
 import WorkspacesIcon from '@mui/icons-material/Workspaces'
+import DocumentCard from '@/components/document/DocumentCard'
 
 const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element => {
   const router = useRouter()
@@ -50,19 +50,13 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
           {documents.length == 0 && <Typography variant="body1">No documents</Typography>}
           {documents.map((document) => {
             return (
-              <Card key={document.id} sx={{ my: 1, width: '100%' }}>
-                <CardActionArea onClick={() => router.push(documentPath(spaceId, document.id)).then()} sx={{ p: 1 }}>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
-                    <ListItemIcon sx={{ minWidth: '2rem' }}>
-                      <TextSnippetOutlinedIcon />
-                    </ListItemIcon>
-                    {document.title}
-                  </Typography>
-                  <Typography variant="body2" textAlign="right" color="gray">
-                    {new Date(document.updated_at).toLocaleString()}
-                  </Typography>
-                </CardActionArea>
-              </Card>
+              <DocumentCard
+                key={`${spaceId}-${document.id}`}
+                spaceId={spaceId}
+                documentId={document.id}
+                title={document.title}
+                date={new Date(document.updated_at)}
+              />
             )
           })}
         </Grid>

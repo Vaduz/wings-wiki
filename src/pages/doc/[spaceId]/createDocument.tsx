@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'
 import { DocumentId, Mention, SpaceId } from '@/lib/types/elasticsearch'
 import { Container, Button, ButtonGroup, Grid, TextField, Paper, Typography } from '@mui/material'
+import { addEditedDocumentHistory } from '@/lib/localStorage/history'
 
 const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [title, setTitle] = useState<string>('')
@@ -16,21 +17,21 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const spaceId = router.query.spaceId as SpaceId
   const parentId = router.query.parentId ? (router.query.parentId as DocumentId) : '-1'
 
-  const createButtonHandler = (title: string = '', content: string = '') => {
-    console.log(`Creating new document: ${title}, ${content}`)
+  const createButtonHandler = () => {
     const newWingsDocument = {
       title: title,
-      content: content,
+      content: document.getElementsByClassName('ck-content').item(0)?.innerHTML ?? '',
       parent_id: parentId,
       mentions: mentions,
       tags: tags,
     }
     createDocumentApi(newWingsDocument, spaceId)
-      .then((r) =>
+      .then((r) => {
+        addEditedDocumentHistory({ spaceId: spaceId, documentId: r?.id ?? '', title: title, action: 'create' })
         router
           .push(r ? documentPath(spaceId, r.id) : spaceBase(spaceId))
           .catch((err) => console.error('Redirect error', err))
-      )
+      })
       .catch((err) => console.error('createDocumentApi error', err))
       .finally(() => console.log(new Date().toISOString(), ' Redirected'))
   }
@@ -65,12 +66,7 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
           </Grid>
           <Grid item xs={12} display="flex" justifyContent="flex-end">
             <ButtonGroup variant="text" aria-label="text button group">
-              <Button
-                variant="contained"
-                onClick={() =>
-                  createButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
-                }
-              >
+              <Button variant="contained" onClick={createButtonHandler}>
                 Publish
               </Button>
               <Button variant="text" href={spaceBase(spaceId)}>

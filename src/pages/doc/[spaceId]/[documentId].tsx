@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Editor } from '@/components/editor/editor'
 import { documentEditPath } from '@/components/global/WingsLink'
 import TopNavi from '../../../components/global/TopNavi'
@@ -28,11 +28,11 @@ const ViewDocument = () => {
       .then((res) => {
         if (!res) return
         setWingsDocument(res)
-        addVisitedDocumentHistory({ url: router.asPath, title: res.title })
+        addVisitedDocumentHistory({ spaceId: spaceId, documentId: documentId, title: res.title })
       })
       .catch((err) => console.error(err))
     setLoading(false)
-  }, [spaceId, documentId, router.asPath])
+  }, [spaceId, documentId])
 
   if (loading) return <CircularProgress />
 

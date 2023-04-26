@@ -7,6 +7,7 @@ import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'
 import { DocumentId, SpaceId, WingsDocument } from '@/lib/types/elasticsearch'
 import Button from '@mui/material/Button'
 import { Container, ButtonGroup, Grid, TextField, CircularProgress, Typography } from '@mui/material'
+import { addEditedDocumentHistory } from '@/lib/localStorage/history'
 
 const EditDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -51,10 +52,10 @@ const EditDocument = () => {
     )
   }
 
-  const updateButtonHandler = (title: string = '', content: string = '') => {
-    // console.log(`Updating document: ${title}, ${content}`)
+  const updateButtonHandler = () => {
+    addEditedDocumentHistory({ spaceId: spaceId, documentId: wingsDocument.id, title: title, action: 'update' })
     wingsDocument.title = title
-    wingsDocument.content = content
+    wingsDocument.content = document.getElementsByClassName('ck-content').item(0)?.innerHTML ?? ''
     updateDocumentApi(wingsDocument, spaceId).then(() => router.push(documentPath(spaceId, wingsDocument.id)))
   }
 
@@ -84,12 +85,7 @@ const EditDocument = () => {
           </Grid>
           <Grid item xs={12} display="flex" justifyContent="flex-end">
             <ButtonGroup variant="text" aria-label="text button grou">
-              <Button
-                variant="contained"
-                onClick={() =>
-                  updateButtonHandler(title, document.getElementsByClassName('ck-content').item(0)?.innerHTML)
-                }
-              >
+              <Button variant="contained" onClick={updateButtonHandler}>
                 Update
               </Button>
               <Button variant="text" href={documentPath(spaceId, documentId)}>

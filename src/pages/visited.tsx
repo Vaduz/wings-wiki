@@ -1,5 +1,5 @@
 import TopNavi from '@/components/global/TopNavi'
-import { Container, Grid, ListItemIcon, Typography } from '@mui/material'
+import { Container, Grid, Typography } from '@mui/material'
 import SmallProfile from '@/components/profile/SmallProfile'
 import React, { NextPage } from 'next'
 import SmallSpaces from '@/components/space/SmallSpaces'
@@ -9,6 +9,7 @@ import { getSpacesApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
 import { getVisitedHistory } from '@/lib/localStorage/history'
 import { VisitedDocumentHistory } from '@/lib/types/localStorage'
+import DocumentCard from '@/components/document/DocumentCard'
 
 const Visited: NextPage = () => {
   const [spaces, setSpaces] = useState<Space[]>([])
@@ -51,11 +52,13 @@ const Visited: NextPage = () => {
               {histories.length > 0 &&
                 Array.from(histories).map((history) => {
                   return (
-                    <Grid item xs={12} key={`grid-${history.timestamp.toString()}`}>
-                      <Typography variant="body1" key={`typography-${history.timestamp.toString()}`}>
-                        {history.title} | {new Date(history.timestamp).toLocaleString()} | {history.url}
-                      </Typography>
-                    </Grid>
+                    <DocumentCard
+                      key={`${history.spaceId}-${history.documentId}`}
+                      spaceId={history.spaceId}
+                      documentId={history.documentId}
+                      title={history.title}
+                      date={new Date(history.timestamp)}
+                    />
                   )
                 })}
             </Grid>

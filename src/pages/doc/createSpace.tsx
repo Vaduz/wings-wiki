@@ -65,7 +65,7 @@ const NewSpace = (): JSX.Element => {
             </Paper>
           </Grid>
           <Grid item>
-            <Button variant="contained" onClick={() => createButtonHandler()}>
+            <Button variant="contained" onClick={createButtonHandler}>
               Create
             </Button>
           </Grid>

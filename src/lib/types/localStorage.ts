@@ -1,13 +1,18 @@
+import { DocumentId, SpaceId } from '@/lib/types/elasticsearch'
+
 export interface HistoryBase {
   timestamp: Date
 }
 
 export interface VisitedDocumentHistory extends HistoryBase {
-  url: string
+  spaceId: SpaceId
+  documentId: DocumentId
   title: string
 }
 
 export interface EditedDocumentHistory extends HistoryBase {
-  url: string
+  spaceId: SpaceId
+  documentId: DocumentId
   title: string
+  action: string
 }
