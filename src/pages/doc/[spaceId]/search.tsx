@@ -66,30 +66,41 @@ export const Search = ({ space }: { space: Space }): JSX.Element => {
         />
       </Grid>
       <Grid item xs={12}>
-        <SearchHits hits={hits} spaceId={space.id} />
+        <SearchHits hits={hits} space={space} />
       </Grid>
     </Grid>
   )
 }
 
-const SearchHits = ({ hits, spaceId }: { hits: SearchDocumentHit[]; spaceId: SpaceId }): JSX.Element => {
+const SearchHits = ({ hits, space }: { hits: SearchDocumentHit[]; space: Space }): JSX.Element => {
   return (
     <Grid container direction="column" rowSpacing={2}>
       {Array.from(hits).map((hit) => {
         return (
           <Grid item key={`hit-${hit.document.id}`}>
             <Card key={`card-${hit.document.id}`}>
-              <CardActionArea href={documentPath(spaceId, hit.document.id)} sx={{ p: 1 }}>
+              <CardActionArea href={documentPath(space.id, hit.document.id)} sx={{ p: 1 }}>
                 <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
                   <ListItemIcon sx={{ minWidth: '2rem' }}>
                     <TextSnippetOutlinedIcon />
                   </ListItemIcon>
                   {hit.document.title}
                 </Typography>
-                <div dangerouslySetInnerHTML={{ __html: hit.highlight?.content.join('') ?? '' }}></div>
-                <Typography variant="body2" textAlign="right" color="gray">
-                  {new Date(hit.document.updated_at).toLocaleString()}
-                </Typography>
+                <Container>
+                  <div dangerouslySetInnerHTML={{ __html: hit.highlight?.content.join('') ?? '' }}></div>
+                </Container>
+                <Grid container columnSpacing={1} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Grid item>
+                    <Typography variant="body2" textAlign="right" color="gray">
+                      {space.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2" textAlign="right" color="gray">
+                      {new Date(hit.document.updated_at).toLocaleString()}
+                    </Typography>
+                  </Grid>
+                </Grid>
               </CardActionArea>
             </Card>
           </Grid>
