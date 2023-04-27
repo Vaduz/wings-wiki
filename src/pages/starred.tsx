@@ -7,7 +7,7 @@ const Starred: NextPage = () => {
   return (
     <Layout menuNames={['smallProfile', 'smallSpaces']}>
       <Grid container>
-        <Grid item xs={12} my={1}>
+        <Grid item xs={12}>
           <Typography variant="h2">Starred Documents</Typography>
         </Grid>
         <ListItemIcon>

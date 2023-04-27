@@ -7,7 +7,7 @@ const ListSpaces = (): JSX.Element => {
   return (
     <Layout menuNames={['smallProfile']}>
       <Grid container>
-        <Grid item xs={12} my={1}>
+        <Grid item xs={12}>
           <Typography variant="h2">Spaces</Typography>
         </Grid>
         <Grid item xs={12}>

@@ -15,9 +15,9 @@ const ListDocuments = () => {
     <Layout menu={<DocumentTree parentId={'-1'} />}>
       <Grid container>
         <Grid item xs={12}>
-          <Typography variant="h2" sx={{ my: 2 }}>
-            New updates
-          </Typography>
+          <Typography variant="h2">New updates</Typography>
+        </Grid>
+        <Grid item xs={12}>
           <LatestUpdatedDocuments spaceId={spaceId} />
         </Grid>
       </Grid>

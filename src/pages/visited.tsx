@@ -15,7 +15,7 @@ const Visited: NextPage = () => {
   return (
     <Layout menuNames={['smallProfile', 'smallSpaces']}>
       <Grid container>
-        <Grid item xs={12} my={1}>
+        <Grid item xs={12}>
           <Typography variant="h2">Visited History</Typography>
         </Grid>
         {histories.length == 0 && (

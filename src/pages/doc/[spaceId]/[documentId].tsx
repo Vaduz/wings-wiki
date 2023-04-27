@@ -48,8 +48,8 @@ const ViewDocument = () => {
 
   return (
     <Layout menu={<DocumentTree parentId={wingsDocument.parent_id} />}>
-      <Grid container>
-        <Grid item xs={12} my="1rem">
+      <Grid container rowSpacing={2}>
+        <Grid item xs={12}>
           <Typography variant="h3">{wingsDocument.title || ''}</Typography>
         </Grid>
         <Grid item xs={12}>

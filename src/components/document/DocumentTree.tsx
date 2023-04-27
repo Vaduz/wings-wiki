@@ -29,7 +29,7 @@ const DocumentTree = ({ parentId }: { parentId: DocumentId }): JSX.Element => {
 
   return (
     <>
-      <Paper>
+      <Paper sx={{ mb: 2 }}>
         <Typography variant="h6" sx={{ p: 1, display: 'flex', alignItems: 'center' }}>
           <ListItemIcon sx={{ minWidth: '2.2rem' }}>
             <AccountTreeIcon />

@@ -32,9 +32,7 @@ const SearchDocuments = () => {
       <Container>
         <Grid container direction="column">
           <Grid item>
-            <Typography variant="h2" sx={{ mt: 2 }}>
-              Search
-            </Typography>
+            <Typography variant="h2">Search</Typography>
           </Grid>
           <Search space={space} />
         </Grid>

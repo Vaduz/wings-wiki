@@ -28,7 +28,7 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
   if (loading || documents == undefined || !space) return <CircularProgress />
 
   return (
-    <Grid container direction="column" sx={{ my: 2, p: 1 }}>
+    <Grid container direction="column" sx={{ py: 1 }}>
       <Grid item my={1}>
         <Typography
           variant="h5"

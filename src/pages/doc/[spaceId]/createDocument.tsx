@@ -39,11 +39,9 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   return (
     <LayoutBase>
       <Container>
-        <Grid container rowSpacing={2}>
+        <Grid container rowSpacing={2} pt={2}>
           <Grid item xs={12}>
-            <Typography variant="h2" sx={{ mt: 2 }}>
-              New Document
-            </Typography>
+            <Typography variant="h2">New Document</Typography>
           </Grid>
           <Grid item xs={12}>
             <Paper>

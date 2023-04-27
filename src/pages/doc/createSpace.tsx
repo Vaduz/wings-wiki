@@ -38,14 +38,12 @@ const NewSpace = (): JSX.Element => {
   return (
     <LayoutBase>
       <Container>
-        <Grid container direction="column">
+        <Grid container direction="column" rowSpacing={2} pt={2}>
           <Grid item>
-            <Typography variant="h2" sx={{ my: 2 }}>
-              New space
-            </Typography>
+            <Typography variant="h2">New space</Typography>
           </Grid>
           <Grid item>
-            <Paper sx={{ mb: 2 }}>
+            <Paper>
               <TextField
                 id="name"
                 label="name"
@@ -54,7 +52,9 @@ const NewSpace = (): JSX.Element => {
                 onChange={(e) => setName(e.target.value)}
               />
             </Paper>
-            <Paper sx={{ mb: 2 }}>
+          </Grid>
+          <Grid item>
+            <Paper>
               <TextField
                 id="description"
                 label="Description"

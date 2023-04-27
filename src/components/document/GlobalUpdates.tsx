@@ -7,9 +7,7 @@ const GlobalUpdates = (): JSX.Element => {
   const spacesContext = useSpacesContext()
   return (
     <>
-      <Typography variant="h4" sx={{ my: 2 }}>
-        All new updates
-      </Typography>
+      <Typography variant="h4">All new updates</Typography>
       {spacesContext &&
         Array.from(spacesContext.spaces).map((space) => {
           return <LatestUpdatedDocuments spaceId={space.id} key={space.id} />
