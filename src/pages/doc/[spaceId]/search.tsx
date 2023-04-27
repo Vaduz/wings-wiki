@@ -30,7 +30,7 @@ const SearchDocuments = () => {
   return (
     <LayoutBase>
       <Container>
-        <Grid container direction="column">
+        <Grid container direction="column" pt={2}>
           <Grid item>
             <Typography variant="h2">Search</Typography>
           </Grid>

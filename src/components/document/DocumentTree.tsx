@@ -90,7 +90,7 @@ const TraceParent = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Do
         key={parent.id}
         itemId={parent.id}
         icon={<FolderIcon />}
-        expand={0}
+        expand={1}
       />
     </>
   )
@@ -137,7 +137,8 @@ const DocumentTreeView = ({
                     itemId={neighbor.id}
                     key={neighbor.id}
                     icon={<TextSnippetOutlinedIcon />}
-                    expand={(neighbor.id == documentId && 1) || 2}
+                    expand={Boolean(neighbor.child_count) ? 2 : 0}
+                    selected={neighbor.id == documentId}
                   />
                   {neighbor.id == documentId && (
                     <Container>
@@ -152,7 +153,7 @@ const DocumentTreeView = ({
                                   itemId={child.id}
                                   icon={<TextSnippetOutlinedIcon />}
                                   key={child.id}
-                                  expand={0}
+                                  expand={Boolean(child.child_count) ? 1 : 0}
                                 />
                               )
                             })}
@@ -191,12 +192,14 @@ const Item = ({
   link,
   icon,
   expand,
+  selected,
 }: {
   itemId: string
   title: string
   link: string
   icon: JSX.Element
   expand: number
+  selected?: boolean
 }): JSX.Element => {
   const router = useRouter()
   const expandEl = expand == 1 ? <ExpandLess /> : expand == 2 ? <ExpandMore /> : undefined
@@ -209,6 +212,7 @@ const Item = ({
       }}
       key={`child-${itemId}`}
       sx={{ py: '0.2rem' }}
+      selected={selected}
     >
       <ListItemIcon sx={{ minWidth: '2rem' }}>{icon}</ListItemIcon>
       <ListItemText primary={title} />

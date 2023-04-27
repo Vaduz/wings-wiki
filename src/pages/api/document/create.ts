@@ -1,7 +1,7 @@
 import { NextApiResponse } from 'next'
 import { NextApiRequestWriteSpace } from '@/lib/types/nextApiRequest'
 import { UserId, WingsDocument } from '@/lib/types/elasticsearch'
-import { createDocument } from '@/lib/elasticsearch/document'
+import { createDocument, incrementChildren } from '@/lib/elasticsearch/document'
 import logger from '@/lib/logger/pino'
 import { DocumentResponse } from '@/lib/types/apiResponse'
 import canWriteSpace from '@/lib/middlewares/authenticate/canWriteSpace'
@@ -23,6 +23,7 @@ export async function handler(req: NextApiRequestWriteSpace, res: NextApiRespons
       ...body,
       author_id: userId,
     })
+    await incrementChildren(spaceId, body.parent_id)
     res.status(200).json({ data: newDocument })
   } catch (e) {
     res.status(500).json({ error: e })

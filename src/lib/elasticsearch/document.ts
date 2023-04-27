@@ -194,3 +194,30 @@ export async function childDocuments(spaceId: SpaceId, parentId: DocumentId): Pr
     return []
   }
 }
+
+export async function incrementChildren(spaceId: SpaceId, documentId: DocumentId): Promise<void> {
+  if (documentId == '-1') return
+  const { result } = await client.update({
+    index: getDocumentIndex(spaceId),
+    id: documentId,
+    script: {
+      source: `
+        if (ctx._source.child_count == null) {
+          ctx._source.child_count = params.count;
+        } else {
+          ctx._source.child_count += params.count;
+        }
+      `,
+      params: {
+        count: 1,
+      },
+    },
+  })
+  if (result != 'updated') {
+    throw new WingsError(
+      `Invalid incrementChildren() result: ${result}, spaceId: ${spaceId}, documentId: ${documentId}`
+    )
+  }
+  logger.debug({ message: 'lib/elasticsearch/document incrementChildren()', spaceId: spaceId, documentId: documentId })
+  // logger.debug({ filename: __filename, document: document })
+}

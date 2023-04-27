@@ -54,6 +54,7 @@ export interface WingsDocumentMeta {
   parent_id: DocumentId
   mentions?: Mention[]
   tags?: string[]
+  child_count?: number
 }
 
 export interface WingsDocumentContent {
