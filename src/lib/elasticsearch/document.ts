@@ -9,7 +9,7 @@ import {
 } from '../types/elasticsearch'
 import client from '@/lib/elasticsearch'
 import logger from '@/lib/logger/pino'
-import { getDocumentIndex } from '@/lib/utils/elasticsearch'
+import { getDocumentIndex, removeHtmlTags } from '@/lib/utils/elasticsearch'
 import { ResponseError } from '@elastic/transport/lib/errors'
 import { generateDocumentId } from '@/lib/utils/id'
 
@@ -17,6 +17,7 @@ export async function createDocument(spaceId: SpaceId, param: NewWingsDocument):
   const documentId = generateDocumentId()
   const esDocument: EsWingsDocument = {
     ...param,
+    content_plain: removeHtmlTags(param.content),
     created_at: new Date(),
     updated_at: new Date(),
   }
@@ -54,6 +55,7 @@ export async function updateDocument(spaceId: SpaceId, document: WingsDocument):
     doc: {
       title: document.title,
       content: document.content,
+      content_plain: removeHtmlTags(document.content),
       author_id: document.author_id,
       parent_id: document.parent_id,
       mentions: document.mentions,
@@ -92,7 +94,7 @@ export async function getLatestDocuments(spaceId: SpaceId, size: number): Promis
         },
       ],
       _source: {
-        excludes: ['content'],
+        excludes: ['content', 'content_plain'],
       },
     })
     logger.debug({ message: 'getLatestDocuments', spaceId: spaceId, response: response })
@@ -123,11 +125,11 @@ export async function searchDocuments(spaceId: SpaceId, q: string): Promise<Sear
       query: {
         multi_match: {
           query: q,
-          fields: ['tag^3', 'title^2', 'content'],
+          fields: ['tag^3', 'title^2', 'content_plain'],
         },
       },
       _source: {
-        excludes: ['content'],
+        excludes: ['content', 'content_plain'],
       },
       highlight: {
         fields: {
@@ -148,13 +150,13 @@ export async function searchDocuments(spaceId: SpaceId, q: string): Promise<Sear
     if (!hits) return []
     const searchResults: SearchDocumentHit[] = []
     hits.forEach((hit) => {
-      const content = hit.highlight && hit.highlight.content ? hit.highlight.content : undefined
+      const content_plain = hit.highlight && hit.highlight.content_plain ? hit.highlight.content_plain : undefined
       searchResults.push({
         document: {
           ...hit._source,
           id: hit._id,
         } as WingsDocumentSearchResult,
-        highlight: content && { content: content },
+        highlight: content_plain && { content_plain: content_plain },
       } as SearchDocumentHit)
     })
     return searchResults
@@ -175,7 +177,7 @@ export async function childDocuments(spaceId: SpaceId, parentId: DocumentId): Pr
         },
       },
       _source: {
-        excludes: ['content'],
+        excludes: ['content', 'content_plain'],
       },
     })
     logger.debug({ message: 'childDocuments', spaceId: spaceId, parentId: parentId, response: response })

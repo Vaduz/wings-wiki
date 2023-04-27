@@ -198,7 +198,7 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               setAnchorElSpace(null)
             }}
           >
-            <Typography>All spaces</Typography>
+            <Typography>Space List</Typography>
           </MenuItem>
           <Divider key="spaces-divider" />
           {spacesContext &&

@@ -59,10 +59,11 @@ export interface WingsDocumentMeta {
 
 export interface WingsDocumentContent {
   content: string
+  content_plain: string
 }
 
 export interface HighlightContent {
-  content: string[]
+  content_plain: string[]
 }
 
 export interface SearchDocumentHit {

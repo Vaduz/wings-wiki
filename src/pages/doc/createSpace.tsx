@@ -4,7 +4,20 @@ import { createSpaceApi } from '@/lib/api/space'
 import { useRouter } from 'next/router'
 import logger from '@/lib/logger/pino'
 import { spaceBase } from '@/components/global/WingsLink'
-import { Container, Grid, Paper, TextField } from '@mui/material'
+import {
+  Container,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
+} from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import { CreateSpaceRequest } from '@/lib/types/apiRequest'
@@ -14,6 +27,8 @@ const NewSpace = (): JSX.Element => {
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [members, setMembers] = useState<string[]>([])
+  const [language, setLanguage] = useState<string>('en')
+  const [visibility, setVisibility] = useState<string>('1')
   const router = useRouter()
 
   const createButtonHandler = () => {
@@ -46,7 +61,7 @@ const NewSpace = (): JSX.Element => {
             <Paper>
               <TextField
                 id="name"
-                label="name"
+                label="Space Name"
                 variant="outlined"
                 fullWidth
                 onChange={(e) => setName(e.target.value)}
@@ -63,6 +78,38 @@ const NewSpace = (): JSX.Element => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Paper>
+          </Grid>
+          <Grid item>
+            <FormControl>
+              <InputLabel id="language-select-label">Language</InputLabel>
+              <Select
+                labelId="language-select-label"
+                id="language-select"
+                value={language}
+                label="Language"
+                onChange={(e) => setLanguage(e.target.value)}
+              >
+                <MenuItem value={'en'}>English</MenuItem>
+                <MenuItem value={'ja'}>Japanese</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item>
+            <FormControl>
+              <Paper sx={{ px: 2, py: 1 }}>
+                <FormLabel id="visibility-radio-label">Visibility</FormLabel>
+                <RadioGroup
+                  row
+                  value={visibility}
+                  onChange={(e) => setVisibility(e.target.value)}
+                  aria-labelledby="visibility-radio-label"
+                  name="visibility-radio-group"
+                >
+                  <FormControlLabel value="1" control={<Radio />} label="Public" />
+                  <FormControlLabel value="2" disabled control={<Radio />} label="Private" />
+                </RadioGroup>
+              </Paper>
+            </FormControl>
           </Grid>
           <Grid item>
             <Button variant="contained" onClick={createButtonHandler}>

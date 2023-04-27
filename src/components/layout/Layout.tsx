@@ -59,7 +59,7 @@ const getMenu = (menuName: MenuName): JSX.Element => {
     case 'smallProfile':
       return <SmallProfile />
     case 'smallSpaces':
-      return <SmallSpaces />
+      return <SmallSpaces withTitle />
     default:
       return <></>
   }

@@ -1,4 +1,4 @@
-import { Card, CardActionArea, Grid, ListItemIcon } from '@mui/material'
+import { Card, CardActionArea, Grid, Link, ListItemIcon } from '@mui/material'
 import { documentBase, spaceBase } from '@/components/global/WingsLink'
 import { useRouter } from 'next/router'
 import Typography from '@mui/material/Typography'
@@ -6,19 +6,24 @@ import React from 'react'
 import WorkspacesIcon from '@mui/icons-material/Workspaces'
 import { useSpacesContext } from '@/contexts/spaces'
 
-const SmallSpaces = (): JSX.Element => {
+const SmallSpaces = ({ withTitle }: { withTitle?: boolean }): JSX.Element => {
   const router = useRouter()
   const spacesContext = useSpacesContext()
 
   return (
     <Grid container direction="column" py={2}>
-      <Typography
-        variant="h5"
-        sx={{ mb: 1, ml: 1, ':hover': { cursor: 'pointer', textDecoration: 'underline' } }}
-        onClick={() => router.push(documentBase).then()}
-      >
-        Spaces
-      </Typography>
+      {withTitle && (
+        <Typography
+          variant="h5"
+          sx={{ mb: 1, ml: 1, ':hover': { cursor: 'pointer', textDecoration: 'underline' } }}
+          onClick={(e) => {
+            e.preventDefault()
+            router.push(documentBase).then()
+          }}
+        >
+          Space List
+        </Typography>
+      )}
       {spacesContext &&
         Array.from(spacesContext.spaces).map((space) => {
           return (

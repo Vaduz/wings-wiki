@@ -3,7 +3,6 @@ import { documentPath } from '@/components/global/WingsLink'
 import Typography from '@mui/material/Typography'
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
 import React from 'react'
-import { useRouter } from 'next/router'
 import { SpaceId, DocumentId } from '@/lib/types/elasticsearch'
 
 const DocumentCard = ({
