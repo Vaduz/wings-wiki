@@ -1,7 +1,7 @@
 import { signIn } from 'next-auth/react'
 import React from 'react'
 import { useRouter } from 'next/router'
-import TopNavi from '../components/global/TopNavi'
+import TopNavi from '../components/layout/TopNavi'
 import { Container, Grid, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 

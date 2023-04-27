@@ -1,13 +1,13 @@
 import { NextPage } from 'next'
 import React, { PropsWithChildren, useState } from 'react'
 import { documentPath, spaceBase } from '@/components/global/WingsLink'
-import TopNavi from '../../../components/global/TopNavi'
 import { Editor } from '@/components/editor/editor'
 import { useRouter } from 'next/router'
 import { createDocumentApi } from '@/lib/api/document'
 import { DocumentId, Mention, SpaceId } from '@/lib/types/elasticsearch'
 import { Container, Button, ButtonGroup, Grid, TextField, Paper, Typography } from '@mui/material'
 import { addEditedDocumentHistory } from '@/lib/localStorage/history'
+import { LayoutBase } from '@/components/layout/Layout'
 
 const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   const [title, setTitle] = useState<string>('')
@@ -37,8 +37,7 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
   }
 
   return (
-    <>
-      <TopNavi spaceId={spaceId} />
+    <LayoutBase>
       <Container>
         <Grid container rowSpacing={2}>
           <Grid item xs={12}>
@@ -76,7 +75,7 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
           </Grid>
         </Grid>
       </Container>
-    </>
+    </LayoutBase>
   )
 }
 

@@ -17,10 +17,9 @@ const DocumentCard = ({
   title: string
   date: Date
 }) => {
-  const router = useRouter()
   return (
     <Card key={documentId} sx={{ my: 1, width: '100%' }}>
-      <CardActionArea onClick={() => router.push(documentPath(spaceId, documentId)).then()} sx={{ p: 1 }}>
+      <CardActionArea href={documentPath(spaceId, documentId)} sx={{ p: 1 }}>
         <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemIcon sx={{ minWidth: '2rem' }}>
             <TextSnippetOutlinedIcon />

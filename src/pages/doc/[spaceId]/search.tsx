@@ -1,4 +1,3 @@
-import TopNavi from '../../../components/global/TopNavi'
 import { useRouter } from 'next/router'
 import { SearchDocumentHit, Space, SpaceId } from '@/lib/types/elasticsearch'
 import React, { useEffect, useState } from 'react'
@@ -9,6 +8,7 @@ import Link from 'next/link'
 import { documentPath } from '@/components/global/WingsLink'
 import { CircularProgress, Container, Grid, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
+import { LayoutBase } from '@/components/layout/Layout'
 
 const SearchDocuments = () => {
   const router = useRouter()
@@ -28,8 +28,7 @@ const SearchDocuments = () => {
   if (!space) return <Typography variant="h4">Unauthorized access</Typography>
 
   return (
-    <>
-      <TopNavi spaceId={spaceId} />
+    <LayoutBase>
       <Container>
         <Grid container direction="column">
           <Grid item>
@@ -40,7 +39,7 @@ const SearchDocuments = () => {
           <Search space={space} />
         </Grid>
       </Container>
-    </>
+    </LayoutBase>
   )
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { documentBase, newDocumentPath, newSpacePath, searchPath, spaceBase } from '@/components/global/WingsLink'
 import { Space, SpaceId } from '@/lib/types/elasticsearch'
@@ -22,8 +22,6 @@ import {
   Divider,
   ListItemIcon,
 } from '@mui/material'
-import { getSpacesApi } from '@/lib/api/space'
-import logger from '@/lib/logger/pino'
 import WorkspacesIcon from '@mui/icons-material/Workspaces'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
@@ -32,8 +30,10 @@ import ViewTimelineOutlinedIcon from '@mui/icons-material/ViewTimelineOutlined'
 import RestoreIcon from '@mui/icons-material/Restore'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import { Check } from '@mui/icons-material'
+import { useSpacesContext } from '@/contexts/spaces'
 
-const TopNavi = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
+const TopNavi = (): JSX.Element => {
+  const spaceId = useRouter().query.spaceId as SpaceId
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -68,7 +68,10 @@ const Masthead = ({ isMobile }: { isMobile?: boolean }): JSX.Element => {
         cursor: 'pointer',
         ...diffParam,
       }}
-      onClick={() => router.push('/').then()}
+      onClick={(e) => {
+        e.preventDefault()
+        router.push('/').then()
+      }}
     >
       Wings
     </Typography>
@@ -77,19 +80,10 @@ const Masthead = ({ isMobile }: { isMobile?: boolean }): JSX.Element => {
 
 const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
   const router = useRouter()
-  const [spaces, setSpaces] = useState<Space[]>()
-  const [mySpace, setMySpace] = useState<Space>()
-  useEffect(() => {
-    getSpacesApi()
-      .then((r) => {
-        setSpaces(r)
-        setMySpace(Array.from(r).find((space) => space.id == spaceId))
-      })
-      .catch((e) => logger.error({ message: 'global/TopNavi.tsx RegularScreenMenu', error: e }))
-  }, [spaceId])
   const [anchorElHome, setAnchorElHome] = useState<null | HTMLElement>(null)
   const [anchorElSpace, setAnchorElSpace] = useState<null | HTMLElement>(null)
   const [anchorElDocument, setAnchorElDocument] = useState<null | HTMLElement>(null)
+  const spacesContext = useSpacesContext()
 
   return (
     <>
@@ -117,66 +111,65 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
         >
           <MenuItem
             key="root-home"
-            onClick={() => {
+            href={'/'}
+            onClick={(e) => {
+              e.preventDefault()
               router.push('/').then()
               setAnchorElHome(null)
             }}
           >
-            <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-              <ListItemIcon>
-                <ViewTimelineOutlinedIcon />
-              </ListItemIcon>
-              Timeline
-            </Typography>
+            <ListItemIcon>
+              <ViewTimelineOutlinedIcon />
+            </ListItemIcon>
+            <Typography sx={{ display: 'flex', alignItems: 'center' }}>Timeline</Typography>
           </MenuItem>
           <MenuItem
             key="root-edited"
-            onClick={() => {
+            href={'/edited'}
+            onClick={(e) => {
+              e.preventDefault()
               router.push('/edited').then()
               setAnchorElHome(null)
             }}
           >
-            <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-              <ListItemIcon>
-                <EditOutlinedIcon />
-              </ListItemIcon>
-              Edited
-            </Typography>
+            <ListItemIcon>
+              <EditOutlinedIcon />
+            </ListItemIcon>
+            <Typography sx={{ display: 'flex', alignItems: 'center' }}>Edited</Typography>
           </MenuItem>
           <MenuItem
             key="root-visited-history"
+            href={'/visited'}
             onClick={() => {
               router.push('/visited').then()
               setAnchorElHome(null)
             }}
           >
-            <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-              <ListItemIcon>
-                <RestoreIcon />
-              </ListItemIcon>
-              Visited History
-            </Typography>
+            <ListItemIcon>
+              <RestoreIcon />
+            </ListItemIcon>
+            <Typography sx={{ display: 'flex', alignItems: 'center' }}>Visited History</Typography>
           </MenuItem>
           <MenuItem
             key="root-starred"
-            onClick={() => {
+            href={'/starred'}
+            onClick={(e) => {
+              e.preventDefault()
               router.push('/starred').then()
               setAnchorElHome(null)
             }}
           >
-            <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-              <ListItemIcon>
-                <StarBorderIcon />
-              </ListItemIcon>
-              Starred
-            </Typography>
+            <ListItemIcon>
+              <StarBorderIcon />
+            </ListItemIcon>
+            <Typography sx={{ display: 'flex', alignItems: 'center' }}>Starred</Typography>
           </MenuItem>
         </Menu>
         <Button key="Spaces" onClick={(e) => setAnchorElSpace(e.currentTarget)} sx={{ my: 2, color: 'white' }}>
           {
             <>
               <WorkspacesIcon sx={{ mr: '0.4rem' }} />
-              {(mySpace && mySpace.name) || 'Space'}
+              {(spacesContext && spacesContext.spaces.find((space) => space.id == spaceId)?.name) || 'Space'}
             </>
           }
           <ChevronRightIcon sx={{ transform: 'rotate(90deg)' }} />
@@ -199,35 +192,38 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
         >
           <MenuItem
             key="all-spaces"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               router.push(documentBase).then()
               setAnchorElSpace(null)
             }}
           >
             <Typography>All spaces</Typography>
           </MenuItem>
-          <Divider key="space-mangement" />
-          {spaces &&
-            Array.from(spaces).map((space) => {
+          <Divider key="spaces-divider" />
+          {spacesContext &&
+            Array.from(spacesContext.spaces).map((space) => {
               return (
                 <MenuItem
                   key={`space-${space.id}`}
-                  onClick={() => {
+                  href={spaceBase(space.id)}
+                  onClick={(e) => {
+                    e.preventDefault()
                     router.push(spaceBase(space.id)).then()
                     setAnchorElSpace(null)
                   }}
                 >
-                  <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-                    <ListItemIcon>{(space.id == spaceId && <Check />) || <WorkspacesIcon />}</ListItemIcon>
-                    {space.name}
-                  </Typography>
+                  <ListItemIcon>{(space.id == spaceId && <Check />) || <WorkspacesIcon />}</ListItemIcon>
+                  <Typography sx={{ display: 'flex', alignItems: 'center' }}>{space.name}</Typography>
                 </MenuItem>
               )
             })}
-          <Divider key="space-mangement" />
+          <Divider key="new-space-divider" />
           <MenuItem
             key="new-space"
-            onClick={() => {
+            href={newSpacePath}
+            onClick={(e) => {
+              e.preventDefault()
               router.push(newSpacePath).then()
               setAnchorElSpace(null)
             }}
@@ -242,7 +238,9 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           <>
             <Button
               key="New Document"
-              onClick={() => {
+              href={newDocumentPath(spaceId)}
+              onClick={(e) => {
+                e.preventDefault()
                 router.push(newDocumentPath(spaceId)).then()
                 setAnchorElSpace(null)
               }}
@@ -251,13 +249,21 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               <EditOutlinedIcon sx={{ mr: '0.2rem' }} />
               New Document
             </Button>
-            <Button key="Search" onClick={() => router.push(searchPath(spaceId)).then()} sx={{ my: 2, color: 'white' }}>
+            <Button
+              key="Search"
+              href={searchPath(spaceId)}
+              onClick={(e) => {
+                e.preventDefault()
+                router.push(searchPath(spaceId)).then()
+              }}
+              sx={{ my: 2, color: 'white' }}
+            >
               <SearchOutlinedIcon sx={{ mr: '0.2rem' }} />
               Search
             </Button>
           </>
         )}
-        {!spaceId && spaces && (
+        {!spaceId && spacesContext && (
           <>
             <Button
               key="New Document"
@@ -289,24 +295,26 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
               <Divider key="new-document-divider">
                 <Typography variant="body2">SELECT TARGET SPACE</Typography>
               </Divider>
-              {Array.from(spaces).map((space) => {
+              {Array.from(spacesContext.spaces).map((space) => {
                 return (
                   <MenuItem
                     key={`document-menu-${space.id}`}
-                    onClick={() => {
+                    href={newDocumentPath(space.id)}
+                    onClick={(e) => {
+                      e.preventDefault()
                       router.push(newDocumentPath(space.id)).then()
                       setAnchorElDocument(null)
                     }}
                   >
+                    <ListItemIcon>
+                      <WorkspacesIcon sx={{ mr: '0.4rem' }} />
+                    </ListItemIcon>
                     <Typography
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
                       }}
                     >
-                      <ListItemIcon>
-                        <WorkspacesIcon sx={{ mr: '0.4rem' }} />
-                      </ListItemIcon>
                       {space.name}
                     </Typography>
                   </MenuItem>
@@ -357,7 +365,8 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
         >
           <MenuItem
             key="home-timeline"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               setAnchorElNav(null)
               router.push('/').then()
             }}
@@ -366,7 +375,8 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           </MenuItem>
           <MenuItem
             key="home-edited"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               setAnchorElNav(null)
               router.push('/edited').then()
             }}
@@ -375,7 +385,8 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           </MenuItem>
           <MenuItem
             key="home-visited"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               setAnchorElNav(null)
               router.push('/visited').then()
             }}
@@ -395,7 +406,8 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           {/* TODO Add space list */}
           <MenuItem
             key="Spaces"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               setAnchorElNav(null)
               router.push(documentBase).then()
             }}
@@ -404,7 +416,8 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
           </MenuItem>
           <MenuItem
             key="New Space"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               setAnchorElNav(null)
               router.push(newSpacePath).then()
             }}
@@ -415,7 +428,8 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
             <Divider key="space-divider" />,
             <MenuItem
               key="Documents"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault()
                 setAnchorElNav(null)
                 router.push(spaceBase(spaceId)).then()
               }}
@@ -424,7 +438,8 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
             </MenuItem>,
             <MenuItem
               key="New Document"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault()
                 setAnchorElNav(null)
                 router.push(newDocumentPath(spaceId)).then()
               }}
@@ -434,7 +449,8 @@ const MobileScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
             <Divider key="document-divider" />,
             <MenuItem
               key="Search"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault()
                 setAnchorElNav(null)
                 router.push(searchPath(spaceId)).then()
               }}
@@ -455,7 +471,13 @@ const UserMenu = (): JSX.Element => {
   return (
     <>
       {!isLoggedIn && (
-        <Button onClick={() => signIn()} color="inherit">
+        <Button
+          onClick={(e) => {
+            e.preventDefault()
+            signIn()
+          }}
+          color="inherit"
+        >
           Login
         </Button>
       )}
@@ -491,7 +513,8 @@ const UserMenu = (): JSX.Element => {
             <Divider key="logout-divider" />
             <MenuItem
               key="logout"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault()
                 setAnchorElUser(null)
                 signOut().then()
               }}

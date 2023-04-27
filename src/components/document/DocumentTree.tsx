@@ -22,15 +22,11 @@ import { getSpaceApi } from '@/lib/api/space'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import AccountTreeIcon from '@mui/icons-material/AccountTree'
 
-const DocumentTree = ({
-  spaceId,
-  parentId,
-  documentId,
-}: {
-  spaceId: SpaceId
-  parentId: DocumentId
-  documentId: DocumentId
-}): JSX.Element => {
+const DocumentTree = ({ parentId }: { parentId: DocumentId }): JSX.Element => {
+  const router = useRouter()
+  const spaceId = router.query.spaceId as SpaceId
+  const documentId = (router.query.documentId as DocumentId) ?? '-1'
+
   return (
     <>
       <Paper>
@@ -41,8 +37,12 @@ const DocumentTree = ({
           Document Tree
         </Typography>
         <List>
-          <TraceParent spaceId={spaceId} documentId={parentId} />
-          <DocumentTreeView spaceId={spaceId} parentId={parentId} documentId={documentId} />
+          {(spaceId && documentId && parentId && (
+            <>
+              <TraceParent spaceId={spaceId} documentId={parentId} />
+              <DocumentTreeView spaceId={spaceId} parentId={parentId} documentId={documentId} />
+            </>
+          )) || <CircularProgress />}
         </List>
       </Paper>
     </>
@@ -201,15 +201,17 @@ const Item = ({
   const router = useRouter()
   const expandEl = expand == 1 ? <ExpandLess /> : expand == 2 ? <ExpandMore /> : undefined
   return (
-    <ListItemButton key={`child-${itemId}`} sx={{ py: '0.2rem' }}>
+    <ListItemButton
+      href={link}
+      onClick={(e) => {
+        e.preventDefault()
+        router.push(link).then()
+      }}
+      key={`child-${itemId}`}
+      sx={{ py: '0.2rem' }}
+    >
       <ListItemIcon sx={{ minWidth: '2rem' }}>{icon}</ListItemIcon>
-      <ListItemText
-        primary={title}
-        onClick={(e) => {
-          e.preventDefault()
-          router.push(link).then()
-        }}
-      />
+      <ListItemText primary={title} />
       {expandEl}
     </ListItemButton>
   )

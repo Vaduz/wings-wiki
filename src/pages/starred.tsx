@@ -1,50 +1,20 @@
-import TopNavi from '@/components/global/TopNavi'
-import { Container, Grid, ListItemIcon, Typography } from '@mui/material'
-import SmallProfile from '@/components/profile/SmallProfile'
+import { Grid, ListItemIcon, Typography } from '@mui/material'
 import React, { NextPage } from 'next'
 import HandymanIcon from '@mui/icons-material/Handyman'
-import SmallSpaces from '@/components/space/SmallSpaces'
-import { useEffect, useState } from 'react'
-import { Space } from '@/lib/types/elasticsearch'
-import { getSpacesApi } from '@/lib/api/space'
-import logger from '@/lib/logger/pino'
+import { Layout } from '@/components/layout/Layout'
 
 const Starred: NextPage = () => {
-  const [spaces, setSpaces] = useState<Space[]>([])
-  useEffect(() => {
-    getSpacesApi()
-      .then((r) => setSpaces(r))
-      .catch((e) => logger.error({ message: 'GlobalUpdates', error: e }))
-  }, [])
-
   return (
-    <>
-      <TopNavi />
-      <Container>
-        <Grid container columnSpacing={2}>
-          <Grid item xs={4} my={1}>
-            <Grid container>
-              <Grid item xs={12} mb={2}>
-                <SmallProfile />
-              </Grid>
-              <Grid item xs={12}>
-                <SmallSpaces spaces={spaces} />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={8}>
-            <Grid container>
-              <Grid item xs={12} my={1}>
-                <Typography variant="h2">Starred Documents</Typography>
-              </Grid>
-              <ListItemIcon>
-                <HandymanIcon sx={{ width: 128, height: 128 }} />
-              </ListItemIcon>
-            </Grid>
-          </Grid>
+    <Layout menuNames={['smallProfile', 'smallSpaces']}>
+      <Grid container>
+        <Grid item xs={12} my={1}>
+          <Typography variant="h2">Starred Documents</Typography>
         </Grid>
-      </Container>
-    </>
+        <ListItemIcon>
+          <HandymanIcon sx={{ width: 128, height: 128 }} />
+        </ListItemIcon>
+      </Grid>
+    </Layout>
   )
 }
 

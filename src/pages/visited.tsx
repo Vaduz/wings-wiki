@@ -1,71 +1,42 @@
-import TopNavi from '@/components/global/TopNavi'
-import { Container, Grid, Typography } from '@mui/material'
-import SmallProfile from '@/components/profile/SmallProfile'
+import { Grid, Typography } from '@mui/material'
 import React, { NextPage } from 'next'
-import SmallSpaces from '@/components/space/SmallSpaces'
 import { useEffect, useState } from 'react'
-import { Space } from '@/lib/types/elasticsearch'
-import { getSpacesApi } from '@/lib/api/space'
-import logger from '@/lib/logger/pino'
 import { getVisitedHistory } from '@/lib/localStorage/history'
 import { VisitedDocumentHistory } from '@/lib/types/localStorage'
 import DocumentCard from '@/components/document/DocumentCard'
+import { Layout } from '@/components/layout/Layout'
 
 const Visited: NextPage = () => {
-  const [spaces, setSpaces] = useState<Space[]>([])
-  useEffect(() => {
-    getSpacesApi()
-      .then((r) => setSpaces(r))
-      .catch((e) => logger.error({ message: 'GlobalUpdates', error: e }))
-  }, [])
-
   const [histories, setHistories] = useState<VisitedDocumentHistory[]>([])
   useEffect(() => {
     setHistories(getVisitedHistory())
   }, [])
 
   return (
-    <>
-      <TopNavi />
-      <Container>
-        <Grid container columnSpacing={2}>
-          <Grid item xs={4} my={1}>
-            <Grid container>
-              <Grid item xs={12} mb={2}>
-                <SmallProfile />
-              </Grid>
-              <Grid item xs={12}>
-                <SmallSpaces spaces={spaces} />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={8}>
-            <Grid container>
-              <Grid item xs={12} my={1}>
-                <Typography variant="h2">Visited History</Typography>
-              </Grid>
-              {histories.length == 0 && (
-                <Grid item xs={12}>
-                  <Typography>No history</Typography>
-                </Grid>
-              )}
-              {histories.length > 0 &&
-                Array.from(histories).map((history) => {
-                  return (
-                    <DocumentCard
-                      key={`${history.spaceId}-${history.documentId}`}
-                      spaceId={history.spaceId}
-                      documentId={history.documentId}
-                      title={history.title}
-                      date={new Date(history.timestamp)}
-                    />
-                  )
-                })}
-            </Grid>
-          </Grid>
+    <Layout menuNames={['smallProfile', 'smallSpaces']}>
+      <Grid container>
+        <Grid item xs={12} my={1}>
+          <Typography variant="h2">Visited History</Typography>
         </Grid>
-      </Container>
-    </>
+        {histories.length == 0 && (
+          <Grid item xs={12}>
+            <Typography>No history</Typography>
+          </Grid>
+        )}
+        {histories.length > 0 &&
+          Array.from(histories).map((history) => {
+            return (
+              <DocumentCard
+                key={`${history.spaceId}-${history.documentId}-${history.timestamp}`}
+                spaceId={history.spaceId}
+                documentId={history.documentId}
+                title={history.title}
+                date={new Date(history.timestamp)}
+              />
+            )
+          })}
+      </Grid>
+    </Layout>
   )
 }
 

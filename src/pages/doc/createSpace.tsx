@@ -1,4 +1,4 @@
-import TopNavi from '@/components/global/TopNavi'
+import TopNavi from '@/components/layout/TopNavi'
 import React, { useState } from 'react'
 import { createSpaceApi } from '@/lib/api/space'
 import { useRouter } from 'next/router'
@@ -8,6 +8,7 @@ import { Container, Grid, Paper, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import { CreateSpaceRequest } from '@/lib/types/apiRequest'
+import { LayoutBase } from '@/components/layout/Layout'
 
 const NewSpace = (): JSX.Element => {
   const [name, setName] = useState<string>('')
@@ -35,8 +36,7 @@ const NewSpace = (): JSX.Element => {
   }
 
   return (
-    <>
-      <TopNavi />
+    <LayoutBase>
       <Container>
         <Grid container direction="column">
           <Grid item>
@@ -71,7 +71,7 @@ const NewSpace = (): JSX.Element => {
           </Grid>
         </Grid>
       </Container>
-    </>
+    </LayoutBase>
   )
 }
 

@@ -20,7 +20,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-const menus = [
+export const rootMenus = [
   {
     name: 'Timeline',
     path: '/',
@@ -49,37 +49,46 @@ const SmallProfile = (): JSX.Element => {
   const router = useRouter()
 
   return (
-    <Card sx={{ pt: 3 }}>
-      <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
-        {isLoggedIn && (
-          <Avatar alt={data.user?.name ?? ''} src={data.user?.image ?? ''} sx={{ width: 56, height: 56 }} />
-        )}
-        {!isLoggedIn && <Avatar sx={{ width: 56, height: 56 }}>G</Avatar>}
-      </CardContent>
-      <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-        {!isLoggedIn && (
-          <Box>
-            <Typography textAlign="center">Guest</Typography>
-            <Button size="small" onClick={() => signIn()}>
-              Login
-            </Button>
-          </Box>
-        )}
-        {isLoggedIn && <Typography textAlign="center">{data.user?.name}</Typography>}
-      </CardActions>
-      <List>
-        {Array.from(menus).map((menu) => {
-          return (
-            <ListItem disablePadding key={menu.path}>
-              <ListItemButton onClick={() => router.push(menu.path).then()} selected={router.pathname === menu.path}>
-                <ListItemIcon>{menu.icon}</ListItemIcon>
-                <ListItemText primary={menu.name} />
-              </ListItemButton>
-            </ListItem>
-          )
-        })}
-      </List>
-    </Card>
+    <Box display="flex" justifyContent="center">
+      <Card sx={{ minWidth: '300px', maxWidth: '100%' }}>
+        <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+          {isLoggedIn && (
+            <Avatar alt={data.user?.name ?? ''} src={data.user?.image ?? ''} sx={{ width: 56, height: 56 }} />
+          )}
+          {!isLoggedIn && <Avatar sx={{ width: 56, height: 56 }}>G</Avatar>}
+        </CardContent>
+        <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+          {!isLoggedIn && (
+            <Box>
+              <Typography textAlign="center">Guest</Typography>
+              <Button size="small" onClick={() => signIn()}>
+                Login
+              </Button>
+            </Box>
+          )}
+          {isLoggedIn && <Typography textAlign="center">{data.user?.name}</Typography>}
+        </CardActions>
+        <List>
+          {Array.from(rootMenus).map((menu) => {
+            return (
+              <ListItem disablePadding key={menu.path}>
+                <ListItemButton
+                  href={menu.path}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    router.push(menu.path).then()
+                  }}
+                  selected={router.pathname === menu.path}
+                >
+                  <ListItemIcon>{menu.icon}</ListItemIcon>
+                  <ListItemText primary={menu.name} />
+                </ListItemButton>
+              </ListItem>
+            )
+          })}
+        </List>
+      </Card>
+    </Box>
   )
 }
 

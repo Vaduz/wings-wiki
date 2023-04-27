@@ -1,32 +1,20 @@
-import TopNavi from '@/components/global/TopNavi'
-import { Space } from '@/lib/types/elasticsearch'
-import React, { useEffect, useState } from 'react'
-import { getSpacesApi } from '@/lib/api/space'
-import logger from '@/lib/logger/pino'
-import { CircularProgress, Container, Grid } from '@mui/material'
+import React from 'react'
+import { Grid, Typography } from '@mui/material'
 import SmallSpaces from '@/components/space/SmallSpaces'
+import { Layout } from '@/components/layout/Layout'
 
 const ListSpaces = (): JSX.Element => {
-  const [spaces, setSpaces] = useState<Space[]>()
-  useEffect(() => {
-    getSpacesApi()
-      .then((r) => setSpaces(r))
-      .catch((e) => logger.error({ message: 'document/index.tsx', error: e }))
-  }, [])
-
-  if (!spaces) return <CircularProgress />
-
   return (
-    <>
-      <TopNavi />
-      <Container>
-        <Grid container direction="column">
-          <Grid item>
-            <SmallSpaces spaces={spaces} />
-          </Grid>
+    <Layout menuNames={['smallProfile']}>
+      <Grid container>
+        <Grid item xs={12} my={1}>
+          <Typography variant="h2">Spaces</Typography>
         </Grid>
-      </Container>
-    </>
+        <Grid item xs={12}>
+          <SmallSpaces />
+        </Grid>
+      </Grid>
+    </Layout>
   )
 }
 

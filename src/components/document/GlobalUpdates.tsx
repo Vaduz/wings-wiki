@@ -1,17 +1,19 @@
 import React from 'react'
-import { Space } from '@/lib/types/elasticsearch'
 import LatestUpdatedDocuments from '@/components/document/LatestUpdatedDocuments'
 import Typography from '@mui/material/Typography'
+import { useSpacesContext } from '@/contexts/spaces'
 
-const GlobalUpdates = ({ spaces }: { spaces: Space[] }): JSX.Element => {
+const GlobalUpdates = (): JSX.Element => {
+  const spacesContext = useSpacesContext()
   return (
     <>
       <Typography variant="h4" sx={{ my: 2 }}>
         All new updates
       </Typography>
-      {Array.from(spaces).map((space) => {
-        return <LatestUpdatedDocuments spaceId={space.id} key={space.id} />
-      })}
+      {spacesContext &&
+        Array.from(spacesContext.spaces).map((space) => {
+          return <LatestUpdatedDocuments spaceId={space.id} key={space.id} />
+        })}
     </>
   )
 }

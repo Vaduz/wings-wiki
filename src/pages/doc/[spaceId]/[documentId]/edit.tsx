@@ -1,13 +1,14 @@
 import { Editor } from '@/components/editor/editor'
 import React, { useEffect, useState } from 'react'
 import { documentPath } from '@/components/global/WingsLink'
-import TopNavi from '../../../../components/global/TopNavi'
+import TopNavi from '../../../../components/layout/TopNavi'
 import { useRouter } from 'next/router'
 import { getDocumentApi, updateDocumentApi } from '@/lib/api/document'
 import { DocumentId, SpaceId, WingsDocument } from '@/lib/types/elasticsearch'
 import Button from '@mui/material/Button'
 import { Container, ButtonGroup, Grid, TextField, CircularProgress, Typography } from '@mui/material'
 import { addEditedDocumentHistory } from '@/lib/localStorage/history'
+import { LayoutBase } from '@/components/layout/Layout'
 
 const EditDocument = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -60,8 +61,7 @@ const EditDocument = () => {
   }
 
   return (
-    <>
-      <TopNavi spaceId={spaceId} />
+    <LayoutBase>
       <Container>
         <Grid container rowSpacing={2}>
           <Grid item xs={12}>
@@ -95,7 +95,7 @@ const EditDocument = () => {
           </Grid>
         </Grid>
       </Container>
-    </>
+    </LayoutBase>
   )
 }
 
