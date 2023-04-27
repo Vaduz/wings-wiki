@@ -6,9 +6,10 @@ import logger from '@/lib/logger/pino'
 import { searchDocumentsApi } from '@/lib/api/document'
 import Link from 'next/link'
 import { documentPath } from '@/components/global/WingsLink'
-import { CircularProgress, Container, Grid, TextField } from '@mui/material'
+import { Card, CardActionArea, CircularProgress, Container, Grid, ListItemIcon, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { LayoutBase } from '@/components/layout/Layout'
+import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
 
 const SearchDocuments = () => {
   const router = useRouter()
@@ -52,7 +53,7 @@ export const Search = ({ space }: { space: Space }): JSX.Element => {
   }, [q, space])
 
   return (
-    <Grid container>
+    <Grid container rowSpacing={2}>
       <Grid item xs={12}>
         <TextField
           id="q"
@@ -65,17 +66,35 @@ export const Search = ({ space }: { space: Space }): JSX.Element => {
         />
       </Grid>
       <Grid item xs={12}>
-        <ul>
-          {Array.from(hits).map((hit) => {
-            return (
-              <li key={hit.document.id}>
-                <Link href={documentPath(space.id, hit.document.id)}>{hit.document.title}</Link>
-                <div dangerouslySetInnerHTML={{ __html: hit.highlight?.content.join('') ?? '' }}></div>
-              </li>
-            )
-          })}
-        </ul>
+        <SearchHits hits={hits} spaceId={space.id} />
       </Grid>
+    </Grid>
+  )
+}
+
+const SearchHits = ({ hits, spaceId }: { hits: SearchDocumentHit[]; spaceId: SpaceId }): JSX.Element => {
+  return (
+    <Grid container direction="column" rowSpacing={2}>
+      {Array.from(hits).map((hit) => {
+        return (
+          <Grid item key={`hit-${hit.document.id}`}>
+            <Card key={`card-${hit.document.id}`}>
+              <CardActionArea href={documentPath(spaceId, hit.document.id)} sx={{ p: 1 }}>
+                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <ListItemIcon sx={{ minWidth: '2rem' }}>
+                    <TextSnippetOutlinedIcon />
+                  </ListItemIcon>
+                  {hit.document.title}
+                </Typography>
+                <div dangerouslySetInnerHTML={{ __html: hit.highlight?.content.join('') ?? '' }}></div>
+                <Typography variant="body2" textAlign="right" color="gray">
+                  {new Date(hit.document.updated_at).toLocaleString()}
+                </Typography>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        )
+      })}
     </Grid>
   )
 }
