@@ -2,6 +2,7 @@
   <dictionary name="vaduz">
     <words>
       <w>jsdelivr</w>
+      <w>kuromoji</w>
     </words>
   </dictionary>
 </component>

@@ -7,7 +7,7 @@ import {
   WingsDocument,
   WingsDocumentSearchResult,
 } from '../types/elasticsearch'
-import client from '@/lib/elasticsearch'
+import client from '@/lib/elasticsearch/client'
 import logger from '@/lib/logger/pino'
 import { getDocumentIndex, removeHtmlTags } from '@/lib/utils/elasticsearch'
 import { ResponseError } from '@elastic/transport/lib/errors'
@@ -125,7 +125,7 @@ export async function searchDocuments(spaceId: SpaceId, q: string): Promise<Sear
       query: {
         multi_match: {
           query: q,
-          fields: ['tag^3', 'title^2', 'content_plain'],
+          fields: ['tags^3', 'title^2', 'content_plain'],
         },
       },
       _source: {
@@ -133,13 +133,17 @@ export async function searchDocuments(spaceId: SpaceId, q: string): Promise<Sear
       },
       highlight: {
         fields: {
+          tags: {
+            fragment_size: 100,
+            number_of_fragments: 3,
+          },
           title: {
             fragment_size: 100,
-            number_of_fragments: 1,
+            number_of_fragments: 3,
           },
-          content: {
+          content_plain: {
             fragment_size: 100,
-            number_of_fragments: 1,
+            number_of_fragments: 3,
           },
         },
       },
@@ -150,13 +154,12 @@ export async function searchDocuments(spaceId: SpaceId, q: string): Promise<Sear
     if (!hits) return []
     const searchResults: SearchDocumentHit[] = []
     hits.forEach((hit) => {
-      const content_plain = hit.highlight && hit.highlight.content_plain ? hit.highlight.content_plain : undefined
       searchResults.push({
         document: {
           ...hit._source,
           id: hit._id,
         } as WingsDocumentSearchResult,
-        highlight: content_plain && { content_plain: content_plain },
+        highlight: hit.highlight,
       } as SearchDocumentHit)
     })
     return searchResults

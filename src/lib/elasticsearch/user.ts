@@ -1,5 +1,5 @@
 import { NewUser, User, UserId } from '../types/elasticsearch'
-import client from '@/lib/elasticsearch'
+import client from '@/lib/elasticsearch/client'
 import logger from '@/lib/logger/pino'
 import { generateUserId } from '@/lib/utils/id'
 

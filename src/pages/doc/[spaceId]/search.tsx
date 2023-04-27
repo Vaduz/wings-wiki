@@ -4,11 +4,10 @@ import React, { useEffect, useState } from 'react'
 import { getSpaceApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
 import { searchDocumentsApi } from '@/lib/api/document'
-import { documentPath } from '@/components/global/WingsLink'
-import { Card, CardActionArea, CircularProgress, Container, Grid, ListItemIcon, TextField } from '@mui/material'
+import { CircularProgress, Container, Grid, TextField } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { LayoutBase } from '@/components/layout/Layout'
-import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined'
+import SearchHits from '@/components/document/SearchHits'
 
 const SearchDocuments = () => {
   const router = useRouter()
@@ -67,44 +66,6 @@ export const Search = ({ space }: { space: Space }): JSX.Element => {
       <Grid item xs={12}>
         <SearchHits hits={hits} space={space} />
       </Grid>
-    </Grid>
-  )
-}
-
-const SearchHits = ({ hits, space }: { hits: SearchDocumentHit[]; space: Space }): JSX.Element => {
-  return (
-    <Grid container direction="column" rowSpacing={2}>
-      {Array.from(hits).map((hit) => {
-        return (
-          <Grid item key={`hit-${hit.document.id}`}>
-            <Card key={`card-${hit.document.id}`}>
-              <CardActionArea href={documentPath(space.id, hit.document.id)} sx={{ p: 1 }}>
-                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
-                  <ListItemIcon sx={{ minWidth: '2rem' }}>
-                    <TextSnippetOutlinedIcon />
-                  </ListItemIcon>
-                  {hit.document.title}
-                </Typography>
-                <Container>
-                  <div dangerouslySetInnerHTML={{ __html: hit.highlight?.content.join('') ?? '' }}></div>
-                </Container>
-                <Grid container columnSpacing={1} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Grid item>
-                    <Typography variant="body2" textAlign="right" color="gray">
-                      {space.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body2" textAlign="right" color="gray">
-                      {new Date(hit.document.updated_at).toLocaleString()}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardActionArea>
-            </Card>
-          </Grid>
-        )
-      })}
     </Grid>
   )
 }

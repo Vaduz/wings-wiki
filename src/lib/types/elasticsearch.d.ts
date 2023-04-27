@@ -63,10 +63,12 @@ export interface WingsDocumentContent {
 }
 
 export interface HighlightContent {
-  content_plain: string[]
+  tags?: string[]
+  title?: string[]
+  content_plain?: string[]
 }
 
 export interface SearchDocumentHit {
   document: WingsDocumentSearchResult
-  highlight?: HighlightContent
+  highlight: HighlightContent
 }
