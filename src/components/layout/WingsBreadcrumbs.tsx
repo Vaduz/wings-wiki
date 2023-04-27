@@ -66,7 +66,14 @@ const WingsBreadcrumbs = (): JSX.Element => {
     const spaceId = pathNames[2]
     const space = spacesContext.spaces.find((space) => space.id == spaceId)
 
-    if (pathCount == 3) {
+    if (pathCount == 3 && spaceId == 'createSpace') {
+      breadCrumb.push(
+        <Box key="breadcrumbs-space-create-space" sx={{ display: 'flex', alignItems: 'center' }}>
+          <WorkspacesIcon sx={{ mr: '0.2rem' }} />
+          <Typography color="textPrimary">Create New Space</Typography>
+        </Box>
+      )
+    } else {
       breadCrumb.push(
         <Box key="breadcrumbs-space-home-primary" sx={{ display: 'flex', alignItems: 'center' }}>
           <WorkspacesIcon sx={{ mr: '0.2rem' }} />
