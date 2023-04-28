@@ -1,4 +1,4 @@
-import { Mention, UserId } from '@/lib/types/elasticsearch'
+import { Mention, SpaceId, UserId } from '@/lib/types/elasticsearch'
 
 export interface NewWingsDocumentRequest {
   title: string
@@ -9,6 +9,15 @@ export interface NewWingsDocumentRequest {
 }
 
 export interface CreateSpaceRequest {
+  name: string
+  description: string
+  members: UserId[]
+  visibility: number
+  language: string
+}
+
+export interface UpdateSpaceRequest {
+  id: SpaceId
   name: string
   description: string
   members: UserId[]

@@ -119,6 +119,20 @@ const RegularScreenMenu = ({ spaceId }: { spaceId?: SpaceId }): JSX.Element => {
             }}
           >
             <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <Typography sx={{ display: 'flex', alignItems: 'center' }}>Home</Typography>
+          </MenuItem>
+          <MenuItem
+            key="root-timeline"
+            href={'/timeline'}
+            onClick={(e) => {
+              e.preventDefault()
+              router.push('/timeline').then()
+              setAnchorElHome(null)
+            }}
+          >
+            <ListItemIcon>
               <ViewTimelineOutlinedIcon />
             </ListItemIcon>
             <Typography sx={{ display: 'flex', alignItems: 'center' }}>Timeline</Typography>

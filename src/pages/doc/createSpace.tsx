@@ -36,6 +36,7 @@ const NewSpace = (): JSX.Element => {
       name: name,
       description: description,
       members: members,
+      language: language,
       visibility: 1,
     }
     createSpaceApi(createSpaceRequest)

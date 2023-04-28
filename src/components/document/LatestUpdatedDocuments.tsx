@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import WorkspacesIcon from '@mui/icons-material/Workspaces'
 import DocumentCard from '@/components/document/DocumentCard'
 
-const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element => {
+const LatestUpdatedDocuments = ({ spaceId, noTitle }: { spaceId: SpaceId; noTitle?: boolean }): JSX.Element => {
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(true)
   const [space, setSpace] = useState<Space>()
@@ -28,23 +28,25 @@ const LatestUpdatedDocuments = ({ spaceId }: { spaceId: SpaceId }): JSX.Element 
   if (loading || documents == undefined || !space) return <CircularProgress />
 
   return (
-    <Grid container direction="column" sx={{ py: 1 }}>
-      <Grid item my={1}>
-        <Typography
-          variant="h5"
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            ':hover': { cursor: 'pointer', textDecoration: 'underline' },
-          }}
-          onClick={() => router.push(spaceBase(spaceId)).then()}
-        >
-          <ListItemIcon sx={{ minWidth: '2rem' }}>
-            <WorkspacesIcon />
-          </ListItemIcon>
-          {space.name}
-        </Typography>
-      </Grid>
+    <Grid container direction="column" sx={{ my: 1 }}>
+      {!noTitle && (
+        <Grid item my={1}>
+          <Typography
+            variant="h5"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              ':hover': { cursor: 'pointer', textDecoration: 'underline' },
+            }}
+            onClick={() => router.push(spaceBase(spaceId)).then()}
+          >
+            <ListItemIcon>
+              <WorkspacesIcon />
+            </ListItemIcon>
+            {space.name}
+          </Typography>
+        </Grid>
+      )}
       <Grid item>
         <Grid container ml={2}>
           {documents.length == 0 && <Typography variant="body1">No documents</Typography>}

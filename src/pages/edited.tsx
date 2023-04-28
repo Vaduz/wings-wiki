@@ -12,10 +12,10 @@ const Edited = (): JSX.Element => {
   }, [])
 
   return (
-    <Layout menuNames={['smallProfile', 'smallSpaces']}>
+    <Layout menuNames={['smallProfile']}>
       <Grid container>
         <Grid item xs={12}>
-          <Typography variant="h2">Timeline</Typography>
+          <Typography variant="h2">Edited documents</Typography>
         </Grid>
         <Grid item xs={12}>
           <Grid container>

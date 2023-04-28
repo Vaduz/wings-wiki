@@ -1,7 +1,7 @@
 import { Space } from '@/lib/types/elasticsearch'
 import { apiGet, apiPost, apiPut } from '@/lib/api/index'
 import { ApiResponse } from '@/lib/types/apiResponse'
-import { CreateSpaceRequest } from '@/lib/types/apiRequest'
+import { CreateSpaceRequest, UpdateSpaceRequest } from '@/lib/types/apiRequest'
 
 export async function getSpaceApi(spaceId: string): Promise<Space | undefined> {
   const { data, error } = await apiGet<ApiResponse<Space>>('/space', { spaceId })
@@ -19,8 +19,8 @@ export async function createSpaceApi(space: CreateSpaceRequest): Promise<Space |
   return data.data
 }
 
-export async function updateSpaceApi(space: Space): Promise<Space | undefined> {
-  const { data, error } = await apiPut<ApiResponse<Space>>('/space/update', space, {})
+export async function updateSpaceApi(space: UpdateSpaceRequest): Promise<Space | undefined> {
+  const { data, error } = await apiPut<ApiResponse<Space>>('/space/update', space, { spaceId: space.id })
   if (error || !data) {
     return
   }

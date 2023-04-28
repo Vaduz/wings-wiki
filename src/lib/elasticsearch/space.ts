@@ -45,6 +45,8 @@ export async function updateSpace(space: Space): Promise<void> {
       name: space.name,
       description: space.description,
       members: space.members,
+      visibility: space.visibility,
+      language: space.language,
       updated_at: new Date(),
     },
   })

@@ -12,7 +12,7 @@ const Visited = (): JSX.Element => {
   }, [])
 
   return (
-    <Layout menuNames={['smallProfile', 'smallSpaces']}>
+    <Layout menuNames={['smallProfile']}>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h2">Visited History</Typography>

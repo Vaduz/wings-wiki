@@ -17,7 +17,7 @@ const WingsBreadcrumbs = (): JSX.Element => {
   const pathNames = router.asPath.split('/')
   let breadCrumb: JSX.Element[] = []
   switch (router.asPath) {
-    case '/':
+    case '/timeline':
       breadCrumb.push(
         <Box key="breadcrumbs-timeline" sx={{ display: 'flex', alignItems: 'center' }}>
           <ViewTimelineOutlinedIcon sx={{ mr: '0.2rem' }} />

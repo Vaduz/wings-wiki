@@ -19,15 +19,21 @@ import ViewTimelineOutlinedIcon from '@mui/icons-material/ViewTimelineOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import { useRouter } from 'next/router'
 import React from 'react'
+import HomeIcon from '@mui/icons-material/Home'
 
 export const rootMenus = [
   {
-    name: 'Timeline',
+    name: 'Home',
     path: '/',
+    icon: <HomeIcon />,
+  },
+  {
+    name: 'Timeline',
+    path: '/timeline',
     icon: <ViewTimelineOutlinedIcon />,
   },
   {
-    name: 'Edited',
+    name: 'Edited History',
     path: '/edited',
     icon: <EditOutlinedIcon />,
   },

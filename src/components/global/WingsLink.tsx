@@ -12,6 +12,10 @@ export const searchPath = (spaceId: SpaceId) => {
   return `${spaceBase(spaceId)}/search`
 }
 
+export const spaceEditPath = (spaceId: SpaceId) => {
+  return `${spaceBase(spaceId)}/edit`
+}
+
 export const newDocumentPath = (spaceId: SpaceId, parentId?: DocumentId) => {
   parentId ??= '-1'
   return `${spaceBase(spaceId)}/createDocument?parentId=${parentId}`

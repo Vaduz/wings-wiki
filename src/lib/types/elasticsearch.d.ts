@@ -29,6 +29,7 @@ export interface NewSpace {
   owner_id: UserId
   members: UserId[]
   visibility: number
+  language: string
 }
 
 export interface Mention {

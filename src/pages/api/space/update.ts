@@ -1,12 +1,12 @@
 import { NextApiResponse } from 'next'
-import { Space, UserId } from '@/lib/types/elasticsearch'
-import { getSpace, updateSpace } from '@/lib/elasticsearch/space'
+import { updateSpace } from '@/lib/elasticsearch/space'
 import logger from '@/lib/logger/pino'
-import { NextApiRequestReadSpace } from '@/lib/types/nextApiRequest'
+import { NextApiRequestWriteSpace } from '@/lib/types/nextApiRequest'
 import { SpaceResponse } from '@/lib/types/apiResponse'
-import canReadSpace from '@/lib/middlewares/authenticate/canReadSpace'
+import { UpdateSpaceRequest } from '@/lib/types/apiRequest'
+import canWriteSpace from '@/lib/middlewares/authenticate/canWriteSpace'
 
-export async function handler(req: NextApiRequestReadSpace, res: NextApiResponse<SpaceResponse>) {
+export async function handler(req: NextApiRequestWriteSpace, res: NextApiResponse<SpaceResponse>) {
   const { method, body } = req
   if (!method || method != 'PUT') {
     res.setHeader('Allow', ['PUT'])
@@ -19,21 +19,18 @@ export async function handler(req: NextApiRequestReadSpace, res: NextApiResponse
       res.status(401).json({ error: 'Unauthorized' })
       return
     }
-    const userId = req.token.userId as UserId
 
-    const putSpace = body as Space
-    const targetSpace = await getSpace(putSpace.id)
-    if (!targetSpace) {
-      res.status(404).json({ error: `${putSpace.id} not found` })
-      return
-    } else if (!targetSpace.members.includes(userId) && targetSpace.owner_id != userId) {
-      res.status(400).json({ data: undefined })
-      logger.warn({ message: 'Unauthorized space access', space: targetSpace, userId: userId })
-      return
-    } else {
-      await updateSpace(body)
-      res.status(200).json({ data: body })
+    const reqSpace = body as UpdateSpaceRequest
+    const targetSpace = req.space
+    const space = {
+      ...targetSpace,
+      name: reqSpace.name,
+      description: reqSpace.description,
+      visibility: reqSpace.visibility,
+      members: reqSpace.members,
     }
+    await updateSpace(space)
+    res.status(200).json({ data: body })
   } catch (e) {
     res.status(500).json({ error: e })
     logger.error(e)
@@ -46,9 +43,9 @@ export async function handler(req: NextApiRequestReadSpace, res: NextApiResponse
   }
 }
 
-export default function withMiddleware(req: NextApiRequestReadSpace, res: NextApiResponse) {
+export default function withMiddleware(req: NextApiRequestWriteSpace, res: NextApiResponse) {
   return new Promise<void>((resolve, reject) => {
-    canReadSpace(req, res, () => {
+    canWriteSpace(req, res, () => {
       handler(req, res).then()
       resolve()
     }).then()
