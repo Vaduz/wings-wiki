@@ -1,5 +1,4 @@
 import { Box, Breadcrumbs, Typography } from '@mui/material'
-import React from 'next'
 import { useRouter } from 'next/router'
 import MuiLink from '@mui/material/Link'
 import HomeIcon from '@mui/icons-material/Home'

@@ -1,9 +1,8 @@
 import { Grid, ListItemIcon, Typography } from '@mui/material'
-import React, { NextPage } from 'next'
 import HandymanIcon from '@mui/icons-material/Handyman'
 import { Layout } from '@/components/layout/Layout'
 
-const Starred: NextPage = () => {
+const Starred = (): JSX.Element => {
   return (
     <Layout menuNames={['smallProfile', 'smallSpaces']}>
       <Grid container>

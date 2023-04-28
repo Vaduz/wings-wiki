@@ -1,4 +1,3 @@
-import React from 'react'
 import { Grid, Typography } from '@mui/material'
 import SmallSpaces from '@/components/space/SmallSpaces'
 import { Layout } from '@/components/layout/Layout'

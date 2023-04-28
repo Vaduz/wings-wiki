@@ -1,4 +1,3 @@
-import React from 'react'
 import { DocumentId, SpaceId } from '@/lib/types/elasticsearch'
 
 export const documentBase = '/doc'

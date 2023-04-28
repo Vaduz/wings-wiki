@@ -1,5 +1,4 @@
-import { NextPage } from 'next'
-import React, { PropsWithChildren, useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
 import { documentPath, spaceBase } from '@/components/global/WingsLink'
 import { Editor } from '@/components/editor/editor'
 import { useRouter } from 'next/router'
@@ -9,7 +8,7 @@ import { Container, Button, ButtonGroup, Grid, TextField, Paper, Typography } fr
 import { addEditedDocumentHistory } from '@/lib/localStorage/history'
 import { LayoutBase } from '@/components/layout/Layout'
 
-const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
+const NewDocument = (props: PropsWithChildren<any>): JSX.Element => {
   const [title, setTitle] = useState<string>('')
   const [mentions, setMentions] = useState<Mention[]>([])
   const [tags, setTags] = useState<string[]>([])
@@ -50,6 +49,7 @@ const NewDocument: NextPage = (props: PropsWithChildren<any>) => {
                 label="Title"
                 variant="outlined"
                 fullWidth
+                autoFocus
                 onChange={(e) => setTitle(e.currentTarget.value)}
               />
             </Paper>

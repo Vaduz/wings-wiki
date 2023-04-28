@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { documentBase, newDocumentPath, newSpacePath, searchPath, spaceBase } from '@/components/global/WingsLink'
 import { Space, SpaceId } from '@/lib/types/elasticsearch'

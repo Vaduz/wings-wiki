@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { SearchDocumentHit, Space, SpaceId } from '@/lib/types/elasticsearch'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getSpaceApi } from '@/lib/api/space'
 import logger from '@/lib/logger/pino'
 import { searchDocumentsApi } from '@/lib/api/document'
@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography'
 import { LayoutBase } from '@/components/layout/Layout'
 import SearchHits from '@/components/document/SearchHits'
 
-const SearchDocuments = () => {
+const SearchDocuments = (): JSX.Element => {
   const router = useRouter()
   const [space, setSpace] = useState<Space>()
   const [loading, setLoading] = useState<boolean>(true)
@@ -61,6 +61,7 @@ export const Search = ({ space }: { space: Space }): JSX.Element => {
           margin="normal"
           sx={{ boxShadow: 2 }}
           onChange={(e) => setQ(e.target.value)}
+          autoFocus
         />
       </Grid>
       <Grid item xs={12}>

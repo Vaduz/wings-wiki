@@ -1,6 +1,5 @@
 import dynamic from 'next/dynamic'
 import { CircularProgress, Paper } from '@mui/material'
-import React from 'react'
 
 const EditorLoader = dynamic(() => import('./CustomCKEditor'), {
   ssr: false,

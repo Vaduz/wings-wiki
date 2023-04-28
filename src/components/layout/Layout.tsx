@@ -1,6 +1,5 @@
 import TopNavi from '@/components/layout/TopNavi'
 import { Container, Grid } from '@mui/material'
-import React from 'next'
 import { ReactNode } from 'react'
 import { SpacesContextProvider } from '@/contexts/spaces'
 import SmallProfile from '@/components/profile/SmallProfile'

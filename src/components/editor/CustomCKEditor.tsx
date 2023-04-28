@@ -1,4 +1,3 @@
-import React from 'react'
 import { EditorProps } from './editor'
 import Editor from './ckeditor.cjs'
 import { CKEditor } from '@ckeditor/ckeditor5-react'

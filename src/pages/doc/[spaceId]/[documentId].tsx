@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Editor } from '@/components/editor/editor'
 import { documentEditPath } from '@/components/global/WingsLink'
 import TopNavi from '../../../components/layout/TopNavi'
@@ -7,12 +7,12 @@ import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/elasticsearch'
 import { getDocumentApi } from '@/lib/api/document'
 import DocumentTree from '@/components/document/DocumentTree'
 import Button from '@mui/material/Button'
-import { CircularProgress, Container, Grid } from '@mui/material'
+import { CircularProgress, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { addVisitedDocumentHistory } from '@/lib/localStorage/history'
 import { Layout } from '@/components/layout/Layout'
 
-const ViewDocument = () => {
+const ViewDocument = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
   const spaceId = router.query.spaceId as SpaceId

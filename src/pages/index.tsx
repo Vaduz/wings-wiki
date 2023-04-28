@@ -1,9 +1,8 @@
-import React, { NextPage } from 'next'
 import { Grid, Typography } from '@mui/material'
 import GlobalUpdates from '@/components/document/GlobalUpdates'
 import { Layout } from '@/components/layout/Layout'
 
-const Home: NextPage = () => {
+const Home = (): JSX.Element => {
   return (
     <Layout menuNames={['smallProfile', 'smallSpaces']}>
       <Grid container rowSpacing={2}>

@@ -1,5 +1,4 @@
-import TopNavi from '@/components/layout/TopNavi'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { createSpaceApi } from '@/lib/api/space'
 import { useRouter } from 'next/router'
 import logger from '@/lib/logger/pino'
@@ -64,6 +63,7 @@ const NewSpace = (): JSX.Element => {
                 label="Space Name"
                 variant="outlined"
                 fullWidth
+                autoFocus
                 onChange={(e) => setName(e.target.value)}
               />
             </Paper>

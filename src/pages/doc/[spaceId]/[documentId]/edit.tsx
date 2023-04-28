@@ -1,5 +1,5 @@
 import { Editor } from '@/components/editor/editor'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { documentPath } from '@/components/global/WingsLink'
 import TopNavi from '../../../../components/layout/TopNavi'
 import { useRouter } from 'next/router'
@@ -10,7 +10,7 @@ import { Container, ButtonGroup, Grid, TextField, CircularProgress, Typography }
 import { addEditedDocumentHistory } from '@/lib/localStorage/history'
 import { LayoutBase } from '@/components/layout/Layout'
 
-const EditDocument = () => {
+const EditDocument = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true)
   const [title, setTitle] = useState('')
   const router = useRouter()

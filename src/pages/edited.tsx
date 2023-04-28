@@ -1,12 +1,11 @@
 import { Grid, Typography } from '@mui/material'
-import React, { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import { EditedDocumentHistory } from '@/lib/types/localStorage'
 import { getEditedHistory } from '@/lib/localStorage/history'
 import DocumentCard from '@/components/document/DocumentCard'
 import { Layout } from '@/components/layout/Layout'
 
-const Edited: NextPage = () => {
+const Edited = (): JSX.Element => {
   const [histories, setHistories] = useState<EditedDocumentHistory[]>([])
   useEffect(() => {
     setHistories(getEditedHistory())
