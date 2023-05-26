@@ -1,16 +1,16 @@
 import { Grid, Typography } from '@mui/material'
-import SmallSpaces from '@/components/space/SmallSpaces'
 import { Layout } from '@/components/layout/Layout'
+import { SmallSpaceCards } from '@/components/space/SpaceCard'
 
 const ListSpaces = (): JSX.Element => {
   return (
     <Layout menuNames={['smallProfile']}>
-      <Grid container>
+      <Grid container rowSpacing={2}>
         <Grid item xs={12}>
           <Typography variant="h2">Space List</Typography>
         </Grid>
         <Grid item xs={12}>
-          <SmallSpaces />
+          <SmallSpaceCards />
         </Grid>
       </Grid>
     </Layout>

@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import DocumentTree from '@/components/document/DocumentTree'
 import LatestUpdatedDocuments from '@/components/document/LatestUpdatedDocuments'
 import { Layout } from '@/components/layout/Layout'
-import { BigSpaceCardSingle } from '@/components/space/BigSpaceCard'
+import { BigSpaceCardSingle } from '@/components/space/SpaceCard'
 
 const SpaceHome = (): JSX.Element => {
   const spaceId = useRouter().query.spaceId as SpaceId

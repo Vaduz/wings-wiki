@@ -1,7 +1,7 @@
 import { Card, Grid, ListItemIcon, Typography } from '@mui/material'
 import { Layout } from '@/components/layout/Layout'
-import SmallSpaces from '@/components/space/SmallSpaces'
 import EditIcon from '@mui/icons-material/Edit'
+import { SmallSpaceCards } from '@/components/space/SpaceCard'
 
 const Home = (): JSX.Element => {
   return (
@@ -19,7 +19,7 @@ const Home = (): JSX.Element => {
           </Card>
         </Grid>
         <Grid item xs={12}>
-          <SmallSpaces />
+          <SmallSpaceCards />
         </Grid>
       </Grid>
     </Layout>

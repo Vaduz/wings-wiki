@@ -3,8 +3,8 @@ import { Container, Grid } from '@mui/material'
 import { ReactNode } from 'react'
 import { SpacesContextProvider } from '@/contexts/spaces'
 import SmallProfile from '@/components/profile/SmallProfile'
-import SmallSpaces from '@/components/space/SmallSpaces'
 import WingsBreadcrumbs from './WingsBreadcrumbs'
+import { SmallSpaceCards } from '@/components/space/SpaceCard'
 
 export const LayoutBase = ({ children }: { children: ReactNode }): JSX.Element => {
   return (
@@ -58,7 +58,7 @@ const getMenu = (menuName: MenuName): JSX.Element => {
     case 'smallProfile':
       return <SmallProfile />
     case 'smallSpaces':
-      return <SmallSpaces withTitle />
+      return <SmallSpaceCards withTitle />
     default:
       return <></>
   }
