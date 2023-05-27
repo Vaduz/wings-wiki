@@ -1,67 +1,46 @@
-import { useEffect, useState } from 'react'
 import { Editor } from '@/components/editor/editor'
 import { documentEditPath } from '@/components/global/WingsLink'
-import TopNavi from '../../../components/layout/TopNavi'
 import { useRouter } from 'next/router'
-import { SpaceId, DocumentId, WingsDocument } from '@/lib/types/elasticsearch'
-import { getDocumentApi } from '@/lib/api/document'
+import { SpaceId, DocumentId } from '@/lib/types/elasticsearch'
 import DocumentTree from '@/components/document/DocumentTree'
 import Button from '@mui/material/Button'
 import { CircularProgress, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { addVisitedDocumentHistory } from '@/lib/localStorage/history'
 import { Layout } from '@/components/layout/Layout'
+import { DocumentContextProvider, useDocumentContext } from '@/contexts/document'
 
 const ViewDocument = (): JSX.Element => {
-  const [loading, setLoading] = useState<boolean>(true)
+  return (
+    <DocumentContextProvider>
+      <Layout menu={<DocumentTree />}>
+        <TitleAndContent />
+      </Layout>
+    </DocumentContextProvider>
+  )
+}
+
+const TitleAndContent = (): JSX.Element => {
   const router = useRouter()
   const spaceId = router.query.spaceId as SpaceId
   const documentId = router.query.documentId as DocumentId
-  const [wingsDocument, setWingsDocument] = useState<WingsDocument | undefined>()
-
-  useEffect(() => {
-    if (!documentId) {
-      setLoading(false)
-      return
-    }
-    setLoading(true)
-    getDocumentApi(spaceId, documentId)
-      .then((res) => {
-        if (!res) return
-        setWingsDocument(res)
-        addVisitedDocumentHistory({ spaceId: spaceId, documentId: documentId, title: res.title })
-      })
-      .catch((err) => console.error(err))
-    setLoading(false)
-  }, [spaceId, documentId])
-
-  if (loading) return <CircularProgress />
-
-  if (!wingsDocument) {
-    return (
-      <>
-        <TopNavi />
-        <Typography variant="body1">Document not found: {documentId}</Typography>
-      </>
-    )
-  }
-
+  const context = useDocumentContext()
+  if (!context) return <CircularProgress />
+  if (context.loading) return <CircularProgress />
+  if (!context.wingsDocument) return <Typography variant="body1">Document not found: {documentId}</Typography>
   return (
-    <Layout menu={<DocumentTree parentId={wingsDocument.parent_id} />}>
-      <Grid container rowSpacing={2}>
-        <Grid item xs={12}>
-          <Typography variant="h3">{wingsDocument.title || ''}</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Editor content={wingsDocument.content} disabled={true} />
-        </Grid>
-        <Grid item xs={12} display="flex" justifyContent="flex-end" py="1rem">
-          <Button variant="contained" href={documentEditPath(spaceId, wingsDocument.id)}>
-            Edit
-          </Button>
-        </Grid>
+    <Grid container rowSpacing={2}>
+      <Grid item xs={12}>
+        <Typography variant="h3">{context.wingsDocument.title || ''}</Typography>
       </Grid>
-    </Layout>
+      <Grid item xs={12}>
+        <Editor content={context.wingsDocument.content} disabled={true} />
+      </Grid>
+      <Grid item xs={12} display="flex" justifyContent="flex-end" py="1rem">
+        <Button variant="contained" href={documentEditPath(spaceId, documentId)}>
+          Edit
+        </Button>
+      </Grid>
+    </Grid>
   )
 }
 

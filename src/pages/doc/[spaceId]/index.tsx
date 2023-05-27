@@ -6,25 +6,28 @@ import DocumentTree from '@/components/document/DocumentTree'
 import LatestUpdatedDocuments from '@/components/document/LatestUpdatedDocuments'
 import { Layout } from '@/components/layout/Layout'
 import { BigSpaceCardSingle } from '@/components/space/SpaceCard'
+import { DocumentContextProvider } from '@/contexts/document'
 
 const SpaceHome = (): JSX.Element => {
   const spaceId = useRouter().query.spaceId as SpaceId
   if (!spaceId) return <></>
 
   return (
-    <Layout menu={<DocumentTree parentId={'-1'} />}>
-      <Grid container rowSpacing={2}>
-        <Grid item xs={12} mb={2}>
-          <BigSpaceCardSingle />
+    <DocumentContextProvider>
+      <Layout menu={<DocumentTree fromRoot />}>
+        <Grid container rowSpacing={2}>
+          <Grid item xs={12} mb={2}>
+            <BigSpaceCardSingle />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h4">New updates</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <LatestUpdatedDocuments spaceId={spaceId} noTitle />
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h4">New updates</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <LatestUpdatedDocuments spaceId={spaceId} noTitle />
-        </Grid>
-      </Grid>
-    </Layout>
+      </Layout>
+    </DocumentContextProvider>
   )
 }
 
