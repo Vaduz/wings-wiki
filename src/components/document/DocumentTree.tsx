@@ -109,7 +109,7 @@ const TraceParent = (props: TraceParentProps): JSX.Element => {
     <>
       <TraceParent spaceId={props.spaceId} documentId={parent.parent_id}>
         <FolderItem
-          key={parent.id}
+          key={`folder-${parent.id}`}
           spaceId={props.spaceId}
           documentId={parent.id}
           parentId={parent.parent_id}
@@ -281,18 +281,17 @@ const FolderItem = (props: FolderItemProps): JSX.Element => {
             .filter((child) => child.id != props.documentId)
             .map((child) => {
               return (
-                <>
+                <Fragment key={child.id}>
                   <Item
                     title={child.title}
                     link={documentPath(props.spaceId, child.id)}
                     itemId={child.id}
                     icon={<TextSnippetOutlinedIcon />}
-                    key={child.id}
                     expand={Boolean(child.child_count) ? 1 : 0}
                     spaceId={props.spaceId}
                     documentId={child.id}
                   />
-                </>
+                </Fragment>
               )
             })) || <CircularProgress />}
         <Item
