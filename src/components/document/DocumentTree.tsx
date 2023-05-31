@@ -79,7 +79,6 @@ interface TraceParentProps {
   documentId: DocumentId
   children: ReactNode
 }
-
 const TraceParent = (props: TraceParentProps): JSX.Element => {
   const [parent, setParent] = useState<WingsDocument>()
   useEffect(() => {
@@ -102,16 +101,16 @@ const TraceParent = (props: TraceParentProps): JSX.Element => {
   return (
     <>
       <TraceParent spaceId={props.spaceId} documentId={parent.parent_id}>
-        <Item
+        <FolderItem
+          key={parent.id}
+          spaceId={props.spaceId}
+          documentId={parent.id}
+          parentId={parent.parent_id}
           title={parent.title}
           link={documentPath(props.spaceId, parent.id)}
-          key={parent.id}
-          itemId={parent.id}
-          icon={<FolderIcon />}
-          expand={1}
-          spaceId={props.spaceId}
-        />
-        <Container>{props.children}</Container>
+        >
+          {props.children}
+        </FolderItem>
       </TraceParent>
     </>
   )
@@ -137,7 +136,7 @@ const DocumentTreeView = ({
     <>
       <Collapse in timeout="auto" unmountOnExit>
         <List component="div" disablePadding key={`${spaceId}-${parentId}-${documentId}`}>
-          {neighbors &&
+          {(neighbors &&
             Array.from(neighbors).map((neighbor) => {
               return (
                 <Fragment key={`fragment-${neighbor.id}`}>
@@ -147,13 +146,13 @@ const DocumentTreeView = ({
                     itemId={neighbor.id}
                     key={neighbor.id}
                     icon={<TextSnippetOutlinedIcon />}
-                    expand={Boolean(neighbor.child_count) ? (neighbor.id == documentId ? 2 : 1) : 0}
+                    expand={Boolean(neighbor.child_count) ? (neighbor.id == documentId ? 3 : 1) : 0}
                     spaceId={spaceId}
                     documentId={neighbor.id}
                   />
                 </Fragment>
               )
-            })}
+            })) || <CircularProgress />}
           <NewItem spaceId={spaceId} documentId={documentId} />
         </List>
       </Collapse>
@@ -242,15 +241,117 @@ const NewItem = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Docume
   )
 }
 
-const Item = ({
-  itemId,
-  title,
-  link,
-  icon,
-  expand,
-  spaceId,
-  documentId,
-}: {
+interface FolderItemProps {
+  title: string
+  link: string
+  spaceId: SpaceId
+  documentId: DocumentId
+  parentId: DocumentId
+  children: ReactNode
+}
+
+const FolderItem = (props: FolderItemProps): JSX.Element => {
+  const router = useRouter()
+  const context = useDocumentContext()
+  const [folderExpanded, setFolderExpanded] = useState<Boolean>(false)
+  const [childrenExpanded, setChildrenExpanded] = useState<Boolean>(true)
+  const [childDocuments, setChildDocuments] = useState<WingsDocumentSearchResult[]>()
+
+  function getChildren() {
+    childDocumentsApi(props.spaceId, props.parentId)
+      .then((res) => setChildDocuments(res))
+      .catch((err) => console.error(err))
+  }
+
+  if (folderExpanded) {
+    !childDocuments && getChildren()
+    return (
+      <>
+        {(childDocuments &&
+          Array.from(childDocuments)
+            .filter((child) => child.id != props.documentId)
+            .map((child) => {
+              return (
+                <>
+                  <Item
+                    title={child.title}
+                    link={documentPath(props.spaceId, child.id)}
+                    itemId={child.id}
+                    icon={<TextSnippetOutlinedIcon />}
+                    key={child.id}
+                    expand={Boolean(child.child_count) ? 1 : 0}
+                    spaceId={props.spaceId}
+                    documentId={child.id}
+                  />
+                </>
+              )
+            })) || <CircularProgress />}
+        <Item
+          title={props.title}
+          link={documentPath(props.spaceId, props.documentId)}
+          itemId={props.documentId}
+          icon={<TextSnippetOutlinedIcon />}
+          key={props.documentId}
+          expand={2}
+          spaceId={props.spaceId}
+          documentId={props.documentId}
+        >
+          {props.children}
+        </Item>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <ListItemButton
+        href={props.link}
+        selected={(context && props.documentId == context.documentId) || false}
+        key={`child-${props.documentId}`}
+        sx={{ py: '0.2rem' }}
+      >
+        <ListItemIcon
+          sx={{ minWidth: '2rem' }}
+          onClick={(e) => {
+            e.preventDefault()
+            props.documentId && context && context.setDocumentId(props.documentId)
+            setFolderExpanded(true)
+            props.link && router.push(props.link, props.link, { shallow: true }).then()
+          }}
+        >
+          <FolderIcon />
+        </ListItemIcon>
+        <ListItemText
+          primary={props.title}
+          onClick={(e) => {
+            e.preventDefault()
+            props.documentId && context && context.setDocumentId(props.documentId)
+            setFolderExpanded(true)
+            props.link && router.push(props.link, props.link, { shallow: true }).then()
+          }}
+        />
+        {childrenExpanded ? (
+          <ExpandLess
+            onClick={(e) => {
+              e.preventDefault()
+              setChildrenExpanded(true)
+            }}
+          />
+        ) : (
+          <ExpandMore
+            onClick={(e) => {
+              e.preventDefault()
+              setChildrenExpanded(false)
+            }}
+          />
+        )}
+      </ListItemButton>
+      <Container>{props.children}</Container>
+    </>
+  )
+}
+
+interface ItemProps {
   itemId: string
   title: string
   link: string
@@ -258,17 +359,20 @@ const Item = ({
   expand: number
   spaceId: SpaceId
   documentId?: DocumentId
-}): JSX.Element => {
+  children?: ReactNode
+}
+
+const Item = (props: ItemProps): JSX.Element => {
   const router = useRouter()
   const context = useDocumentContext()
-  const [expandState, setExpandState] = useState<number>(expand)
+  const [expandState, setExpandState] = useState<number>(props.expand)
 
   return (
     <>
       <ListItemButton
-        href={link}
-        selected={(context && documentId == context.documentId) || false}
-        key={`child-${itemId}`}
+        href={props.link}
+        selected={(context && props.documentId == context.documentId) || false}
+        key={`child-${props.itemId}`}
         sx={{ py: '0.2rem' }}
       >
         <ListItemIcon
@@ -276,17 +380,18 @@ const Item = ({
           onClick={(e) => {
             e.preventDefault()
             setExpandState((prevState) => (prevState == 1 ? 2 : prevState))
+            props.link && router.push(props.link, props.link, { shallow: true }).then()
           }}
         >
-          {icon}
+          {props.icon}
         </ListItemIcon>
         <ListItemText
-          primary={title}
+          primary={props.title}
           onClick={(e) => {
             e.preventDefault()
-            documentId && context && context.setDocumentId(documentId)
+            props.documentId && context && context.setDocumentId(props.documentId)
             setExpandState((prevState) => (prevState == 1 ? 2 : prevState))
-            link && router.push(link, link, { shallow: true }).then()
+            props.link && router.push(props.link, props.link, { shallow: true }).then()
           }}
         />
         {expandState == 1 ? (
@@ -296,7 +401,7 @@ const Item = ({
               setExpandState(2)
             }}
           />
-        ) : expandState == 2 ? (
+        ) : expandState >= 2 ? (
           <ExpandMore
             onClick={(e) => {
               e.preventDefault()
@@ -305,11 +410,16 @@ const Item = ({
           />
         ) : undefined}
       </ListItemButton>
-      {((documentId && expandState == 2) || (context && documentId == context.documentId)) && (
-        <ChildItems spaceId={spaceId} documentId={documentId} />
-      )}
+      {props.documentId && expandState >= 2 && <ChildItems spaceId={props.spaceId} documentId={props.documentId} />}
     </>
   )
+}
+
+enum ExpandState {
+  NO_CHILDREN,
+  HAS_CHILDREN,
+  EXPANDED,
+  AUTO_EXPAND,
 }
 
 export default DocumentTree
