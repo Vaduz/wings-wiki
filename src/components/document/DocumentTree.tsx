@@ -3,15 +3,14 @@ import React, { Fragment, ReactNode, useEffect, useState } from 'react'
 import { childDocumentsApi, getDocumentApi } from '@/lib/api/document'
 import { documentPath, newDocumentPath, spaceBase } from '@/components/global/WingsLink'
 import {
-  Collapse,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Container,
   Typography,
   Paper,
   CircularProgress,
+  Box,
 } from '@mui/material'
 import { useRouter } from 'next/router'
 import WorkspacesIcon from '@mui/icons-material/Workspaces'
@@ -70,8 +69,16 @@ const DocumentTreeBody = ({
         </TraceParent>
       </List>
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return documentTreeBody ? documentTreeBody : <CircularProgress />
+  return documentTreeBody ? (
+    documentTreeBody
+  ) : (
+    <List>
+      <SpaceItem spaceId={spaceId} />
+      <CircularProgress />
+    </List>
+  )
 }
 
 interface TraceParentProps {
@@ -88,12 +95,12 @@ const TraceParent = (props: TraceParentProps): JSX.Element => {
       .catch((err) => console.error(err))
   }, [props.spaceId, props.documentId])
 
-  if (props.documentId == '-1') return <Container>{props.children}</Container>
+  if (props.documentId == '-1') return <Box pl={3}>{props.children}</Box>
   if (!parent) {
     return (
       <>
         <CircularProgress />
-        <Container>{props.children}</Container>
+        <Box pl={3}>{props.children}</Box>
       </>
     )
   }
@@ -134,28 +141,32 @@ const DocumentTreeView = ({
 
   return (
     <>
-      <Collapse in timeout="auto" unmountOnExit>
-        <List component="div" disablePadding key={`${spaceId}-${parentId}-${documentId}`}>
-          {(neighbors &&
-            Array.from(neighbors).map((neighbor) => {
-              return (
-                <Fragment key={`fragment-${neighbor.id}`}>
-                  <Item
-                    title={neighbor.title}
-                    link={documentPath(spaceId, neighbor.id)}
-                    itemId={neighbor.id}
-                    key={neighbor.id}
-                    icon={<TextSnippetOutlinedIcon />}
-                    expand={Boolean(neighbor.child_count) ? (neighbor.id == documentId ? 3 : 1) : 0}
-                    spaceId={spaceId}
-                    documentId={neighbor.id}
-                  />
-                </Fragment>
-              )
-            })) || <CircularProgress />}
-          <NewItem spaceId={spaceId} documentId={documentId} />
-        </List>
-      </Collapse>
+      <List component="div" disablePadding key={`${spaceId}-${parentId}-${documentId}`}>
+        {(neighbors &&
+          Array.from(neighbors).map((neighbor) => {
+            return (
+              <Fragment key={`fragment-${neighbor.id}`}>
+                <Item
+                  title={neighbor.title}
+                  link={documentPath(spaceId, neighbor.id)}
+                  itemId={neighbor.id}
+                  key={neighbor.id}
+                  icon={<TextSnippetOutlinedIcon />}
+                  expand={
+                    Boolean(neighbor.child_count)
+                      ? neighbor.id == documentId
+                        ? ExpandState.AUTO_EXPAND
+                        : ExpandState.HAS_CHILDREN
+                      : ExpandState.NO_CHILDREN
+                  }
+                  spaceId={spaceId}
+                  documentId={neighbor.id}
+                />
+              </Fragment>
+            )
+          })) || <CircularProgress />}
+        <NewItem spaceId={spaceId} documentId={documentId} />
+      </List>
     </>
   )
 }
@@ -179,7 +190,7 @@ const SpaceItem = ({ spaceId }: { spaceId: SpaceId }): JSX.Element => {
       key="root"
       itemId="root"
       icon={<WorkspacesIcon />}
-      expand={0}
+      expand={ExpandState.NO_CHILDREN}
       spaceId={spaceId}
     />
   )
@@ -198,28 +209,26 @@ const ChildItems = ({ spaceId, documentId }: { spaceId: SpaceId; documentId: Doc
   }, [spaceId, documentId])
 
   return (
-    <Container>
-      <Collapse in timeout="auto" unmountOnExit>
-        <List component="div" disablePadding key={`children-of-${documentId}`}>
-          {(children &&
-            Array.from(children).map((child) => {
-              return (
-                <Item
-                  title={child.title}
-                  link={documentPath(spaceId, child.id)}
-                  itemId={child.id}
-                  icon={<TextSnippetOutlinedIcon />}
-                  key={child.id}
-                  expand={Boolean(child.child_count) ? 1 : 0}
-                  spaceId={spaceId}
-                  documentId={child.id}
-                />
-              )
-            })) || <CircularProgress />}
-          <NewItem spaceId={spaceId} documentId={documentId} />
-        </List>
-      </Collapse>
-    </Container>
+    <Box pl={3}>
+      <List component="div" disablePadding key={`children-of-${documentId}`}>
+        {(children &&
+          Array.from(children).map((child) => {
+            return (
+              <Item
+                title={child.title}
+                link={documentPath(spaceId, child.id)}
+                itemId={child.id}
+                icon={<TextSnippetOutlinedIcon />}
+                key={child.id}
+                expand={Boolean(child.child_count) ? ExpandState.HAS_CHILDREN : 0}
+                spaceId={spaceId}
+                documentId={child.id}
+              />
+            )
+          })) || <CircularProgress />}
+        <NewItem spaceId={spaceId} documentId={documentId} />
+      </List>
+    </Box>
   )
 }
 
@@ -346,7 +355,7 @@ const FolderItem = (props: FolderItemProps): JSX.Element => {
           />
         )}
       </ListItemButton>
-      <Container>{props.children}</Container>
+      <Box pl={3}>{props.children}</Box>
     </>
   )
 }
@@ -356,7 +365,7 @@ interface ItemProps {
   title: string
   link: string
   icon: JSX.Element
-  expand: number
+  expand: ExpandState
   spaceId: SpaceId
   documentId?: DocumentId
   children?: ReactNode
@@ -365,7 +374,7 @@ interface ItemProps {
 const Item = (props: ItemProps): JSX.Element => {
   const router = useRouter()
   const context = useDocumentContext()
-  const [expandState, setExpandState] = useState<number>(props.expand)
+  const [expandState, setExpandState] = useState<ExpandState>(props.expand)
 
   return (
     <>
@@ -379,7 +388,7 @@ const Item = (props: ItemProps): JSX.Element => {
           sx={{ minWidth: '2rem' }}
           onClick={(e) => {
             e.preventDefault()
-            setExpandState((prevState) => (prevState == 1 ? 2 : prevState))
+            setExpandState((prevState) => (prevState == ExpandState.HAS_CHILDREN ? ExpandState.EXPANDED : prevState))
             props.link && router.push(props.link, props.link, { shallow: true }).then()
           }}
         >
@@ -390,27 +399,29 @@ const Item = (props: ItemProps): JSX.Element => {
           onClick={(e) => {
             e.preventDefault()
             props.documentId && context && context.setDocumentId(props.documentId)
-            setExpandState((prevState) => (prevState == 1 ? 2 : prevState))
+            setExpandState((prevState) => (prevState == ExpandState.HAS_CHILDREN ? ExpandState.EXPANDED : prevState))
             props.link && router.push(props.link, props.link, { shallow: true }).then()
           }}
         />
-        {expandState == 1 ? (
+        {expandState == ExpandState.HAS_CHILDREN ? (
           <ExpandLess
             onClick={(e) => {
               e.preventDefault()
-              setExpandState(2)
+              setExpandState(ExpandState.EXPANDED)
             }}
           />
-        ) : expandState >= 2 ? (
+        ) : expandState >= ExpandState.EXPANDED ? (
           <ExpandMore
             onClick={(e) => {
               e.preventDefault()
-              setExpandState(1)
+              setExpandState(ExpandState.HAS_CHILDREN)
             }}
           />
         ) : undefined}
       </ListItemButton>
-      {props.documentId && expandState >= 2 && <ChildItems spaceId={props.spaceId} documentId={props.documentId} />}
+      {props.documentId && (expandState == ExpandState.EXPANDED || expandState == ExpandState.AUTO_EXPAND) && (
+        <ChildItems spaceId={props.spaceId} documentId={props.documentId} />
+      )}
     </>
   )
 }
