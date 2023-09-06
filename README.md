@@ -1,10 +1,15 @@
+# Wings Wiki
+
+Globally Scalable Enterprise Wiki
+
 # Getting Started
 
-First, run ElasticSearch.
+First, run ElasticSearch and create initial schema by using [init.ts](https://github.com/Vaduz/wings-wiki/blob/main/configs/es/init.ts).
 
-Secondly, run the development server:
+Secondly, run the Next.js server:
 
 ```bash
+# To run dev server:
 npm run dev
 # or
 yarn dev
