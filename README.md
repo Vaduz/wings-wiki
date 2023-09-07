@@ -21,14 +21,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ## Enabling Google OAuth
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/home/dashboard) and create project.
+1. Go to [Google Cloud Console](https://console.cloud.google.com/home/dashboard) and a new create project.
 2. Open hamburger menu, API & Services -> Credentials.
 3. Create a new OAuth client ID.
 4. Set Authorized redirect URIs: http://localhost:3000/api/auth/callback/google for development environment.
 5. Set following environment variables for Next.js server displayed on credentials page:
-  - `GOOGLE_CLIENT_ID`: Client ID
-  - `GOOGLE_CLIENT_SECRET`: Client secret
-  - `JWT_SECRET`: Random string
+   - `GOOGLE_CLIENT_ID`: Client ID
+   - `GOOGLE_CLIENT_SECRET`: Client secret
+   - `JWT_SECRET`: Random string
 
 # Screen Shots
 
